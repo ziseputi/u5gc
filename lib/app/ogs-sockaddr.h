@@ -63,36 +63,44 @@ typedef struct ogs_ipsubnet_s {
 } ogs_ipsubnet_t;
 
 int ogs_getnameinfo(
-    char *hostname, socklen_t hostname_len, ogs_sockaddr_t *addr, int flags);
+        char *hostname, socklen_t hostname_len, ogs_sockaddr_t *addr, int flags);
 
-int ogs_getaddrinfo(ogs_sockaddr_t **sa_list, 
-        int family, const char *hostname, uint16_t port, int flags);
+int ogs_getaddrinfo(ogs_sockaddr_t **sa_list,
+                    int family, const char *hostname, uint16_t port, int flags);
+
 int ogs_freeaddrinfo(ogs_sockaddr_t *sa_list);
 
-int ogs_addaddrinfo(ogs_sockaddr_t **sa_list, 
-        int family, const char *hostname, uint16_t port, int flags);
+int ogs_addaddrinfo(ogs_sockaddr_t **sa_list,
+                    int family, const char *hostname, uint16_t port, int flags);
+
 int ogs_copyaddrinfo(
         ogs_sockaddr_t **dst, const ogs_sockaddr_t *src);
+
 int ogs_filteraddrinfo(ogs_sockaddr_t **sa_list, int family);
+
 int ogs_sortaddrinfo(ogs_sockaddr_t **sa_list, int family);
 
 ogs_sockaddr_t *ogs_link_local_addr_by_dev(const char *dev);
-int ogs_filter_ip_version(ogs_sockaddr_t **addr, 
-        int no_ipv4, int no_ipv6, int prefer_ipv4);
+
+int ogs_filter_ip_version(ogs_sockaddr_t **addr,
+                          int no_ipv4, int no_ipv6, int prefer_ipv4);
 
 #define OGS_ADDRSTRLEN INET6_ADDRSTRLEN
 #define OGS_ADDR(__aDDR, __bUF) \
     ogs_inet_ntop(__aDDR, __bUF, OGS_ADDRSTRLEN)
 #define OGS_PORT(__aDDR) \
     be16toh((__aDDR)->ogs_sin_port)
+
 const char *ogs_inet_ntop(void *addr, char *buf, int buflen);
+
 int ogs_inet_pton(int family, const char *src, void *addr);
 
 socklen_t ogs_sockaddr_len(const void *addr);
+
 bool ogs_sockaddr_is_equal(void *p, void *q);
 
 int ogs_ipsubnet(ogs_ipsubnet_t *ipsub,
-        const char *ipstr, const char *mask_or_numbits);
+                 const char *ipstr, const char *mask_or_numbits);
 
 #ifdef __cplusplus
 }

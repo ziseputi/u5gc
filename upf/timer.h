@@ -47,6 +47,7 @@ upf_timer_cfg_t *upf_timer_cfg(upf_timer_e id);
 const char *upf_timer_get_name(upf_timer_e id);
 
 void upf_timer_association(void *data);
+
 void upf_timer_heartbeat(void *data);
 
 #ifdef __cplusplus

@@ -21,21 +21,19 @@
 
 static OGS_POOL(pool, ogs_gtp_node_t);
 
-int ogs_gtp_node_init(int size)
-{
+int ogs_gtp_node_init(int size) {
     ogs_pool_init(&pool, size);
 
     return OGS_OK;
 }
-int ogs_gtp_node_final(void)
-{
+
+int ogs_gtp_node_final(void) {
     ogs_pool_final(&pool);
 
     return OGS_OK;
 }
 
-ogs_gtp_node_t *ogs_gtp_node_new(ogs_sockaddr_t *sa_list)
-{
+ogs_gtp_node_t *ogs_gtp_node_new(ogs_sockaddr_t *sa_list) {
     ogs_gtp_node_t *node = NULL;
 
     ogs_assert(sa_list);
@@ -52,8 +50,7 @@ ogs_gtp_node_t *ogs_gtp_node_new(ogs_sockaddr_t *sa_list)
     return node;
 }
 
-void ogs_gtp_node_free(ogs_gtp_node_t *node)
-{
+void ogs_gtp_node_free(ogs_gtp_node_t *node) {
     ogs_assert(node);
 
     if (node->sock)
@@ -67,8 +64,7 @@ void ogs_gtp_node_free(ogs_gtp_node_t *node)
 
 ogs_gtp_node_t *ogs_gtp_node_add_by_f_teid(
         ogs_list_t *list, ogs_gtp_f_teid_t *f_teid,
-        uint16_t port, int no_ipv4, int no_ipv6, int prefer_ipv4)
-{
+        uint16_t port, int no_ipv4, int no_ipv6, int prefer_ipv4) {
     int rv;
     ogs_gtp_node_t *node = NULL;
     ogs_sockaddr_t *addr = NULL;
@@ -98,8 +94,7 @@ ogs_gtp_node_t *ogs_gtp_node_add_by_f_teid(
 }
 
 ogs_gtp_node_t *ogs_gtp_node_add_by_addr(
-        ogs_list_t *list, ogs_sockaddr_t *addr)
-{
+        ogs_list_t *list, ogs_sockaddr_t *addr) {
     ogs_gtp_node_t *gnode = NULL;
     ogs_sockaddr_t *new = NULL;
 
@@ -117,8 +112,7 @@ ogs_gtp_node_t *ogs_gtp_node_add_by_addr(
     return gnode;
 }
 
-void ogs_gtp_node_remove(ogs_list_t *list, ogs_gtp_node_t *node)
-{
+void ogs_gtp_node_remove(ogs_list_t *list, ogs_gtp_node_t *node) {
     ogs_assert(node);
 
     ogs_list_remove(list, node);
@@ -126,17 +120,14 @@ void ogs_gtp_node_remove(ogs_list_t *list, ogs_gtp_node_t *node)
     ogs_gtp_node_free(node);
 }
 
-void ogs_gtp_node_remove_all(ogs_list_t *list)
-{
+void ogs_gtp_node_remove_all(ogs_list_t *list) {
     ogs_gtp_node_t *node = NULL, *next_node = NULL;
-    
-    ogs_list_for_each_safe(list, next_node, node)
-        ogs_gtp_node_remove(list, node);
+
+    ogs_list_for_each_safe(list, next_node, node)ogs_gtp_node_remove(list, node);
 }
 
 ogs_gtp_node_t *ogs_gtp_node_find_by_addr(
-        ogs_list_t *list, ogs_sockaddr_t *addr)
-{
+        ogs_list_t *list, ogs_sockaddr_t *addr) {
     ogs_gtp_node_t *node = NULL;
 
     ogs_assert(list);
@@ -151,8 +142,7 @@ ogs_gtp_node_t *ogs_gtp_node_find_by_addr(
 }
 
 ogs_gtp_node_t *ogs_gtp_node_find_by_f_teid(
-        ogs_list_t *list, ogs_gtp_f_teid_t *f_teid)
-{
+        ogs_list_t *list, ogs_gtp_f_teid_t *f_teid) {
     int rv;
     ogs_gtp_node_t *node = NULL;
     ogs_ip_t ip;

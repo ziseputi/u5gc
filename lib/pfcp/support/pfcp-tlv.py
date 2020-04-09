@@ -36,20 +36,25 @@ FAIL = '\033[91m'
 INFO = '\033[93m'
 ENDC = '\033[0m'
 
+
 def d_print(string):
     if verbosity > 0:
         sys.stdout.write(string)
 
+
 def d_info(string):
     sys.stdout.write(INFO + string + ENDC + "\n")
+
 
 def d_error(string):
     sys.stderr.write(FAIL + string + ENDC + "\n")
     sys.exit(0)
 
+
 def write_file(f, string):
     f.write(string)
     d_print(string)
+
 
 def output_header_to_file(f):
     now = datetime.datetime.now()
@@ -79,6 +84,7 @@ def output_header_to_file(f):
     f.write(" * Created on: %s by %s\n * from %s\n" % (str(now), getpass.getuser(), filename))
     f.write(" ******************************************************************************/\n\n")
 
+
 def usage():
     print "Python generating TLV build/parser for PFCP v%s" % (version)
     print "Usage: python pfcp-tlv.py [options]"
@@ -89,11 +95,14 @@ def usage():
     print "-c [dir]  Cache files to given directory"
     print "-h        Print this help and return"
 
+
 def v_upper(v):
     return re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())
 
+
 def v_lower(v):
     return re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())
+
 
 def get_cells(cells):
     note = cells[0].text.encode('ascii', 'ignore')
@@ -101,10 +110,10 @@ def get_cells(cells):
         return None
     comment = cells[2].text.encode('ascii', 'ignore')
     comment = re.sub('\n|\"|\'|\\\\', '', comment);
-    #print comment
-    ie_type = re.sub('\s*$', '', re.sub('\'\s*\n*\s*\(NOTE.*\)*', '', cells[-1].text.encode('ascii', 'ignore')))    
-    
-    #if ie_type.find('Usage Report') != -1:
+    # print comment
+    ie_type = re.sub('\s*$', '', re.sub('\'\s*\n*\s*\(NOTE.*\)*', '', cells[-1].text.encode('ascii', 'ignore')))
+
+    # if ie_type.find('Usage Report') != -1:
     if ie_type == 'Usage Report':
         if comment.find('Report Type') != -1:
             ie_type = "Usage Report Session Report Request"
@@ -113,16 +122,16 @@ def get_cells(cells):
         elif comment.find('provisioned ') != -1:
             ie_type = "Usage Report Session Deletion Response"
         else:
-             assert False, "Unknown IE type : [Usage Report]"
-    
+            assert False, "Unknown IE type : [Usage Report]"
+
     if ie_type == 'Update BAR':
         if comment.find('7.5.4.11-1') != -1:
             ie_type = "Update BAR Session Modification Request"
         elif comment.find('7.5.9.2-1') != -1:
             ie_type = "Update BAR PFCP Session Report Response"
         else:
-             assert False, "Unknown IE type : [Update BAR]"
-    
+            assert False, "Unknown IE type : [Update BAR]"
+
     if ie_type.find('PFD Contents') != -1:
         ie_type = 'PFD contents'
     elif ie_type.find('PFD') != -1:
@@ -137,11 +146,11 @@ def get_cells(cells):
         ie_type = 'IP4CP'
     if ie_type not in type_list.keys():
         assert False, "Unknown IE type : [" \
-                + cells[-1].text + "]" + "(" + ie_type + ")"
+                      + cells[-1].text + "]" + "(" + ie_type + ")"
     presence = cells[1].text.encode('ascii', 'ignore')
     ie_value = re.sub('\s*\n*\s*\([^\)]*\)*', '', cells[0].text).encode('ascii', 'ignore')
-    if ie_value[len(ie_value)-1] == ' ':
-        ie_value = ie_value[:len(ie_value)-1]
+    if ie_value[len(ie_value) - 1] == ' ':
+        ie_value = ie_value[:len(ie_value) - 1]
 
     tlv_more = "0"  # PFCP has no tlv_more
     if ie_type == 'Create PDR' or ie_type == 'Update PDR' or ie_type == "Remove PDR":
@@ -159,14 +168,16 @@ def get_cells(cells):
         type_list[ie_type]["max_tlv_more"] = tlv_more
         write_file(f, "type_list[\"" + ie_type + "\"][\"max_tlv_more\"] = \"" + tlv_more + "\"\n")
 
-    return { "ie_type" : ie_type, "ie_value" : ie_value, "presence" : presence, "tlv_more" : tlv_more, "comment" : comment }
+    return {"ie_type": ie_type, "ie_value": ie_value, "presence": presence, "tlv_more": tlv_more, "comment": comment}
+
 
 def write_cells_to_file(name, cells):
     write_file(f, name + ".append({ \"ie_type\" : \"" + cells["ie_type"] + \
-        "\", \"ie_value\" : \"" + cells["ie_value"] + \
-        "\", \"presence\" : \"" + cells["presence"] + \
-        "\", \"tlv_more\" : \"" + cells["tlv_more"] + \
-        "\", \"comment\" : \"" + cells["comment"] + "\"})\n")
+               "\", \"ie_value\" : \"" + cells["ie_value"] + \
+               "\", \"presence\" : \"" + cells["presence"] + \
+               "\", \"tlv_more\" : \"" + cells["tlv_more"] + \
+               "\", \"comment\" : \"" + cells["comment"] + "\"})\n")
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "df:ho:c:", ["debug", "file", "help", "output", "cache"])
@@ -193,7 +204,7 @@ for o, a in opts:
         sys.exit(2)
 
 if os.path.isfile(filename) and os.access(filename, os.R_OK):
-    file = open(filename, 'r') 
+    file = open(filename, 'r')
 else:
     d_error("Cannot find file : " + filename)
 
@@ -204,7 +215,7 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     msg_table = ""
     for i, table in enumerate(document.tables):
@@ -225,7 +236,7 @@ else:
         if key.find('Reserved') != -1:
             continue
         key = re.sub('\s*\n*\s*\([^\)]*\)*', '', key)
-        msg_list[key] = { "type": type }
+        msg_list[key] = {"type": type}
         write_file(f, "msg_list[\"" + key + "\"] = { \"type\" : \"" + type + "\" }\n")
     f.close()
 
@@ -236,7 +247,7 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     ie_table = ""
     for i, table in enumerate(document.tables):
@@ -258,7 +269,7 @@ else:
         key = re.sub('\s*$', '', key)
 
         type = row.cells[0].text.encode('ascii', 'ignore')
-        type_list[key] = { "type": type , "max_tlv_more" : "0" }
+        type_list[key] = {"type": type, "max_tlv_more": "0"}
         write_file(f, "type_list[\"" + key + "\"] = { \"type\" : \"" + type)
         write_file(f, "\", \"max_tlv_more\" : \"0\" }\n")
     f.close()
@@ -270,7 +281,7 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     for i, table in enumerate(document.tables):
         try:
@@ -279,7 +290,7 @@ else:
             pass
         else:
             if cell.text.find('Octet') != -1 and \
-               table.rows[0].cells[1].text.find('Outer Header to be created') == -1:
+                    table.rows[0].cells[1].text.find('Outer Header to be created') == -1:
 
                 num = 0;
                 if len(table.rows[0].cells) > 2 and table.rows[0].cells[2].text.find('IE Type') != -1:
@@ -305,22 +316,23 @@ else:
 
                 # SKIP Access Forwarding Action Information
                 if (int(ie_type) == 78):
-                    ie_name =  "Usage Report Session Modification Response"
+                    ie_name = "Usage Report Session Modification Response"
                 elif (int(ie_type) == 79):
-                    ie_name =  "Usage Report Session Deletion Response"
+                    ie_name = "Usage Report Session Deletion Response"
                 elif (int(ie_type) == 80):
-                    ie_name =  "Usage Report Session Report Request"    
+                    ie_name = "Usage Report Session Report Request"
                 elif (int(ie_type) == 86):
-                    ie_name =  "Update BAR Session Modification Request" 
+                    ie_name = "Update BAR Session Modification Request"
                 elif (int(ie_type) == 12):
-                    ie_name =  "Update BAR PFCP Session Report Response" 
+                    ie_name = "Update BAR PFCP Session Report Response"
 
                 if ie_name.find('Access Forwarding Action Information 2') != -1:
-                    ie_idx = str(int(ie_type)+100)
-                    group_list[ie_name] = { "index" : ie_idx, "type" : ie_type, "ies" : ies }
-                    write_file(f, "group_list[\"" + ie_name + "\"] = { \"index\" : \"" + ie_idx + "\", \"type\" : \"" + ie_type + "\", \"ies\" : ies }\n")
+                    ie_idx = str(int(ie_type) + 100)
+                    group_list[ie_name] = {"index": ie_idx, "type": ie_type, "ies": ies}
+                    write_file(f,
+                               "group_list[\"" + ie_name + "\"] = { \"index\" : \"" + ie_idx + "\", \"type\" : \"" + ie_type + "\", \"ies\" : ies }\n")
                     continue
-                
+
                 if ie_name not in group_list.keys():
                     ies = []
                     write_file(f, "ies = []\n")
@@ -332,13 +344,14 @@ else:
                         ies.append(cells)
                         write_cells_to_file("ies", cells)
 
-                    ie_idx = str(int(ie_type)+100)
-                    group_list[ie_name] = { "index" : ie_idx, "type" : ie_type, "ies" : ies }
-                    write_file(f, "group_list[\"" + ie_name + "\"] = { \"index\" : \"" + ie_idx + "\", \"type\" : \"" + ie_type + "\", \"ies\" : ies }\n")
+                    ie_idx = str(int(ie_type) + 100)
+                    group_list[ie_name] = {"index": ie_idx, "type": ie_type, "ies": ies}
+                    write_file(f,
+                               "group_list[\"" + ie_name + "\"] = { \"index\" : \"" + ie_idx + "\", \"type\" : \"" + ie_type + "\", \"ies\" : ies }\n")
     f.close()
 
 msg_list["PFCP Heartbeat Request"]["table"] = 7
-msg_list["PFCP Heartbeat Response"]["table"] = 8 
+msg_list["PFCP Heartbeat Response"]["table"] = 8
 msg_list["PFCP PFD Management Request"]["table"] = 9
 msg_list["PFCP PFD Management Response"]["table"] = 12
 msg_list["PFCP Association Setup Request"]["table"] = 13
@@ -370,7 +383,7 @@ for key in msg_list.keys():
             print "Read from " + cachefile
         else:
             document = Document(filename)
-            f = open(cachefile, 'w') 
+            f = open(cachefile, 'w')
 
             table = document.tables[msg_list[key]["table"]]
             if key.find('Association') != -1:
@@ -379,7 +392,7 @@ for key in msg_list.keys():
                 start_i = 1
             else:
                 start_i = 2
-            
+
             ies = []
             write_file(f, "ies = []\n")
             if key != "PFCP Session Deletion Request" and key != "PFCP Version Not Supported Response":
@@ -389,12 +402,12 @@ for key in msg_list.keys():
                         continue
 
                     item = {
-                        "ie_type" : cells["ie_type"],
-                        "ie_value" : cells["ie_value"],
-                        "presence" : cells["presence"],
-                        "tlv_more" : cells["tlv_more"],
-                        "comment" : cells["comment"]
-                        }
+                        "ie_type": cells["ie_type"],
+                        "ie_value": cells["ie_value"],
+                        "presence": cells["presence"],
+                        "tlv_more": cells["tlv_more"],
+                        "comment": cells["comment"]
+                    }
                     ies.append(item)
                     write_cells_to_file("ies", item)
 
@@ -402,24 +415,24 @@ for key in msg_list.keys():
             write_file(f, "msg_list[key][\"ies\"] = ies\n")
             f.close()
 
-type_list["Cause"]["size"] = 1                              # Type 19
-type_list["Source Interface"]["size"] = 1                   # Type 20
-type_list["Gate Status"]["size"] = 1                        # Type 25
-type_list["QER Correlation ID"]["size"] = 4                 # Type 28
-type_list["Precedence"]["size"] = 4                         # Type 29
-type_list["Reporting Triggers"]["size"] = 1                 # Type 37
-type_list["Destination Interface"]["size"] = 1              # Type 42
-type_list["UP Function Features"]["size"] = 2               # Type 43
-type_list["Apply Action"]["size"] = 1                       # Type 44
-type_list["PDR ID"]["size"] = 2                             # Type 56
-type_list["Measurement Method"]["size"] = 1                 # Type 62
-type_list["URR ID"]["size"] = 4                             # Type 81
-type_list["BAR ID"]["size"] = 1                             # Type 88
-type_list["CP Function Features"]["size"] = 1               # Type 89
-type_list["Recovery Time Stamp"]["size"] = 4                # Type 96
-type_list["FAR ID"]["size"] = 4                             # Type 108
-type_list["QER ID"]["size"] = 4                             # Type 109
-type_list["PDN Type"]["size"] = 1                           # Type 113
+type_list["Cause"]["size"] = 1  # Type 19
+type_list["Source Interface"]["size"] = 1  # Type 20
+type_list["Gate Status"]["size"] = 1  # Type 25
+type_list["QER Correlation ID"]["size"] = 4  # Type 28
+type_list["Precedence"]["size"] = 4  # Type 29
+type_list["Reporting Triggers"]["size"] = 1  # Type 37
+type_list["Destination Interface"]["size"] = 1  # Type 42
+type_list["UP Function Features"]["size"] = 2  # Type 43
+type_list["Apply Action"]["size"] = 1  # Type 44
+type_list["PDR ID"]["size"] = 2  # Type 56
+type_list["Measurement Method"]["size"] = 1  # Type 62
+type_list["URR ID"]["size"] = 4  # Type 81
+type_list["BAR ID"]["size"] = 1  # Type 88
+type_list["CP Function Features"]["size"] = 1  # Type 89
+type_list["Recovery Time Stamp"]["size"] = 4  # Type 96
+type_list["FAR ID"]["size"] = 4  # Type 108
+type_list["QER ID"]["size"] = 4  # Type 109
+type_list["PDN Type"]["size"] = 1  # Type 113
 
 f = open(outdir + 'message.h', 'w')
 output_header_to_file(f)
@@ -567,7 +580,8 @@ for (k, v) in sorted_msg_list:
         f.write("typedef struct ogs_" + v_lower(k) + "_s {\n")
         for ies in msg_list[k]["ies"]:
             if type_list[ies["ie_type"]]["max_tlv_more"] != "0":
-                f.write("    ogs_pfcp_tlv_" + v_lower(ies["ie_type"]) + "_t " + v_lower(ies["ie_value"]) + "[" + str(int(ies["tlv_more"])+1) + "];\n")
+                f.write("    ogs_pfcp_tlv_" + v_lower(ies["ie_type"]) + "_t " + v_lower(ies["ie_value"]) + "[" + str(
+                    int(ies["tlv_more"]) + 1) + "];\n")
             else:
                 f.write("    ogs_pfcp_tlv_" + v_lower(ies["ie_type"]) + "_t " + v_lower(ies["ie_value"]) + ";\n")
 
@@ -655,7 +669,7 @@ for (k, v) in sorted_msg_list:
         for ies in msg_list[k]["ies"]:
             f.write("        &ogs_pfcp_tlv_desc_%s,\n" % v_lower(ies["ie_type"]))
             if type_list[ies["ie_type"]]["max_tlv_more"] != "0":
-                f.write("        &ogs_tlv_desc_more" + str(int(ies["tlv_more"])+1) + ",\n")
+                f.write("        &ogs_tlv_desc_more" + str(int(ies["tlv_more"]) + 1) + ",\n")
         f.write("    NULL,\n")
         f.write("}};\n\n")
 f.write("\n")

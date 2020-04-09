@@ -22,8 +22,7 @@
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __ogs_mem_domain
 
-void *ogs_malloc(size_t size)
-{
+void *ogs_malloc(size_t size) {
     size_t headroom = 0;
     ogs_pkbuf_t *pkbuf = NULL;
 
@@ -38,8 +37,7 @@ void *ogs_malloc(size_t size)
     return pkbuf->data;
 }
 
-void ogs_free(void *ptr)
-{
+void ogs_free(void *ptr) {
     size_t headroom;
     ogs_pkbuf_t *pkbuf = NULL;
 
@@ -47,14 +45,13 @@ void ogs_free(void *ptr)
         return;
 
     headroom = sizeof(ogs_pkbuf_t *);
-    memcpy(&pkbuf, (unsigned char*)ptr - headroom, headroom);
+    memcpy(&pkbuf, (unsigned char *) ptr - headroom, headroom);
     ogs_assert(pkbuf);
 
     ogs_pkbuf_free(pkbuf);
 }
 
-void *ogs_calloc(size_t nmemb, size_t size)
-{
+void *ogs_calloc(size_t nmemb, size_t size) {
     void *ptr = NULL;
 
     ptr = ogs_malloc(nmemb * size);
@@ -64,8 +61,7 @@ void *ogs_calloc(size_t nmemb, size_t size)
     return ptr;
 }
 
-void *ogs_realloc(void *ptr, size_t size)
-{
+void *ogs_realloc(void *ptr, size_t size) {
     size_t headroom = 0;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_cluster_t *cluster = NULL;
@@ -75,7 +71,7 @@ void *ogs_realloc(void *ptr, size_t size)
 
     headroom = sizeof(ogs_pkbuf_t *);
 
-    memcpy(&pkbuf, (unsigned char*)ptr - headroom, headroom);
+    memcpy(&pkbuf, (unsigned char *) ptr - headroom, headroom);
     ogs_assert(pkbuf);
     cluster = pkbuf->cluster;
     ogs_assert(cluster);

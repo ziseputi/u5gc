@@ -31,19 +31,23 @@ extern "C" {
 typedef struct ogs_gtp_xact_s ogs_gtp_xact_t;
 
 ogs_sock_t *ogs_gtp_server(ogs_socknode_t *node);
+
 int ogs_gtp_connect(ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_gtp_node_t *gnode);
 
 int ogs_gtp_send(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf);
+
 int ogs_gtp_sendto(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf);
 
 ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkt);
+
 void ogs_gtp_send_error_message(
         ogs_gtp_xact_t *xact, uint32_t teid, uint8_t type, uint8_t cause_value);
 
 void ogs_gtp_send_echo_request(
         ogs_gtp_node_t *gnode, uint8_t recovery, uint8_t features);
+
 void ogs_gtp_send_echo_response(ogs_gtp_xact_t *xact,
-        uint8_t recovery, uint8_t features);
+                                uint8_t recovery, uint8_t features);
 
 #ifdef __cplusplus
 }

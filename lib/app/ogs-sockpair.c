@@ -22,8 +22,7 @@
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __ogs_sock_domain
 
-int ogs_socketpair(int family, int type, int protocol, ogs_socket_t fd[2])
-{
+int ogs_socketpair(int family, int type, int protocol, ogs_socket_t fd[2]) {
 #ifndef WIN32
     return socketpair(family, type, protocol, fd);
 #else

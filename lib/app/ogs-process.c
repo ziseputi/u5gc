@@ -38,8 +38,7 @@
 #include "ogs-core.h"
 
 int ogs_proc_create(const char *const commandLine[], int options,
-                    ogs_proc_t *const out_process)
-{
+                    ogs_proc_t *const out_process) {
 #if defined(_WIN32)
     struct process_process_information_s {
         void *hProcess;
@@ -269,9 +268,9 @@ int ogs_proc_create(const char *const commandLine[], int options,
         if (ogs_proc_option_inherit_environment !=
             (options & ogs_proc_option_inherit_environment)) {
             char *const environment[1] = {0};
-            exit(execve(commandLine[0], (char *const *)commandLine, environment));
+            exit(execve(commandLine[0], (char *const *) commandLine, environment));
         } else {
-            exit(execvp(commandLine[0], (char *const *)commandLine));
+            exit(execvp(commandLine[0], (char *const *) commandLine));
         }
     } else {
         // Close the stdin read end
@@ -302,20 +301,17 @@ int ogs_proc_create(const char *const commandLine[], int options,
 #endif
 }
 
-FILE *ogs_proc_stdin(const ogs_proc_t *const process)
-{
+FILE *ogs_proc_stdin(const ogs_proc_t *const process) {
     ogs_assert(process);
     return process->stdin_file;
 }
 
-FILE *ogs_proc_stdout(const ogs_proc_t *const process)
-{
+FILE *ogs_proc_stdout(const ogs_proc_t *const process) {
     ogs_assert(process);
     return process->stdout_file;
 }
 
-FILE *ogs_proc_stderr(const ogs_proc_t *const process)
-{
+FILE *ogs_proc_stderr(const ogs_proc_t *const process) {
     ogs_assert(process);
     if (process->stdout_file != process->stderr_file) {
         return process->stderr_file;
@@ -324,8 +320,7 @@ FILE *ogs_proc_stderr(const ogs_proc_t *const process)
     }
 }
 
-int ogs_proc_join(ogs_proc_t *const process, int *const out_return_code)
-{
+int ogs_proc_join(ogs_proc_t *const process, int *const out_return_code) {
 #if defined(_WIN32)
     const unsigned long infinite = 0xFFFFFFFF;
 
@@ -372,8 +367,7 @@ int ogs_proc_join(ogs_proc_t *const process, int *const out_return_code)
 #endif
 }
 
-int ogs_proc_destroy(ogs_proc_t *const process)
-{
+int ogs_proc_destroy(ogs_proc_t *const process) {
     ogs_assert(process);
     if (0 != process->stdin_file) {
         fclose(process->stdin_file);
@@ -392,8 +386,7 @@ int ogs_proc_destroy(ogs_proc_t *const process)
     return OGS_OK;
 }
 
-int ogs_proc_terminate(ogs_proc_t *const process)
-{
+int ogs_proc_terminate(ogs_proc_t *const process) {
     ogs_assert(process);
 #if defined(_WIN32)
     // `GenerateConsoleCtrlEvent` can only be called on a process group. To call
@@ -410,9 +403,8 @@ int ogs_proc_terminate(ogs_proc_t *const process)
 
     return OGS_OK;
 }
-    
-int ogs_proc_kill(ogs_proc_t *const process)
-{
+
+int ogs_proc_kill(ogs_proc_t *const process) {
     ogs_assert(process);
 #if defined(_WIN32)
     // We use 137 as the exit status because it is the same exit status as a

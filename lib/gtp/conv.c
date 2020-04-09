@@ -21,8 +21,7 @@
 
 void ogs_gtp_bearers_in_create_indirect_tunnel_request(
         ogs_gtp_tlv_bearer_context_t *bearers[][OGS_GTP_MAX_INDIRECT_TUNNEL],
-        ogs_gtp_create_indirect_data_forwarding_tunnel_request_t *req)
-{
+        ogs_gtp_create_indirect_data_forwarding_tunnel_request_t *req) {
 
     (*bearers)[0] = &req->bearer_context_0;
     (*bearers)[1] = &req->bearer_context_1;
@@ -39,8 +38,7 @@ void ogs_gtp_bearers_in_create_indirect_tunnel_request(
 
 void ogs_gtp_bearers_in_create_indirect_tunnel_response(
         ogs_gtp_tlv_bearer_context_t *bearers[][OGS_GTP_MAX_INDIRECT_TUNNEL],
-        ogs_gtp_create_indirect_data_forwarding_tunnel_response_t *rsp)
-{
+        ogs_gtp_create_indirect_data_forwarding_tunnel_response_t *rsp) {
     (*bearers)[0] = &rsp->bearer_context_0;
     (*bearers)[1] = &rsp->bearer_context_1;
     (*bearers)[2] = &rsp->bearer_context_2;
@@ -55,8 +53,7 @@ void ogs_gtp_bearers_in_create_indirect_tunnel_response(
 }
 
 int ogs_gtp_f_teid_to_sockaddr(
-    ogs_gtp_f_teid_t *f_teid, uint16_t port, ogs_sockaddr_t **list)
-{
+        ogs_gtp_f_teid_t *f_teid, uint16_t port, ogs_sockaddr_t **list) {
     ogs_sockaddr_t *addr = NULL, *addr6 = NULL;
 
     ogs_assert(f_teid);
@@ -99,8 +96,7 @@ int ogs_gtp_f_teid_to_sockaddr(
 }
 
 int ogs_gtp_sockaddr_to_f_teid(ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
-        ogs_gtp_f_teid_t *f_teid, int *len)
-{
+                               ogs_gtp_f_teid_t *f_teid, int *len) {
     ogs_assert(f_teid);
 
     if (addr && addr6) {
@@ -125,8 +121,7 @@ int ogs_gtp_sockaddr_to_f_teid(ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
     return OGS_OK;
 }
 
-int ogs_gtp_f_teid_to_ip(ogs_gtp_f_teid_t *f_teid, ogs_ip_t *ip)
-{
+int ogs_gtp_f_teid_to_ip(ogs_gtp_f_teid_t *f_teid, ogs_ip_t *ip) {
     ogs_assert(ip);
     ogs_assert(f_teid);
 
@@ -151,8 +146,7 @@ int ogs_gtp_f_teid_to_ip(ogs_gtp_f_teid_t *f_teid, ogs_ip_t *ip)
     return OGS_OK;
 }
 
-int ogs_gtp_ip_to_f_teid(ogs_ip_t *ip, ogs_gtp_f_teid_t *f_teid, int *len)
-{
+int ogs_gtp_ip_to_f_teid(ogs_ip_t *ip, ogs_gtp_f_teid_t *f_teid, int *len) {
     ogs_assert(ip);
     ogs_assert(f_teid);
 

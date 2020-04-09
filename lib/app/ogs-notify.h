@@ -29,7 +29,9 @@ extern "C" {
 #endif
 
 void ogs_notify_init(ogs_pollset_t *pollset);
+
 void ogs_notify_final(ogs_pollset_t *pollset);
+
 int ogs_notify_pollset(ogs_pollset_t *pollset);
 
 #ifdef __cplusplus

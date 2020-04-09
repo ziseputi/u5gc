@@ -23,8 +23,7 @@ static ogs_config_t self;
 
 static int initialized = 0;
 
-int ogs_config_init()
-{
+int ogs_config_init() {
     ogs_assert(initialized == 0);
 
     memset(&self, 0, sizeof(ogs_config_t));
@@ -34,8 +33,7 @@ int ogs_config_init()
     return OGS_OK;
 }
 
-int ogs_config_final()
-{
+int ogs_config_final() {
     ogs_assert(initialized == 1);
 
     if (self.document) {
@@ -48,13 +46,11 @@ int ogs_config_final()
     return OGS_OK;
 }
 
-ogs_config_t *ogs_config()
-{
+ogs_config_t *ogs_config() {
     return &self;
 }
 
-int ogs_config_read()
-{
+int ogs_config_read() {
     ogs_config_t *config = &self;
     FILE *file;
     yaml_parser_t parser;
@@ -75,47 +71,47 @@ int ogs_config_read()
     if (!yaml_parser_load(&parser, document)) {
         ogs_fatal("Failed to parse configuration file '%s'", config->file);
         switch (parser.error) {
-        case YAML_MEMORY_ERROR:
-            ogs_error("Memory error: Not enough memory for parsing");
-            break;
-        case YAML_READER_ERROR:
-            if (parser.problem_value != -1)
-                ogs_error("Reader error - %s: #%X at %zd", parser.problem,
-                    parser.problem_value, parser.problem_offset);
-            else
-                ogs_error("Reader error - %s at %zd", parser.problem,
-                    parser.problem_offset);
-            break;
-        case YAML_SCANNER_ERROR:
-            if (parser.context)
-                ogs_error("Scanner error - %s at line %zu, column %zu"
-                        "%s at line %zu, column %zu", parser.context,
-                        parser.context_mark.line+1,
-                        parser.context_mark.column+1,
-                        parser.problem, parser.problem_mark.line+1,
-                        parser.problem_mark.column+1);
-            else
-                ogs_error("Scanner error - %s at line %zu, column %zu",
-                        parser.problem, parser.problem_mark.line+1,
-                        parser.problem_mark.column+1);
-            break;
-        case YAML_PARSER_ERROR:
-            if (parser.context)
-                ogs_error("Parser error - %s at line %zu, column %zu"
-                        "%s at line %zu, column %zu", parser.context,
-                        parser.context_mark.line+1,
-                        parser.context_mark.column+1,
-                        parser.problem, parser.problem_mark.line+1,
-                        parser.problem_mark.column+1);
-            else
-                ogs_error("Parser error - %s at line %zu, column %zu",
-                        parser.problem, parser.problem_mark.line+1,
-                        parser.problem_mark.column+1);
-            break;
-        default:
-            /* Couldn't happen. */
-            ogs_assert_if_reached();
-            break;
+            case YAML_MEMORY_ERROR:
+                ogs_error("Memory error: Not enough memory for parsing");
+                break;
+            case YAML_READER_ERROR:
+                if (parser.problem_value != -1)
+                    ogs_error("Reader error - %s: #%X at %zd", parser.problem,
+                              parser.problem_value, parser.problem_offset);
+                else
+                    ogs_error("Reader error - %s at %zd", parser.problem,
+                              parser.problem_offset);
+                break;
+            case YAML_SCANNER_ERROR:
+                if (parser.context)
+                    ogs_error("Scanner error - %s at line %zu, column %zu"
+                              "%s at line %zu, column %zu", parser.context,
+                              parser.context_mark.line + 1,
+                              parser.context_mark.column + 1,
+                              parser.problem, parser.problem_mark.line + 1,
+                              parser.problem_mark.column + 1);
+                else
+                    ogs_error("Scanner error - %s at line %zu, column %zu",
+                              parser.problem, parser.problem_mark.line + 1,
+                              parser.problem_mark.column + 1);
+                break;
+            case YAML_PARSER_ERROR:
+                if (parser.context)
+                    ogs_error("Parser error - %s at line %zu, column %zu"
+                              "%s at line %zu, column %zu", parser.context,
+                              parser.context_mark.line + 1,
+                              parser.context_mark.column + 1,
+                              parser.problem, parser.problem_mark.line + 1,
+                              parser.problem_mark.column + 1);
+                else
+                    ogs_error("Parser error - %s at line %zu, column %zu",
+                              parser.problem, parser.problem_mark.line + 1,
+                              parser.problem_mark.column + 1);
+                break;
+            default:
+                /* Couldn't happen. */
+                ogs_assert_if_reached();
+                break;
         }
 
         free(document);
@@ -132,8 +128,7 @@ int ogs_config_read()
     return OGS_OK;
 }
 
-static void recalculate_pool_size(void)
-{
+static void recalculate_pool_size(void) {
 #define MAX_NUM_OF_BEARER       4   /* Num of Bearer per APN(Session) */
 #define MAX_NUM_OF_TUNNEL       3   /* Num of Tunnel per Bearer */
 #define MAX_NUM_OF_PF           16  /* Num of PacketFilter per Bearer */
@@ -145,8 +140,7 @@ static void recalculate_pool_size(void)
     self.pool.pf = self.pool.bearer * MAX_NUM_OF_PF;
 }
 
-static int config_prepare(void)
-{
+static int config_prepare(void) {
 #define USRSCTP_LOCAL_UDP_PORT      9899
     self.usrsctp.udp_port = USRSCTP_LOCAL_UDP_PORT;
 
@@ -177,19 +171,18 @@ static int config_prepare(void)
     return OGS_OK;
 }
 
-static int ogs_app_ctx_validation(void)
-{
+static int ogs_app_ctx_validation(void) {
     if (self.parameter.no_ipv4 == 1 &&
         self.parameter.no_ipv6 == 1) {
         ogs_error("Both `no_ipv4` and `no_ipv6` set to `true` in `%s`",
-                self.file);
+                  self.file);
         return OGS_ERROR;
     }
 
     return OGS_OK;
 }
-int ogs_config_parse()
-{
+
+int ogs_config_parse() {
     int rv;
     ogs_config_t *config = &self;
     yaml_document_t *document = NULL;
@@ -218,10 +211,10 @@ int ogs_config_parse()
                     self.logger.file = ogs_yaml_iter_value(&logger_iter);
                 } else if (!strcmp(logger_key, "level")) {
                     self.logger.level =
-                        ogs_yaml_iter_value(&logger_iter);
+                            ogs_yaml_iter_value(&logger_iter);
                 } else if (!strcmp(logger_key, "domain")) {
                     self.logger.domain =
-                        ogs_yaml_iter_value(&logger_iter);
+                            ogs_yaml_iter_value(&logger_iter);
                 }
             }
         } else if (!strcmp(root_key, "parameter")) {
@@ -232,31 +225,31 @@ int ogs_config_parse()
                 ogs_assert(parameter_key);
                 if (!strcmp(parameter_key, "no_hss")) {
                     self.parameter.no_hss =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_sgw")) {
                     self.parameter.no_sgw =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_pgw")) {
                     self.parameter.no_pgw =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_pcrf")) {
                     self.parameter.no_pcrf =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_ipv4")) {
                     self.parameter.no_ipv4 =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_ipv6")) {
                     self.parameter.no_ipv6 =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "prefer_ipv4")) {
                     self.parameter.prefer_ipv4 =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "multicast")) {
                     self.parameter.multicast =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else if (!strcmp(parameter_key, "no_slaac")) {
                     self.parameter.no_slaac =
-                        ogs_yaml_iter_bool(&parameter_iter);
+                            ogs_yaml_iter_bool(&parameter_iter);
                 } else
                     ogs_warn("unknown key `%s`", parameter_key);
             }
@@ -358,7 +351,7 @@ int ogs_config_parse()
                     ogs_warn("unknown key `%s`", pool_key);
             }
         }
-            
+
     }
 
     rv = ogs_app_ctx_validation();

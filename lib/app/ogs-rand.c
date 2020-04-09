@@ -37,8 +37,7 @@
 
 #include "ogs-core.h"
 
-void ogs_random(void *buf, size_t buflen)
-{
+void ogs_random(void *buf, size_t buflen) {
 #ifdef _WIN32
     void arc4random_buf(void *buf, size_t n);
     arc4random_buf(buf, buflen);
@@ -79,7 +78,7 @@ void ogs_random(void *buf, size_t buflen)
             fd = -1; /* force open() again */
         }
         else {
-			buf = (unsigned char *)buf + rc;
+            buf = (unsigned char *)buf + rc;
             buflen -= rc;
         }
     } while (buflen > 0);
@@ -90,8 +89,7 @@ void ogs_random(void *buf, size_t buflen)
 #endif
 }
 
-uint32_t ogs_random32(void)
-{
+uint32_t ogs_random32(void) {
 #ifdef _WIN32
     uint32_t arc4random(void);
     return arc4random();
@@ -123,7 +121,7 @@ void *(*volatile evutil_memset_volatile_)(void *, int, size_t) = memset;
 
 static void evutil_memclear_(void *mem, size_t len)
 {
-	evutil_memset_volatile_(mem, 0, len);
+    evutil_memset_volatile_(mem, 0, len);
 }
 
 #include "arc4random.c"

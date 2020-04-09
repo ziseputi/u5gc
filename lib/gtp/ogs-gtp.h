@@ -26,17 +26,17 @@
 #define OGS_GTPV2_C_UDP_PORT            2123
 
 /* Num of PacketFilter per Bearer */
-#define OGS_MAX_NUM_OF_PACKET_FILTER    16 
+#define OGS_MAX_NUM_OF_PACKET_FILTER    16
 
 #define OGS_GTP_INSIDE
 
-#include "gtp/message.h"
-#include "gtp/types.h"
-#include "gtp/conv.h"
-#include "gtp/node.h"
-#include "gtp/build.h"
-#include "gtp/path.h"
-#include "gtp/xact.h"
+#include "message.h"
+#include "types.h"
+#include "conv.h"
+#include "node.h"
+#include "build.h"
+#include "path.h"
+#include "xact.h"
 
 #ifdef __cplusplus
 extern "C" {

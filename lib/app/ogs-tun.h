@@ -27,7 +27,8 @@ extern "C" {
 #endif
 
 ogs_socket_t ogs_tun_open(char *ifname, int len, int is_tap);
-int ogs_tun_set_ip(char *ifname, ogs_ipsubnet_t *gw,  ogs_ipsubnet_t *sub);
+
+int ogs_tun_set_ip(char *ifname, ogs_ipsubnet_t *gw, ogs_ipsubnet_t *sub);
 
 #ifdef __cplusplus
 }

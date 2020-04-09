@@ -21,8 +21,7 @@
 
 #include "ogs-core.h"
 
-char *ogs_env_get(const char *envvar)
-{
+char *ogs_env_get(const char *envvar) {
 #ifdef HAVE_GETENV
     return getenv(envvar);
 #else
@@ -31,8 +30,7 @@ char *ogs_env_get(const char *envvar)
 }
 
 
-int ogs_env_set(const char *envvar, const char *value)
-{
+int ogs_env_set(const char *envvar, const char *value) {
 #if defined(HAVE_SETENV)
 
     if (0 > setenv(envvar, value, 1)) {
@@ -62,8 +60,7 @@ int ogs_env_set(const char *envvar, const char *value)
 }
 
 
-int ogs_env_delete(const char *envvar)
-{
+int ogs_env_delete(const char *envvar) {
 #ifdef HAVE_UNSETENV
 
     if (0 > unsetenv(envvar)) {

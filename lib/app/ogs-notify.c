@@ -32,8 +32,7 @@
 
 static void ogs_drain_pollset(short when, ogs_socket_t fd, void *data);
 
-void ogs_notify_init(ogs_pollset_t *pollset)
-{
+void ogs_notify_init(ogs_pollset_t *pollset) {
 #if !defined(HAVE_EVENTFD)
     int rc;
 #endif
@@ -48,12 +47,11 @@ void ogs_notify_init(ogs_pollset_t *pollset)
 #endif
 
     pollset->notify.poll = ogs_pollset_add(pollset, OGS_POLLIN,
-            pollset->notify.fd[0], ogs_drain_pollset, NULL);
+                                           pollset->notify.fd[0], ogs_drain_pollset, NULL);
     ogs_assert(pollset->notify.poll);
 }
 
-void ogs_notify_final(ogs_pollset_t *pollset)
-{
+void ogs_notify_final(ogs_pollset_t *pollset) {
     ogs_assert(pollset);
 
     ogs_pollset_remove(pollset->notify.poll);
@@ -64,8 +62,7 @@ void ogs_notify_final(ogs_pollset_t *pollset)
 #endif
 }
 
-int ogs_notify_pollset(ogs_pollset_t *pollset)
-{
+int ogs_notify_pollset(ogs_pollset_t *pollset) {
     ssize_t r;
 #if defined(HAVE_EVENTFD)
     uint64_t msg = 1;
@@ -90,8 +87,7 @@ int ogs_notify_pollset(ogs_pollset_t *pollset)
     return OGS_OK;
 }
 
-static void ogs_drain_pollset(short when, ogs_socket_t fd, void *data)
-{
+static void ogs_drain_pollset(short when, ogs_socket_t fd, void *data) {
     ssize_t r;
 #if defined(HAVE_EVENTFD)
     uint64_t msg;
@@ -104,7 +100,7 @@ static void ogs_drain_pollset(short when, ogs_socket_t fd, void *data)
 #if defined(HAVE_EVENTFD)
     r = read(fd, (char *)&msg, sizeof(msg));
 #else
-    r = recv(fd, (char *)buf, sizeof(buf), 0);
+    r = recv(fd, (char *) buf, sizeof(buf), 0);
 #endif
     if (r < 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "drain failed");

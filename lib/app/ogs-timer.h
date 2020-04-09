@@ -32,16 +32,20 @@ typedef struct ogs_timer_mgr_s ogs_timer_mgr_t;
 typedef struct ogs_timer_s ogs_timer_t;;
 
 ogs_timer_mgr_t *ogs_timer_mgr_create(void);
+
 void ogs_timer_mgr_destroy(ogs_timer_mgr_t *manager);
 
 ogs_timer_t *ogs_timer_add(
         ogs_timer_mgr_t *manager, void (*cb)(void *data), void *data);
+
 void ogs_timer_delete(ogs_timer_t *timer);
 
 void ogs_timer_start(ogs_timer_t *timer, ogs_time_t duration);
+
 void ogs_timer_stop(ogs_timer_t *timer);
 
 ogs_time_t ogs_timer_mgr_next(ogs_timer_mgr_t *manager);
+
 void ogs_timer_mgr_expire(ogs_timer_mgr_t *manager);
 
 #ifdef __cplusplus

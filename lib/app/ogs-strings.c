@@ -29,8 +29,7 @@
 
 #include "ogs-core.h"
 
-int ogs_vsnprintf(char *str, size_t size, const char *format, va_list ap)
-{
+int ogs_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
     int r = -1;
 
     /* Microsoft has finally implemented snprintf in Visual Studio 2015.
@@ -46,13 +45,12 @@ int ogs_vsnprintf(char *str, size_t size, const char *format, va_list ap)
 #else
     r = vsnprintf(str, size, format, ap);
 #endif
-    str[size-1] = '\0';
+    str[size - 1] = '\0';
 
     return r;
 }
 
-int ogs_snprintf(char *str, size_t size, const char *format, ...)
-{
+int ogs_snprintf(char *str, size_t size, const char *format, ...) {
     int r;
     va_list ap;
 
@@ -63,8 +61,7 @@ int ogs_snprintf(char *str, size_t size, const char *format, ...)
     return r;
 }
 
-char *ogs_vslprintf(char *str, char *last, const char *format, va_list ap)
-{
+char *ogs_vslprintf(char *str, char *last, const char *format, va_list ap) {
     int r = -1;
 
     ogs_assert(last);
@@ -78,8 +75,7 @@ char *ogs_vslprintf(char *str, char *last, const char *format, va_list ap)
     return (str + r);
 }
 
-char *ogs_slprintf(char *str, char *last, const char *format, ...)
-{
+char *ogs_slprintf(char *str, char *last, const char *format, ...) {
     char *r;
     va_list ap;
 
@@ -90,8 +86,7 @@ char *ogs_slprintf(char *str, char *last, const char *format, ...)
     return r;
 }
 
-char *ogs_strdup(const char *s)
-{
+char *ogs_strdup(const char *s) {
     char *res;
     size_t len;
 
@@ -103,8 +98,7 @@ char *ogs_strdup(const char *s)
     return res;
 }
 
-char *ogs_strndup(const char *s, size_t n)
-{
+char *ogs_strndup(const char *s, size_t n) {
     char *res;
     const char *end;
 
@@ -120,8 +114,7 @@ char *ogs_strndup(const char *s, size_t n)
     return res;
 }
 
-void *ogs_memdup(const void *m, size_t n)
-{
+void *ogs_memdup(const void *m, size_t n) {
     void *res;
 
     if (m == NULL)
@@ -132,8 +125,7 @@ void *ogs_memdup(const void *m, size_t n)
     return res;
 }
 
-char *ogs_cpystrn(char *dst, const char *src, size_t dst_size)
-{
+char *ogs_cpystrn(char *dst, const char *src, size_t dst_size) {
     char *d = dst, *end;
 
     if (dst_size == 0) {
@@ -150,7 +142,7 @@ char *ogs_cpystrn(char *dst, const char *src, size_t dst_size)
         }
     }
 
-    *d = '\0';	/* always null terminate */
+    *d = '\0';    /* always null terminate */
 
     return (d);
 }

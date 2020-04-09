@@ -45,7 +45,7 @@ typedef struct ogs_pkbuf_s {
     unsigned char *tail;
     unsigned char *data;
     unsigned char *end;
-    
+
     ogs_pkbuf_pool_t *pool;
 } ogs_pkbuf_t;
 
@@ -60,40 +60,42 @@ typedef struct ogs_pkbuf_config_s {
 } ogs_pkbuf_config_t;
 
 void ogs_pkbuf_init(void);
+
 void ogs_pkbuf_final(void);
 
 void ogs_pkbuf_default_init(ogs_pkbuf_config_t *config);
+
 void ogs_pkbuf_default_create(ogs_pkbuf_config_t *config);
+
 void ogs_pkbuf_default_destroy(void);
 
 ogs_pkbuf_pool_t *ogs_pkbuf_pool_create(ogs_pkbuf_config_t *config);
+
 void ogs_pkbuf_pool_destroy(ogs_pkbuf_pool_t *pool);
 
 ogs_pkbuf_t *ogs_pkbuf_alloc(ogs_pkbuf_pool_t *pool, unsigned int size);
+
 void ogs_pkbuf_free(ogs_pkbuf_t *pkbuf);
 
 void *ogs_pkbuf_put_data(
         ogs_pkbuf_t *pkbuf, const void *data, unsigned int len);
+
 ogs_pkbuf_t *ogs_pkbuf_copy(ogs_pkbuf_t *pkbuf);
 
-static ogs_inline int ogs_pkbuf_tailroom(const ogs_pkbuf_t *pkbuf)
-{
+static ogs_inline int ogs_pkbuf_tailroom(const ogs_pkbuf_t *pkbuf) {
     return pkbuf->end - pkbuf->tail;
 }
 
-static ogs_inline int ogs_pkbuf_headroom(const ogs_pkbuf_t *pkbuf)
-{
+static ogs_inline int ogs_pkbuf_headroom(const ogs_pkbuf_t *pkbuf) {
     return pkbuf->data - pkbuf->head;
 }
 
-static ogs_inline void ogs_pkbuf_reserve(ogs_pkbuf_t *pkbuf, int len)
-{
+static ogs_inline void ogs_pkbuf_reserve(ogs_pkbuf_t *pkbuf, int len) {
     pkbuf->data += len;
     pkbuf->tail += len;
 }
 
-static ogs_inline void *ogs_pkbuf_put(ogs_pkbuf_t *pkbuf, unsigned int len)
-{
+static ogs_inline void *ogs_pkbuf_put(ogs_pkbuf_t *pkbuf, unsigned int len) {
     void *tmp = pkbuf->tail;
 
     pkbuf->tail += len;
@@ -105,13 +107,11 @@ static ogs_inline void *ogs_pkbuf_put(ogs_pkbuf_t *pkbuf, unsigned int len)
     return tmp;
 }
 
-static ogs_inline void ogs_pkbuf_put_u8(ogs_pkbuf_t *pkbuf, uint8_t val)
-{
-    *(uint8_t *)ogs_pkbuf_put(pkbuf, 1) = val;
+static ogs_inline void ogs_pkbuf_put_u8(ogs_pkbuf_t *pkbuf, uint8_t val) {
+    *(uint8_t *) ogs_pkbuf_put(pkbuf, 1) = val;
 }
 
-static ogs_inline void *ogs_pkbuf_push(ogs_pkbuf_t *pkbuf, unsigned int len)
-{
+static ogs_inline void *ogs_pkbuf_push(ogs_pkbuf_t *pkbuf, unsigned int len) {
     pkbuf->data -= len;
     pkbuf->len += len;
 
@@ -122,20 +122,17 @@ static ogs_inline void *ogs_pkbuf_push(ogs_pkbuf_t *pkbuf, unsigned int len)
 }
 
 static ogs_inline void *ogs_pkbuf_pull_inline(
-        ogs_pkbuf_t *pkbuf, unsigned int len)
-{
+        ogs_pkbuf_t *pkbuf, unsigned int len) {
     pkbuf->len -= len;
     return pkbuf->data += len;
 }
 
-static ogs_inline void *ogs_pkbuf_pull(ogs_pkbuf_t *pkbuf, unsigned int len)
-{
+static ogs_inline void *ogs_pkbuf_pull(ogs_pkbuf_t *pkbuf, unsigned int len) {
     return ogs_unlikely(len > pkbuf->len) ?
-        NULL : ogs_pkbuf_pull_inline(pkbuf, len);
+           NULL : ogs_pkbuf_pull_inline(pkbuf, len);
 }
 
-static ogs_inline void ogs_pkbuf_trim(ogs_pkbuf_t *pkbuf, unsigned int len)
-{
+static ogs_inline void ogs_pkbuf_trim(ogs_pkbuf_t *pkbuf, unsigned int len) {
     if (pkbuf->len > len) {
         pkbuf->tail = pkbuf->data + len;
         pkbuf->len = len;

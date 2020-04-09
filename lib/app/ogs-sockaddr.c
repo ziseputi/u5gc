@@ -41,25 +41,22 @@
 #define OGS_LOG_DOMAIN __ogs_sock_domain
 
 int ogs_getnameinfo(
-    char *hostname, socklen_t hostname_len, ogs_sockaddr_t *addr, int flags)
-{
+        char *hostname, socklen_t hostname_len, ogs_sockaddr_t *addr, int flags) {
     ogs_assert(hostname);
     ogs_assert(addr);
 
     return getnameinfo(&addr->sa, ogs_sockaddr_len(addr),
-            hostname, hostname_len,
-            NULL, 0, flags != 0 ? flags : NI_NAMEREQD);
+                       hostname, hostname_len,
+                       NULL, 0, flags != 0 ? flags : NI_NAMEREQD);
 }
 
-int ogs_getaddrinfo(ogs_sockaddr_t **sa_list, 
-        int family, const char *hostname, uint16_t port, int flags)
-{
+int ogs_getaddrinfo(ogs_sockaddr_t **sa_list,
+                    int family, const char *hostname, uint16_t port, int flags) {
     *sa_list = NULL;
     return ogs_addaddrinfo(sa_list, family, hostname, port, flags);
 }
 
-int ogs_freeaddrinfo(ogs_sockaddr_t *sa_list)
-{
+int ogs_freeaddrinfo(ogs_sockaddr_t *sa_list) {
     ogs_sockaddr_t *next = NULL, *addr = NULL;
 
     addr = sa_list;
@@ -74,9 +71,8 @@ int ogs_freeaddrinfo(ogs_sockaddr_t *sa_list)
     return OGS_OK;
 }
 
-int ogs_addaddrinfo(ogs_sockaddr_t **sa_list, 
-        int family, const char *hostname, uint16_t port, int flags)
-{
+int ogs_addaddrinfo(ogs_sockaddr_t **sa_list,
+                    int family, const char *hostname, uint16_t port, int flags) {
     int rc;
     char service[NI_MAXSERV];
     struct addrinfo hints, *ai, *ai_list;
@@ -95,15 +91,15 @@ int ogs_addaddrinfo(ogs_sockaddr_t **sa_list,
     rc = getaddrinfo(hostname, service, &hints, &ai_list);
     if (rc != 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "getaddrinfo(%d:%s:%d:0x%x) failed",
-                family, hostname, port, flags);
+                        "getaddrinfo(%d:%s:%d:0x%x) failed",
+                        family, hostname, port, flags);
         return OGS_ERROR;
     }
 
     prev = NULL;
     if (*sa_list) {
         prev = *sa_list;
-        while(prev->next) prev = prev->next;
+        while (prev->next) prev = prev->next;
     }
     for (ai = ai_list; ai; ai = ai->ai_next) {
         ogs_sockaddr_t *new;
@@ -129,16 +125,15 @@ int ogs_addaddrinfo(ogs_sockaddr_t **sa_list,
 
     if (prev == NULL) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "ogs_getaddrinfo(%d:%s:%d:%d) failed",
-                family, hostname, port, flags);
+                        "ogs_getaddrinfo(%d:%s:%d:%d) failed",
+                        family, hostname, port, flags);
         return OGS_ERROR;
     }
 
     return OGS_OK;
 }
 
-int ogs_filteraddrinfo(ogs_sockaddr_t **sa_list, int family)
-{
+int ogs_filteraddrinfo(ogs_sockaddr_t **sa_list, int family) {
     ogs_sockaddr_t *addr = NULL, *prev = NULL, *next = NULL;
 
     ogs_assert(sa_list);
@@ -167,8 +162,7 @@ int ogs_filteraddrinfo(ogs_sockaddr_t **sa_list, int family)
     return OGS_OK;
 }
 
-int ogs_copyaddrinfo(ogs_sockaddr_t **dst, const ogs_sockaddr_t *src)
-{
+int ogs_copyaddrinfo(ogs_sockaddr_t **dst, const ogs_sockaddr_t *src) {
     ogs_sockaddr_t *d;
     const ogs_sockaddr_t *s;
 
@@ -190,8 +184,7 @@ int ogs_copyaddrinfo(ogs_sockaddr_t **dst, const ogs_sockaddr_t *src)
     return OGS_OK;
 }
 
-int ogs_sortaddrinfo(ogs_sockaddr_t **sa_list, int family)
-{
+int ogs_sortaddrinfo(ogs_sockaddr_t **sa_list, int family) {
     ogs_sockaddr_t *head = NULL, *addr = NULL, *new = NULL, *old = NULL;
 
     ogs_assert(sa_list);
@@ -207,38 +200,37 @@ int ogs_sortaddrinfo(ogs_sockaddr_t **sa_list, int family)
             head = addr;
         } else {
             new = head;
-            while(new->next != NULL && new->next->ogs_sa_family != family) {
+            while (new->next != NULL && new->next->ogs_sa_family != family) {
                 new = new->next;
             }
             addr->next = new->next;
             new->next = addr;
         }
     }
-    
+
     *sa_list = head;
 
     return OGS_OK;
 }
 
-ogs_sockaddr_t *ogs_link_local_addr_by_dev(const char *dev)
-{
+ogs_sockaddr_t *ogs_link_local_addr_by_dev(const char *dev) {
 #if defined(HAVE_GETIFADDRS)
-	struct ifaddrs *iflist, *cur;
+    struct ifaddrs *iflist, *cur;
     int rc;
 
     ogs_assert(dev);
 
-	rc = getifaddrs(&iflist);
+    rc = getifaddrs(&iflist);
     if (rc != 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "getifaddrs failed");
         return NULL;
     }
 
-	for (cur = iflist; cur != NULL; cur = cur->ifa_next) {
+    for (cur = iflist; cur != NULL; cur = cur->ifa_next) {
         ogs_sockaddr_t *addr = NULL;
 
-		if (cur->ifa_addr == NULL) /* may happen with ppp interfaces */
-			continue;
+        if (cur->ifa_addr == NULL) /* may happen with ppp interfaces */
+            continue;
 
         if (strcmp(dev, cur->ifa_name) != 0)
             continue;
@@ -247,7 +239,7 @@ ogs_sockaddr_t *ogs_link_local_addr_by_dev(const char *dev)
             continue;
 
         addr = (ogs_sockaddr_t *)cur->ifa_addr;
-        if (!IN6_IS_ADDR_LINKLOCAL(&addr->sin6.sin6_addr)) 
+        if (!IN6_IS_ADDR_LINKLOCAL(&addr->sin6.sin6_addr))
             continue;
 
         addr = ogs_calloc(1, sizeof(ogs_sockaddr_t));
@@ -256,18 +248,17 @@ ogs_sockaddr_t *ogs_link_local_addr_by_dev(const char *dev)
 
         freeifaddrs(iflist);
         return addr;
-	}
+    }
 
-	freeifaddrs(iflist);
+    freeifaddrs(iflist);
 #endif
     return NULL;
 }
 
-int ogs_filter_ip_version(ogs_sockaddr_t **addr, 
-        int no_ipv4, int no_ipv6, int prefer_ipv4)
-{
+int ogs_filter_ip_version(ogs_sockaddr_t **addr,
+                          int no_ipv4, int no_ipv6, int prefer_ipv4) {
     int rv;
-    
+
     if (no_ipv4 == 1) {
         rv = ogs_filteraddrinfo(addr, AF_INET6);
         ogs_assert(rv == OGS_OK);
@@ -289,8 +280,7 @@ int ogs_filter_ip_version(ogs_sockaddr_t **addr,
 }
 
 
-const char *ogs_inet_ntop(void *sa, char *buf, int buflen)
-{
+const char *ogs_inet_ntop(void *sa, char *buf, int buflen) {
     int family;
     ogs_sockaddr_t *sockaddr = NULL;
 
@@ -300,22 +290,21 @@ const char *ogs_inet_ntop(void *sa, char *buf, int buflen)
     ogs_assert(buflen >= OGS_ADDRSTRLEN);
 
     family = sockaddr->ogs_sa_family;
-    switch(family) {
-    case AF_INET:
-        return inet_ntop(family, &sockaddr->sin.sin_addr, buf,
-                INET_ADDRSTRLEN);
-    case AF_INET6:
-        return inet_ntop(family, &sockaddr->sin6.sin6_addr, buf,
-                INET6_ADDRSTRLEN);
-    default:
-        ogs_fatal("Unknown family(%d)", family);
-        ogs_abort();
-        return NULL;
+    switch (family) {
+        case AF_INET:
+            return inet_ntop(family, &sockaddr->sin.sin_addr, buf,
+                             INET_ADDRSTRLEN);
+        case AF_INET6:
+            return inet_ntop(family, &sockaddr->sin6.sin6_addr, buf,
+                             INET6_ADDRSTRLEN);
+        default:
+            ogs_fatal("Unknown family(%d)", family);
+            ogs_abort();
+            return NULL;
     }
 }
 
-int ogs_inet_pton(int family, const char *src, void *sa)
-{
+int ogs_inet_pton(int family, const char *src, void *sa) {
     ogs_sockaddr_t *dst = NULL;
 
     ogs_assert(src);
@@ -323,40 +312,38 @@ int ogs_inet_pton(int family, const char *src, void *sa)
     ogs_assert(dst);
 
     dst->ogs_sa_family = family;
-    switch(family) {
-    case AF_INET:
-        return inet_pton(family, src, &dst->sin.sin_addr) == 1 ?
-            OGS_OK : OGS_ERROR;
-    case AF_INET6:
-        return inet_pton(family, src, &dst->sin6.sin6_addr) == 1 ?
-             OGS_OK : OGS_ERROR;
-    default:
-        ogs_fatal("Unknown family(%d)", family);
-        ogs_abort();
-        return OGS_ERROR;
+    switch (family) {
+        case AF_INET:
+            return inet_pton(family, src, &dst->sin.sin_addr) == 1 ?
+                   OGS_OK : OGS_ERROR;
+        case AF_INET6:
+            return inet_pton(family, src, &dst->sin6.sin6_addr) == 1 ?
+                   OGS_OK : OGS_ERROR;
+        default:
+            ogs_fatal("Unknown family(%d)", family);
+            ogs_abort();
+            return OGS_ERROR;
     }
 }
 
-socklen_t ogs_sockaddr_len(const void *sa)
-{
+socklen_t ogs_sockaddr_len(const void *sa) {
     const ogs_sockaddr_t *sockaddr = sa;
 
     ogs_assert(sa);
 
-    switch(sockaddr->ogs_sa_family) {
-    case AF_INET:
-        return sizeof(struct sockaddr_in);
-    case AF_INET6:
-        return sizeof(struct sockaddr_in6);
-    default:
-        ogs_fatal("Unknown family(%d)", sockaddr->ogs_sa_family);
-        ogs_abort();
-        return OGS_ERROR;
+    switch (sockaddr->ogs_sa_family) {
+        case AF_INET:
+            return sizeof(struct sockaddr_in);
+        case AF_INET6:
+            return sizeof(struct sockaddr_in6);
+        default:
+            ogs_fatal("Unknown family(%d)", sockaddr->ogs_sa_family);
+            ogs_abort();
+            return OGS_ERROR;
     }
 }
 
-bool ogs_sockaddr_is_equal(void *p, void *q)
-{
+bool ogs_sockaddr_is_equal(void *p, void *q) {
     ogs_sockaddr_t *a, *b;
 
     a = p;
@@ -368,10 +355,10 @@ bool ogs_sockaddr_is_equal(void *p, void *q)
         return false;
 
     if (a->ogs_sa_family == AF_INET && memcmp(
-        &a->sin.sin_addr, &b->sin.sin_addr, sizeof(struct in_addr)) == 0)
+            &a->sin.sin_addr, &b->sin.sin_addr, sizeof(struct in_addr)) == 0)
         return true;
     else if (a->ogs_sa_family == AF_INET6 && memcmp(
-        &a->sin6.sin6_addr, &b->sin6.sin6_addr, sizeof(struct in6_addr)) == 0)
+            &a->sin6.sin6_addr, &b->sin6.sin6_addr, sizeof(struct in6_addr)) == 0)
         return true;
     else {
         return false;
@@ -380,8 +367,7 @@ bool ogs_sockaddr_is_equal(void *p, void *q)
     return false;
 }
 
-static int parse_network(ogs_ipsubnet_t *ipsub, const char *network)
-{
+static int parse_network(ogs_ipsubnet_t *ipsub, const char *network) {
     /* legacy syntax for ip addrs: a.b.c. ==> a.b.c.0/24 for example */
     int shift;
     char *s, *t;
@@ -437,8 +423,7 @@ static int parse_network(ogs_ipsubnet_t *ipsub, const char *network)
  * CORE_BADMASK    mask portion is not valid
  */
 static int parse_ip(
-        ogs_ipsubnet_t *ipsub, const char *ipstr, int network_allowed)
-{
+        ogs_ipsubnet_t *ipsub, const char *ipstr, int network_allowed) {
     /* supported flavors of IP:
      *
      * . IPv6 numeric address string (e.g., "fe80::1")
@@ -455,14 +440,14 @@ static int parse_ip(
 
     rc = inet_pton(AF_INET6, ipstr, ipsub->sub);
     if (rc == 1) {
-        if (IN6_IS_ADDR_V4MAPPED((struct in6_addr *)ipsub->sub)) {
+        if (IN6_IS_ADDR_V4MAPPED((struct in6_addr *) ipsub->sub)) {
             /* ipsubnet_test() assumes that we don't create IPv4-mapped IPv6
              * addresses; this of course forces the user to specify 
              * IPv4 addresses in a.b.c.d style instead of ::ffff:a.b.c.d style.
              */
             ogs_error("Cannot support IPv4-mapped IPv6: "
-                    "Use IPv4 address in a.b.c.d style "
-                    "instead of ::ffff:a.b.c.d style");
+                      "Use IPv4 address in a.b.c.d style "
+                      "instead of ::ffff:a.b.c.d style");
             return OGS_ERROR;
         }
         ipsub->family = AF_INET6;
@@ -482,11 +467,10 @@ static int parse_ip(
     return OGS_OK;
 }
 
-static int looks_like_ip(const char *ipstr)
-{
+static int looks_like_ip(const char *ipstr) {
     if (strlen(ipstr) == 0)
         return 0;
-    
+
     if (strchr(ipstr, ':')) {
         /* definitely not a hostname;
          * assume it is intended to be an IPv6 address */
@@ -500,8 +484,7 @@ static int looks_like_ip(const char *ipstr)
     return (*ipstr == '\0');
 }
 
-static void fix_subnet(ogs_ipsubnet_t *ipsub)
-{
+static void fix_subnet(ogs_ipsubnet_t *ipsub) {
     /* in case caller specified more bits in network address than are
      * valid according to the mask, turn off the extra bits
      */
@@ -513,8 +496,7 @@ static void fix_subnet(ogs_ipsubnet_t *ipsub)
 
 /* be sure not to store any IPv4 address as a v4-mapped IPv6 address */
 int ogs_ipsubnet(ogs_ipsubnet_t *ipsub,
-        const char *ipstr, const char *mask_or_numbits)
-{
+                 const char *ipstr, const char *mask_or_numbits) {
     int rv;
     char *endptr;
     long bits, maxbits = 32;
@@ -565,9 +547,8 @@ int ogs_ipsubnet(ogs_ipsubnet_t *ipsub,
                 cur_bit_value /= 2;
             }
             ipsub->mask[cur_entry] = htobe32(ipsub->mask[cur_entry]);
-        }
-        else if (inet_pton(AF_INET, mask_or_numbits, ipsub->mask) == 1 &&
-            ipsub->family == AF_INET) {
+        } else if (inet_pton(AF_INET, mask_or_numbits, ipsub->mask) == 1 &&
+                   ipsub->family == AF_INET) {
             /* valid IPv4 netmask */
         } else {
             ogs_error("Bad netmask");

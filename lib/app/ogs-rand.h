@@ -29,6 +29,7 @@ extern "C" {
 #endif
 
 void ogs_random(void *buf, size_t buflen);
+
 uint32_t ogs_random32(void);
 
 #ifdef __cplusplus

@@ -28,8 +28,7 @@ extern const ogs_pollset_actions_t ogs_select_actions;
 ogs_pollset_actions_t ogs_pollset_actions;
 bool ogs_pollset_actions_initialized = false;
 
-ogs_pollset_t *ogs_pollset_create(void)
-{
+ogs_pollset_t *ogs_pollset_create(void) {
     ogs_pollset_t *pollset = ogs_calloc(1, sizeof *pollset);
     ogs_assert(pollset);
 
@@ -51,8 +50,7 @@ ogs_pollset_t *ogs_pollset_create(void)
     return pollset;
 }
 
-void ogs_pollset_destroy(ogs_pollset_t *pollset)
-{
+void ogs_pollset_destroy(ogs_pollset_t *pollset) {
     ogs_assert(pollset);
 
     ogs_pollset_actions.cleanup(pollset);
@@ -62,8 +60,7 @@ void ogs_pollset_destroy(ogs_pollset_t *pollset)
 }
 
 ogs_poll_t *ogs_pollset_add(ogs_pollset_t *pollset, short when,
-        ogs_socket_t fd, ogs_poll_handler_f handler, void *data)
-{
+                            ogs_socket_t fd, ogs_poll_handler_f handler, void *data) {
     ogs_poll_t *poll = NULL;
     int rc;
 
@@ -96,8 +93,7 @@ ogs_poll_t *ogs_pollset_add(ogs_pollset_t *pollset, short when,
     return poll;
 }
 
-void ogs_pollset_remove(ogs_poll_t *poll)
-{
+void ogs_pollset_remove(ogs_poll_t *poll) {
     int rc;
     ogs_pollset_t *pollset = NULL;
 

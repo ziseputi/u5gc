@@ -20,8 +20,7 @@
 #include "ogs-core.h"
 
 static ogs_inline void rb_change_child(ogs_rbtree_t *tree,
-        ogs_rbnode_t *old, ogs_rbnode_t *new, ogs_rbnode_t *parent)
-{
+                                       ogs_rbnode_t *old, ogs_rbnode_t *new, ogs_rbnode_t *parent) {
     if (parent) {
         if (old == parent->left)
             parent->left = new;
@@ -33,8 +32,7 @@ static ogs_inline void rb_change_child(ogs_rbtree_t *tree,
 }
 
 static ogs_inline void rb_replace_node(ogs_rbtree_t *tree,
-        ogs_rbnode_t *old, ogs_rbnode_t *new, ogs_rbnode_t *parent)
-{
+                                       ogs_rbnode_t *old, ogs_rbnode_t *new, ogs_rbnode_t *parent) {
     rb_change_child(tree, old, new, parent);
 
     if (new)
@@ -52,8 +50,7 @@ static ogs_inline void rb_replace_node(ogs_rbtree_t *tree,
  *  / \                  / \
  * 1   2                1   2
  */
-static void rb_rotate_left(ogs_rbtree_t *tree, ogs_rbnode_t *node)
-{
+static void rb_rotate_left(ogs_rbtree_t *tree, ogs_rbnode_t *node) {
     ogs_rbnode_t *right = node->right;
     node->right = right->left;
     if (right->left)
@@ -76,8 +73,7 @@ static void rb_rotate_left(ogs_rbtree_t *tree, ogs_rbnode_t *node)
  *  / \                  / \
  * 1   2                1   2
  */
-static void rb_rotate_right(ogs_rbtree_t *tree, ogs_rbnode_t *node)
-{
+static void rb_rotate_right(ogs_rbtree_t *tree, ogs_rbnode_t *node) {
     ogs_rbnode_t *left = node->left;
     node->left = left->right;
     if (left->right)
@@ -89,8 +85,7 @@ static void rb_rotate_right(ogs_rbtree_t *tree, ogs_rbnode_t *node)
     node->parent = left;
 }
 
-void ogs_rbtree_insert_color(ogs_rbtree_t *tree, void *rb_node)
-{
+void ogs_rbtree_insert_color(ogs_rbtree_t *tree, void *rb_node) {
     ogs_rbnode_t *node = rb_node;
     ogs_rbnode_t *parent;
     ogs_assert(tree);
@@ -151,7 +146,7 @@ void ogs_rbtree_insert_color(ogs_rbtree_t *tree, void *rb_node)
                 gparent->color = OGS_RBTREE_RED;
                 rb_rotate_right(tree, gparent);
             }
-        /* parent  == grandparent's right child */
+            /* parent  == grandparent's right child */
         } else {
             ogs_rbnode_t *uncle = gparent->left;
 
@@ -210,8 +205,7 @@ void ogs_rbtree_insert_color(ogs_rbtree_t *tree, void *rb_node)
 }
 
 static void rb_delete_color(
-    ogs_rbtree_t *tree, ogs_rbnode_t *node, ogs_rbnode_t *parent)
-{
+        ogs_rbtree_t *tree, ogs_rbnode_t *node, ogs_rbnode_t *parent) {
     ogs_rbnode_t *sibling;
     ogs_assert(tree);
 
@@ -320,8 +314,7 @@ static void rb_delete_color(
         node->color = OGS_RBTREE_BLACK;
 }
 
-void ogs_rbtree_delete(ogs_rbtree_t *tree, void *rb_node)
-{
+void ogs_rbtree_delete(ogs_rbtree_t *tree, void *rb_node) {
     ogs_rbnode_t *node = rb_node;
     ogs_rbnode_t *child, *parent;
     ogs_rbtree_color_e color;
@@ -371,8 +364,7 @@ void ogs_rbtree_delete(ogs_rbtree_t *tree, void *rb_node)
         rb_delete_color(tree, child, parent);
 }
 
-void *ogs_rbtree_first(const ogs_rbtree_t *tree)
-{
+void *ogs_rbtree_first(const ogs_rbtree_t *tree) {
     ogs_rbnode_t *node;
     ogs_assert(tree);
 
@@ -383,8 +375,7 @@ void *ogs_rbtree_first(const ogs_rbtree_t *tree)
     return ogs_rbtree_min(node);
 }
 
-void *ogs_rbtree_last(const ogs_rbtree_t *tree)
-{
+void *ogs_rbtree_last(const ogs_rbtree_t *tree) {
     ogs_rbnode_t *node;
     ogs_assert(tree);
 
@@ -397,8 +388,7 @@ void *ogs_rbtree_last(const ogs_rbtree_t *tree)
 
 #define rb_empty_node(node) ((node)->parent == (node))
 
-void *ogs_rbtree_next(const void *rb_node)
-{
+void *ogs_rbtree_next(const void *rb_node) {
     const ogs_rbnode_t *node = rb_node;
     ogs_rbnode_t *parent;
     ogs_assert(node);
@@ -415,8 +405,7 @@ void *ogs_rbtree_next(const void *rb_node)
     return parent;
 }
 
-void *ogs_rbtree_prev(const void *rb_node)
-{
+void *ogs_rbtree_prev(const void *rb_node) {
     const ogs_rbnode_t *node = rb_node;
     ogs_rbnode_t *parent;
     ogs_assert(node);

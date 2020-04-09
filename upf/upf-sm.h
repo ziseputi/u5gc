@@ -27,14 +27,21 @@ extern "C" {
 #endif
 
 void upf_state_initial(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_state_final(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_state_operational(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_state_exception(ogs_fsm_t *s, upf_event_t *e);
 
 void upf_pfcp_state_initial(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_pfcp_state_final(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_pfcp_state_will_associate(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_pfcp_state_associated(ogs_fsm_t *s, upf_event_t *e);
+
 void upf_pfcp_state_exception(ogs_fsm_t *s, upf_event_t *e);
 
 #define upf_sm_debug(__pe) \

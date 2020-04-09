@@ -1,10 +1,10 @@
 
 * Install python-pip
-user@host ~/Documents/git/open5gs/lib/gtp/support$ \
+user@host ~/Documents/git/open5gs/lib/support$ \
     sudo apt-get install python-pip
 
 * Install python-docx
-user@host ~/Documents/git/open5gs/lib/gtp/support$ \
+user@host ~/Documents/git/open5gs/lib/support$ \
     sudo pip install python-docx
 
 * Change the format of standard specification 

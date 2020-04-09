@@ -63,13 +63,13 @@ typedef struct ogs_log_s {
     };
 
     struct {
-    ED7(uint8_t color:1;,
-        uint8_t timestamp:1;,
-        uint8_t domain:1;,
-        uint8_t level:1;,
-        uint8_t fileline:1;,
-        uint8_t function:1;,
-        uint8_t linefeed:1;)
+        ED7(uint8_t color:1;,
+            uint8_t timestamp:1;,
+            uint8_t domain:1;,
+            uint8_t level:1;,
+            uint8_t fileline:1;,
+            uint8_t function:1;,
+            uint8_t linefeed:1;)
     } print;
 
     void (*writer)(ogs_log_t *log, ogs_log_level_e level, const char *string);
@@ -85,8 +85,8 @@ typedef struct ogs_log_domain_s {
 } ogs_log_domain_t;
 
 const char *level_strings[] = {
-    NULL,
-    "FATAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE",
+        NULL,
+        "FATAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE",
 };
 
 static OGS_POOL(log_pool, ogs_log_t);
@@ -96,23 +96,27 @@ static OGS_POOL(domain_pool, ogs_log_domain_t);
 static OGS_LIST(domain_list);
 
 static ogs_log_t *add_log(ogs_log_type_e type);
+
 static int file_cycle(ogs_log_t *log);
 
 static char *log_timestamp(char *buf, char *last,
-        int use_color);
+                           int use_color);
+
 static char *log_domain(char *buf, char *last,
-        const char *name, int use_color);
+                        const char *name, int use_color);
+
 static char *log_content(char *buf, char *last,
-        const char *format, va_list ap);
+                         const char *format, va_list ap);
+
 static char *log_level(char *buf, char *last,
-        ogs_log_level_e level, int use_color);
+                       ogs_log_level_e level, int use_color);
+
 static char *log_linefeed(char *buf, char *last);
 
 static void file_writer(
         ogs_log_t *log, ogs_log_level_e level, const char *string);
 
-void ogs_log_init(void)
-{
+void ogs_log_init(void) {
     ogs_pool_init(&log_pool, ogs_core()->log.pool);
     ogs_list_init(&log_list);
 
@@ -123,38 +127,33 @@ void ogs_log_init(void)
     ogs_log_add_stderr();
 }
 
-void ogs_log_final(void)
-{
+void ogs_log_final(void) {
     ogs_log_t *log, *saved_log;
     ogs_log_domain_t *domain, *saved_domain;
 
-    ogs_list_for_each_safe(&log_list, saved_log, log)
-        ogs_log_remove(log);
+    ogs_list_for_each_safe(&log_list, saved_log, log)ogs_log_remove(log);
     ogs_pool_final(&log_pool);
 
-    ogs_list_for_each_safe(&domain_list, saved_domain, domain)
-        ogs_log_remove_domain(domain);
+    ogs_list_for_each_safe(&domain_list, saved_domain, domain)ogs_log_remove_domain(domain);
     ogs_pool_final(&domain_pool);
 }
 
-void ogs_log_cycle(void)
-{
+void ogs_log_cycle(void) {
     ogs_log_t *log = NULL;
 
     ogs_list_for_each(&log_list, log) {
-        switch(log->type) {
-        case OGS_LOG_FILE_TYPE:
-            file_cycle(log);
-        default:
-            break;
+        switch (log->type) {
+            case OGS_LOG_FILE_TYPE:
+                file_cycle(log);
+            default:
+                break;
         }
     }
 }
 
-ogs_log_t *ogs_log_add_stderr(void)
-{
+ogs_log_t *ogs_log_add_stderr(void) {
     ogs_log_t *log = NULL;
-    
+
     log = add_log(OGS_LOG_STDERR_TYPE);
     ogs_assert(log);
 
@@ -168,15 +167,14 @@ ogs_log_t *ogs_log_add_stderr(void)
     return log;
 }
 
-ogs_log_t *ogs_log_add_file(const char *name)
-{
+ogs_log_t *ogs_log_add_file(const char *name) {
     FILE *out = NULL;
     ogs_log_t *log = NULL;
 
     out = fopen(name, "a");
-    if (!out) 
+    if (!out)
         return NULL;
-    
+
     log = add_log(OGS_LOG_FILE_TYPE);
     ogs_assert(log);
 
@@ -188,8 +186,7 @@ ogs_log_t *ogs_log_add_file(const char *name)
     return log;
 }
 
-void ogs_log_remove(ogs_log_t *log)
-{
+void ogs_log_remove(ogs_log_t *log) {
     ogs_assert(log);
 
     ogs_list_remove(&log_list, log);
@@ -203,8 +200,7 @@ void ogs_log_remove(ogs_log_t *log)
     ogs_pool_free(&log_pool, log);
 }
 
-ogs_log_domain_t *ogs_log_add_domain(const char *name, ogs_log_level_e level)
-{
+ogs_log_domain_t *ogs_log_add_domain(const char *name, ogs_log_level_e level) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(name);
@@ -221,29 +217,25 @@ ogs_log_domain_t *ogs_log_add_domain(const char *name, ogs_log_level_e level)
     return domain;
 }
 
-ogs_log_domain_t *ogs_log_find_domain(const char *name)
-{
+ogs_log_domain_t *ogs_log_find_domain(const char *name) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(name);
 
-    ogs_list_for_each(&domain_list, domain)
-        if (!ogs_strcasecmp(domain->name, name))
+    ogs_list_for_each(&domain_list, domain)if (!ogs_strcasecmp(domain->name, name))
             return domain;
 
     return NULL;
 }
 
-void ogs_log_remove_domain(ogs_log_domain_t *domain)
-{
+void ogs_log_remove_domain(ogs_log_domain_t *domain) {
     ogs_assert(domain);
 
     ogs_list_remove(&domain_list, domain);
     ogs_pool_free(&domain_pool, domain);
 }
 
-void ogs_log_set_domain_level(int id, ogs_log_level_e level)
-{
+void ogs_log_set_domain_level(int id, ogs_log_level_e level) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(id > 0 && id <= ogs_core()->log.domain_pool);
@@ -254,8 +246,7 @@ void ogs_log_set_domain_level(int id, ogs_log_level_e level)
     domain->level = level;
 }
 
-ogs_log_level_e ogs_log_get_domain_level(int id)
-{
+ogs_log_level_e ogs_log_get_domain_level(int id) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(id > 0 && id <= ogs_core()->log.domain_pool);
@@ -266,8 +257,7 @@ ogs_log_level_e ogs_log_get_domain_level(int id)
     return domain->level;
 }
 
-const char *ogs_log_get_domain_name(int id)
-{
+const char *ogs_log_get_domain_name(int id) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(id > 0 && id <= ogs_core()->log.domain_pool);
@@ -278,12 +268,11 @@ const char *ogs_log_get_domain_name(int id)
     return domain->name;
 }
 
-int ogs_log_get_domain_id(const char *name)
-{
+int ogs_log_get_domain_id(const char *name) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(name);
-    
+
     domain = ogs_log_find_domain(name);
     ogs_assert(domain);
 
@@ -291,8 +280,7 @@ int ogs_log_get_domain_id(const char *name)
 }
 
 void ogs_log_install_domain(int *domain_id,
-        const char *name, ogs_log_level_e level)
-{
+                            const char *name, ogs_log_level_e level) {
     ogs_log_domain_t *domain = NULL;
 
     ogs_assert(domain_id);
@@ -303,7 +291,7 @@ void ogs_log_install_domain(int *domain_id,
         ogs_warn("`%s` log-domain duplicated", name);
         if (level != domain->level) {
             ogs_warn("[%s]->[%s] log-level changed",
-                    level_strings[domain->level], level_strings[level]);
+                     level_strings[domain->level], level_strings[level]);
             ogs_log_set_domain_level(domain->id, level);
         }
     } else {
@@ -314,8 +302,7 @@ void ogs_log_install_domain(int *domain_id,
     *domain_id = domain->id;
 }
 
-void ogs_log_set_mask_level(const char *_mask, ogs_log_level_e level)
-{
+void ogs_log_set_mask_level(const char *_mask, ogs_log_level_e level) {
     ogs_log_domain_t *domain = NULL;
 
     if (_mask) {
@@ -328,8 +315,8 @@ void ogs_log_set_mask_level(const char *_mask, ogs_log_level_e level)
         ogs_assert(mask);
 
         for (name = ogs_strtok_r(mask, delim, &saveptr);
-            name != NULL;
-            name = ogs_strtok_r(NULL, delim, &saveptr)) {
+             name != NULL;
+             name = ogs_strtok_r(NULL, delim, &saveptr)) {
 
             domain = ogs_log_find_domain(name);
             if (domain)
@@ -338,13 +325,11 @@ void ogs_log_set_mask_level(const char *_mask, ogs_log_level_e level)
 
         ogs_free(mask);
     } else {
-        ogs_list_for_each(&domain_list, domain)
-            domain->level = level;
+        ogs_list_for_each(&domain_list, domain)domain->level = level;
     }
 }
 
-static ogs_log_level_e ogs_log_level_from_string(const char *string)
-{
+static ogs_log_level_e ogs_log_level_from_string(const char *string) {
     ogs_log_level_e level = OGS_ERROR;
 
     if (!strcasecmp(string, "none")) level = OGS_LOG_NONE;
@@ -358,8 +343,7 @@ static ogs_log_level_e ogs_log_level_from_string(const char *string)
     return level;
 }
 
-int ogs_log_config_domain(const char *domain, const char *level)
-{
+int ogs_log_config_domain(const char *domain, const char *level) {
     if (domain || level) {
         int l = ogs_core()->log.level;
 
@@ -367,8 +351,8 @@ int ogs_log_config_domain(const char *domain, const char *level)
             l = ogs_log_level_from_string(level);
             if (l == OGS_ERROR) {
                 ogs_error("Invalid LOG-LEVEL "
-                        "[none:fatal|error|warn|info|debug|trace]: %s\n",
-                        level);
+                          "[none:fatal|error|warn|info|debug|trace]: %s\n",
+                          level);
                 return OGS_ERROR;
             }
         }
@@ -380,9 +364,8 @@ int ogs_log_config_domain(const char *domain, const char *level)
 }
 
 void ogs_log_vprintf(ogs_log_level_e level, int id,
-    ogs_err_t err, const char *file, int line, const char *func,
-    int content_only, const char *format, va_list ap)
-{
+                     ogs_err_t err, const char *file, int line, const char *func,
+                     int content_only, const char *format, va_list ap) {
     ogs_log_t *log = NULL;
     ogs_log_domain_t *domain = NULL;
 
@@ -414,7 +397,7 @@ void ogs_log_vprintf(ogs_log_level_e level, int id,
         if (err) {
             char errbuf[OGS_HUGE_LEN];
             p = ogs_slprintf(p, last, " (%d:%s)",
-                    (int)err, ogs_strerror(err, errbuf, OGS_HUGE_LEN));
+                             (int) err, ogs_strerror(err, errbuf, OGS_HUGE_LEN));
         }
 
         if (!content_only) {
@@ -422,18 +405,17 @@ void ogs_log_vprintf(ogs_log_level_e level, int id,
                 p = ogs_slprintf(p, last, " (%s:%d)", file, line);
             if (log->print.function)
                 p = ogs_slprintf(p, last, " %s()", func);
-            if (log->print.linefeed) 
+            if (log->print.linefeed)
                 p = log_linefeed(p, last);
         }
 
         log->writer(log, level, logstr);
-        
+
         if (log->type == OGS_LOG_STDERR_TYPE)
             wrote_stderr = 1;
     }
 
-    if (!wrote_stderr)
-    {
+    if (!wrote_stderr) {
         int use_color = 0;
 #if !defined(_WIN32)
         use_color = 1;
@@ -459,20 +441,18 @@ void ogs_log_vprintf(ogs_log_level_e level, int id,
 }
 
 void ogs_log_printf(ogs_log_level_e level, int id,
-    ogs_err_t err, const char *file, int line, const char *func,
-    int content_only, const char *format, ...)
-{
+                    ogs_err_t err, const char *file, int line, const char *func,
+                    int content_only, const char *format, ...) {
     va_list args;
 
     va_start(args, format);
     ogs_log_vprintf(level, id,
-            err, file, line, func, content_only, format, args);
+                    err, file, line, func, content_only, format, args);
     va_end(args);
 }
 
 void ogs_log_hexdump_func(ogs_log_level_e level, int id,
-        const unsigned char *data, size_t len)
-{
+                          const unsigned char *data, size_t len) {
     size_t n, m;
     char dumpstr[OGS_HUGE_LEN];
     char *p, *last;
@@ -481,8 +461,8 @@ void ogs_log_hexdump_func(ogs_log_level_e level, int id,
     p = dumpstr;
 
     for (n = 0; n < len; n += 16) {
-        p = ogs_slprintf(p, last, "%04x: ", (int)n);
-        
+        p = ogs_slprintf(p, last, "%04x: ", (int) n);
+
         for (m = n; m < n + 16; m++) {
             if (m > n && (m % 4) == 0)
                 p = ogs_slprintf(p, last, " ");
@@ -503,8 +483,7 @@ void ogs_log_hexdump_func(ogs_log_level_e level, int id,
     ogs_log_print(level, "%s", dumpstr);
 }
 
-static ogs_log_t *add_log(ogs_log_type_e type)
-{
+static ogs_log_t *add_log(ogs_log_type_e type) {
     ogs_log_t *log = NULL;
 
     ogs_pool_alloc(&log_pool, &log);
@@ -524,8 +503,7 @@ static ogs_log_t *add_log(ogs_log_type_e type)
     return log;
 }
 
-static int file_cycle(ogs_log_t *log)
-{
+static int file_cycle(ogs_log_t *log) {
     ogs_assert(log);
     ogs_assert(log->file.out);
     ogs_assert(log->file.name);
@@ -538,8 +516,7 @@ static int file_cycle(ogs_log_t *log)
 }
 
 static char *log_timestamp(char *buf, char *last,
-        int use_color)
-{
+                           int use_color) {
     struct timeval tv;
     struct tm tm;
     char nowstr[32];
@@ -549,44 +526,41 @@ static char *log_timestamp(char *buf, char *last,
     strftime(nowstr, sizeof nowstr, "%m/%d %H:%M:%S", &tm);
 
     buf = ogs_slprintf(buf, last, "%s%s.%03d%s: ",
-            use_color ? TA_FGC_GREEN : "",
-            nowstr, (int)(tv.tv_usec/1000),
-            use_color ? TA_NOR : "");
+                       use_color ? TA_FGC_GREEN : "",
+                       nowstr, (int) (tv.tv_usec / 1000),
+                       use_color ? TA_NOR : "");
 
     return buf;
 }
 
 static char *log_domain(char *buf, char *last,
-        const char *name, int use_color)
-{
+                        const char *name, int use_color) {
     buf = ogs_slprintf(buf, last, "[%s%s%s] ",
-            use_color ? TA_FGC_YELLOW : "",
-            name,
-            use_color ? TA_NOR : "");
+                       use_color ? TA_FGC_YELLOW : "",
+                       name,
+                       use_color ? TA_NOR : "");
 
     return buf;
 }
 
 static char *log_level(char *buf, char *last,
-        ogs_log_level_e level, int use_color)
-{
+                       ogs_log_level_e level, int use_color) {
     const char *colors[] = {
-        TA_NOR,
-        TA_FGC_BOLD_RED, TA_FGC_BOLD_YELLOW, TA_FGC_BOLD_CYAN,
-        TA_FGC_BOLD_GREEN, TA_FGC_BOLD_WHITE, TA_FGC_WHITE,
+            TA_NOR,
+            TA_FGC_BOLD_RED, TA_FGC_BOLD_YELLOW, TA_FGC_BOLD_CYAN,
+            TA_FGC_BOLD_GREEN, TA_FGC_BOLD_WHITE, TA_FGC_WHITE,
     };
 
     buf = ogs_slprintf(buf, last, "%s%s%s: ",
-            use_color ? colors[level] : "",
-            level_strings[level],
-            use_color ? TA_NOR : "");
+                       use_color ? colors[level] : "",
+                       level_strings[level],
+                       use_color ? TA_NOR : "");
 
     return buf;
 }
 
 static char *log_content(char *buf, char *last,
-        const char *format, va_list ap)
-{
+                         const char *format, va_list ap) {
     va_list bp;
 
     va_copy(bp, ap);
@@ -599,8 +573,7 @@ static char *log_content(char *buf, char *last,
     return buf;
 }
 
-static char *log_linefeed(char *buf, char *last)
-{
+static char *log_linefeed(char *buf, char *last) {
 #if defined(_WIN32)
     if (buf > last - 3)
         buf = last - 3;
@@ -617,8 +590,7 @@ static char *log_linefeed(char *buf, char *last)
 }
 
 static void file_writer(
-        ogs_log_t *log, ogs_log_level_e level, const char *string)
-{
+        ogs_log_t *log, ogs_log_level_e level, const char *string) {
     fprintf(log->file.out, "%s", string);
     fflush(log->file.out);
 }

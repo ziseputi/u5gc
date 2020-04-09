@@ -41,10 +41,10 @@ extern "C" {
 typedef struct ogs_pfcp_header_s {
     union {
         struct {
-        ED4(uint8_t version:3;,
-            uint8_t spare1:3;,
-            uint8_t mp:1;,
-            uint8_t seid_presence:1;)
+            ED4(uint8_t version:3;,
+                uint8_t spare1:3;,
+                uint8_t mp:1;,
+                uint8_t seid_presence:1;)
         };
         uint8_t flags;
     };
@@ -1297,8 +1297,8 @@ typedef struct ogs_pfcp_session_report_response_s {
 } ogs_pfcp_session_report_response_t;
 
 typedef struct ogs_pfcp_message_s {
-   ogs_pfcp_header_t h;
-   union {
+    ogs_pfcp_header_t h;
+    union {
         ogs_pfcp_heartbeat_request_t pfcp_heartbeat_request;
         ogs_pfcp_heartbeat_response_t pfcp_heartbeat_response;
         ogs_pfcp_pfd_management_request_t pfcp_pfd_management_request;
@@ -1322,10 +1322,11 @@ typedef struct ogs_pfcp_message_s {
         ogs_pfcp_session_deletion_response_t pfcp_session_deletion_response;
         ogs_pfcp_session_report_request_t pfcp_session_report_request;
         ogs_pfcp_session_report_response_t pfcp_session_report_response;
-   };
+    };
 } ogs_pfcp_message_t;
 
 int ogs_pfcp_parse_msg(ogs_pfcp_message_t *pfcp_message, ogs_pkbuf_t *pkbuf);
+
 ogs_pkbuf_t *ogs_pfcp_build_msg(ogs_pfcp_message_t *pfcp_message);
 
 #ifdef __cplusplus

@@ -29,6 +29,7 @@ extern "C" {
 #endif
 
 void ogs_path_remove_last_component(char *dir, const char *path);
+
 bool ogs_path_is_absolute(const char *filename);
 
 #ifdef __cplusplus

@@ -18,10 +18,12 @@
  */
 
 #ifdef __APPLE__
+
 #include <mach/clock.h>
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 #include <sys/time.h>
+
 #endif
 
 #include "core-config-private.h"
@@ -37,26 +39,25 @@
  * https://github.com/mongodb/mongo-c-driver/blob/master/src/libbson/src/bson/bson-clock.c
  */
 
-int ogs_gettimeofday(struct timeval *tv)
-{
+int ogs_gettimeofday(struct timeval *tv) {
 #if defined(_WIN32)
 #if defined(_MSC_VER)
 #define DELTA_EPOCH_IN_MICROSEC 11644473600000000Ui64
 #else
 #define DELTA_EPOCH_IN_MICROSEC 11644473600000000ULL
 #endif
-	FILETIME ft;
-	uint64_t tmp = 0;
+    FILETIME ft;
+    uint64_t tmp = 0;
 
-	/*
-	 * The const value is shamelessy stolen from
-	 * http://www.boost.org/doc/libs/1_55_0/boost/chrono/detail/inlined/win/chrono.hpp
-	 *
-	 * File times are the number of 100 nanosecond intervals elapsed since
-	 * 12:00 am Jan 1, 1601 UTC.  I haven't check the math particularly hard
-	 *
-	 * ...  good luck
-	 */
+    /*
+     * The const value is shamelessy stolen from
+     * http://www.boost.org/doc/libs/1_55_0/boost/chrono/detail/inlined/win/chrono.hpp
+     *
+     * File times are the number of 100 nanosecond intervals elapsed since
+     * 12:00 am Jan 1, 1601 UTC.  I haven't check the math particularly hard
+     *
+     * ...  good luck
+     */
 
     if (tv) {
         GetSystemTimeAsFileTime (&ft);
@@ -84,8 +85,7 @@ int ogs_gettimeofday(struct timeval *tv)
 #endif
 }
 
-int ogs_timezone(void)
-{
+int ogs_timezone(void) {
 #if defined(_WIN32)
     u_long                 n;
     TIME_ZONE_INFORMATION  tz;
@@ -124,8 +124,7 @@ int ogs_timezone(void)
 #endif
 }
 
-ogs_time_t ogs_get_monotonic_time(void)
-{
+ogs_time_t ogs_get_monotonic_time(void) {
 #if defined(HAVE_CLOCK_GETTIME) && defined(CLOCK_MONOTONIC)
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -159,8 +158,7 @@ ogs_time_t ogs_get_monotonic_time(void)
 #endif
 }
 
-void ogs_localtime(time_t s, struct tm *tm)
-{
+void ogs_localtime(time_t s, struct tm *tm) {
     ogs_assert(tm);
 
 #if (HAVE_LOCALTIME_R)
@@ -173,8 +171,7 @@ void ogs_localtime(time_t s, struct tm *tm)
 #endif
 }
 
-void ogs_gmtime(time_t s, struct tm *tm)
-{
+void ogs_gmtime(time_t s, struct tm *tm) {
     ogs_assert(tm);
 
 #if (HAVE_LOCALTIME_R)
@@ -187,8 +184,7 @@ void ogs_gmtime(time_t s, struct tm *tm)
 #endif
 }
 
-void ogs_msleep(time_t msec)
-{
+void ogs_msleep(time_t msec) {
 #if defined(_WIN32)
     Sleep(msec);
 #else
@@ -196,8 +192,7 @@ void ogs_msleep(time_t msec)
 #endif
 }
 
-void ogs_usleep(time_t usec)
-{
+void ogs_usleep(time_t usec) {
 #if defined(_WIN32)
     Sleep(usec ? (1 + (usec - 1) / 1000) : 0);
 #else

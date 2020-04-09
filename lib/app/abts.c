@@ -21,11 +21,14 @@
  * Modified by Sukchan Lee to fit Open5GS coding style.
  */
 #include "abts.h"
+
 #if 0 /* modified by acetcom */
 #include "abts_tests.h"
 #include "testutil.h"
 #else
+
 #include "ogs-core.h"
+
 #endif
 
 #define ABTS_STAT_SIZE 6
@@ -68,13 +71,11 @@ static int should_test_run(const char *testname) {
     return 0;
 }
 
-static void reset_status(void)
-{
+static void reset_status(void) {
     curr_char = 0;
 }
 
-static void update_status(void)
-{
+static void update_status(void) {
     if (!quiet) {
         curr_char = (curr_char + 1) % ABTS_STAT_SIZE;
         fprintf(stdout, "\b%c", status[curr_char]);
@@ -82,8 +83,7 @@ static void update_status(void)
     }
 }
 
-static void end_suite(abts_suite *suite)
-{
+static void end_suite(abts_suite *suite) {
     if (suite != NULL) {
         sub_suite *last = suite->tail;
         if (!quiet) {
@@ -93,23 +93,21 @@ static void end_suite(abts_suite *suite)
         if (last->failed == 0) {
             fprintf(stdout, "SUCCESS\n");
             fflush(stdout);
-        }
-        else {
+        } else {
             fprintf(stdout, "FAILED %d of %d\n", last->failed, last->num_test);
             fflush(stdout);
         }
     }
 }
 
-abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name_full)
-{
+abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name_full) {
     sub_suite *subsuite;
     char *p;
     const char *suite_name;
     curr_char = 0;
-    
+
     /* Only end the suite if we actually ran it */
-    if (suite && suite->tail &&!suite->tail->not_run) {
+    if (suite && suite->tail && !suite->tail->not_run) {
         end_suite(suite);
     }
 
@@ -132,8 +130,7 @@ abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name_full)
     if (p) {
         subsuite->name = memcpy(calloc(p - suite_name + 1, 1),
                                 suite_name, p - suite_name);
-    }
-    else {
+    } else {
 #if 0 /* modified by acetcom */
         subsuite->name = suite_name;
 #else
@@ -145,15 +142,14 @@ abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name_full)
     if (list_tests) {
         fprintf(stdout, "%s\n", subsuite->name);
     }
-    
+
     subsuite->not_run = 0;
 
     if (suite == NULL) {
         suite = malloc(sizeof(*suite));
         suite->head = subsuite;
         suite->tail = subsuite;
-    }
-    else {
+    } else {
         suite->tail->next = subsuite;
         suite->tail = subsuite;
     }
@@ -171,8 +167,7 @@ abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name_full)
     return suite;
 }
 
-void abts_run_test(abts_suite *ts, test_func f, void *value)
-{
+void abts_run_test(abts_suite *ts, test_func f, void *value) {
     abts_case tc;
     sub_suite *ss;
 
@@ -183,23 +178,22 @@ void abts_run_test(abts_suite *ts, test_func f, void *value)
 
     tc.failed = 0;
     tc.suite = ss;
-    
+
     ss->num_test++;
     update_status();
 
     f(&tc, value);
-    
+
     if (tc.failed) {
         ss->failed++;
     }
 }
 
-static int report(abts_suite *suite)
-{
+static int report(abts_suite *suite) {
     int count = 0;
     sub_suite *dptr;
 
-    if (suite && suite->tail &&!suite->tail->not_run) {
+    if (suite && suite->tail && !suite->tail->not_run) {
         end_suite(suite);
     }
 
@@ -221,8 +215,8 @@ static int report(abts_suite *suite)
     fprintf(stdout, "===================================================\n");
     while (dptr != NULL) {
         if (dptr->failed != 0) {
-            float percent = ((float)dptr->failed / (float)dptr->num_test);
-            fprintf(stdout, "%-15s\t\t%5d\t%4d\t%6.2f%%\n", dptr->name, 
+            float percent = ((float) dptr->failed / (float) dptr->num_test);
+            fprintf(stdout, "%-15s\t\t%5d\t%4d\t%6.2f%%\n", dptr->name,
                     dptr->num_test, dptr->failed, percent * 100);
         }
         dptr = dptr->next;
@@ -230,8 +224,7 @@ static int report(abts_suite *suite)
     return 1;
 }
 
-void abts_log_message(const char *fmt, ...)
-{
+void abts_log_message(const char *fmt, ...) {
     va_list args;
     update_status();
 
@@ -247,8 +240,7 @@ void abts_log_message(const char *fmt, ...)
     }
 }
 
-void abts_int_equal(abts_case *tc, const int expected, const int actual, int lineno)
-{
+void abts_int_equal(abts_case *tc, const int expected, const int actual, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -261,8 +253,7 @@ void abts_int_equal(abts_case *tc, const int expected, const int actual, int lin
     }
 }
 
-void abts_int_nequal(abts_case *tc, const int expected, const int actual, int lineno)
-{
+void abts_int_nequal(abts_case *tc, const int expected, const int actual, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -276,8 +267,7 @@ void abts_int_nequal(abts_case *tc, const int expected, const int actual, int li
     }
 }
 
-void abts_size_equal(abts_case *tc, size_t expected, size_t actual, int lineno)
-{
+void abts_size_equal(abts_case *tc, size_t expected, size_t actual, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -286,14 +276,13 @@ void abts_size_equal(abts_case *tc, size_t expected, size_t actual, int lineno)
     tc->failed = TRUE;
     if (verbose) {
         /* Note that the comparison is type-exact, reporting must be a best-fit */
-        fprintf(stderr, "Line %d: expected %lu, but saw %lu\n", lineno, 
-                (unsigned long)expected, (unsigned long)actual);
+        fprintf(stderr, "Line %d: expected %lu, but saw %lu\n", lineno,
+                (unsigned long) expected, (unsigned long) actual);
         fflush(stderr);
     }
 }
 
-void abts_str_equal(abts_case *tc, const char *expected, const char *actual, int lineno)
-{
+void abts_str_equal(abts_case *tc, const char *expected, const char *actual, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -309,8 +298,7 @@ void abts_str_equal(abts_case *tc, const char *expected, const char *actual, int
 }
 
 void abts_str_nequal(abts_case *tc, const char *expected, const char *actual,
-                       size_t n, int lineno)
-{
+                     size_t n, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -324,8 +312,7 @@ void abts_str_nequal(abts_case *tc, const char *expected, const char *actual,
     }
 }
 
-void abts_ptr_notnull(abts_case *tc, const void *ptr, int lineno)
-{
+void abts_ptr_notnull(abts_case *tc, const void *ptr, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -337,9 +324,8 @@ void abts_ptr_notnull(abts_case *tc, const void *ptr, int lineno)
         fflush(stderr);
     }
 }
- 
-void abts_ptr_equal(abts_case *tc, const void *expected, const void *actual, int lineno)
-{
+
+void abts_ptr_equal(abts_case *tc, const void *expected, const void *actual, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -352,8 +338,7 @@ void abts_ptr_equal(abts_case *tc, const void *expected, const void *actual, int
     }
 }
 
-void abts_fail(abts_case *tc, const char *message, int lineno)
-{
+void abts_fail(abts_case *tc, const char *message, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -363,9 +348,8 @@ void abts_fail(abts_case *tc, const char *message, int lineno)
         fflush(stderr);
     }
 }
- 
-void abts_assert(abts_case *tc, const char *message, int condition, int lineno)
-{
+
+void abts_assert(abts_case *tc, const char *message, int condition, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -378,8 +362,7 @@ void abts_assert(abts_case *tc, const char *message, int condition, int lineno)
     }
 }
 
-void abts_true(abts_case *tc, int condition, int lineno)
-{
+void abts_true(abts_case *tc, int condition, int lineno) {
     update_status();
     if (tc->failed) return;
 
@@ -392,8 +375,7 @@ void abts_true(abts_case *tc, int condition, int lineno)
     }
 }
 
-void abts_not_impl(abts_case *tc, const char *message, int lineno)
-{
+void abts_not_impl(abts_case *tc, const char *message, int lineno) {
     update_status();
 
     tc->suite->not_impl++;
@@ -406,6 +388,7 @@ void abts_not_impl(abts_case *tc, const char *message, int lineno)
 #if 0 /* modified by acetcom */
 int main(int argc, const char *const argv[]) {
 #else
+
 void abts_init(int argc, const char *const argv[]) {
 #endif
     int i;
@@ -482,28 +465,27 @@ void abts_init(int argc, const char *const argv[]) {
     return rv;
 #endif
 }
-       
+
 #if 1 /* modified by acetcom */
-static void show_help(const char *name)
-{
+
+static void show_help(const char *name) {
     printf("Usage: %s [options] [test1] [test2] ...\n"
-        "Options:\n"
-       "   -c filename    : set configuration file\n"
-       "   -e level       : set global log-level (default:info)\n"
-       "   -m domain      : set log-domain (e.g. mme:sgw:gtp)\n"
-       "   -d             : print lots of debugging information\n"
-       "   -t             : print tracing information for developer\n"
-       "   -v             : show version number and exit\n"
-       "   -h             : show this message and exit\n"
-       "   -v             : turn on verbose in test\n"
-       "   -q             : turn off status in test\n"
-       "   -x             : exclute test-unit (e.g. -x sctp-test)\n"
-       "   -l             : list test-unit\n"
-       "\n", name);
+           "Options:\n"
+           "   -c filename    : set configuration file\n"
+           "   -e level       : set global log-level (default:info)\n"
+           "   -m domain      : set log-domain (e.g. mme:sgw:gtp)\n"
+           "   -d             : print lots of debugging information\n"
+           "   -t             : print tracing information for developer\n"
+           "   -v             : show version number and exit\n"
+           "   -h             : show this message and exit\n"
+           "   -v             : turn on verbose in test\n"
+           "   -q             : turn off status in test\n"
+           "   -x             : exclute test-unit (e.g. -x sctp-test)\n"
+           "   -l             : list test-unit\n"
+           "\n", name);
 }
 
-int abts_main(int argc, const char *const argv[], const char **argv_out)
-{
+int abts_main(int argc, const char *const argv[], const char **argv_out) {
     char *arg;
     int i, opt;
     ogs_getopt_t options;
@@ -518,66 +500,66 @@ int abts_main(int argc, const char *const argv[], const char **argv_out)
 
     memset(&optarg, 0, sizeof(optarg));
 
-    ogs_getopt_init(&options, (char**)argv);
+    ogs_getopt_init(&options, (char **) argv);
     while ((opt = ogs_getopt(&options, "hvxlqc:e:m:dt")) != -1) {
         switch (opt) {
-        case 'h':
-            show_help(argv[0]);
-            break;
-        case 'v':
-            verbose = 1;
-            break;
-        case 'x':
-            exclude = 1;
-            break;
-        case 'l':
-            list_tests = 1;
-            break;
-        case 'q':
-            quiet = 1;
-            break;
-        case 'c':
-            optarg.config_file = options.optarg;
-            break;
-        case 'e':
-            optarg.log_level = options.optarg;
-            break;
-        case 'm':
-            optarg.domain_mask = options.optarg;
-            break;
-        case 'd':
-            optarg.enable_debug = true;
-            break;
-        case 't':
-            optarg.enable_trace = true;
-            break;
-        case '?':
-            fprintf(stderr, "%s: %s\n", argv[0], options.errmsg);
-            show_help(argv[0]);
-            return OGS_ERROR;
-        default:
-            fprintf(stderr, "%s: should not be reached\n", OGS_FUNC);
-            exit(1);
+            case 'h':
+                show_help(argv[0]);
+                break;
+            case 'v':
+                verbose = 1;
+                break;
+            case 'x':
+                exclude = 1;
+                break;
+            case 'l':
+                list_tests = 1;
+                break;
+            case 'q':
+                quiet = 1;
+                break;
+            case 'c':
+                optarg.config_file = options.optarg;
+                break;
+            case 'e':
+                optarg.log_level = options.optarg;
+                break;
+            case 'm':
+                optarg.domain_mask = options.optarg;
+                break;
+            case 'd':
+                optarg.enable_debug = true;
+                break;
+            case 't':
+                optarg.enable_trace = true;
+                break;
+            case '?':
+                fprintf(stderr, "%s: %s\n", argv[0], options.errmsg);
+                show_help(argv[0]);
+                return OGS_ERROR;
+            default:
+                fprintf(stderr, "%s: should not be reached\n", OGS_FUNC);
+                exit(1);
         }
     }
 
     i = 0;
-    while((arg = ogs_getopt_arg(&options))) {
+    while ((arg = ogs_getopt_arg(&options))) {
         if (!testlist)
             testlist = calloc(argc + 1, sizeof(char *));
         testlist[i++] = arg;
     }
 
-    if (optarg.enable_debug) optarg.log_level = (char*)"debug";
-    if (optarg.enable_trace) optarg.log_level = (char*)"trace";
+    if (optarg.enable_debug) optarg.log_level = (char *) "debug";
+    if (optarg.enable_trace) optarg.log_level = (char *) "trace";
 
     i = 0;
     argv_out[i++] = argv[0];
 
     argv_out[i++] = "-e";
-    if (!optarg.log_level) 
+    if (!optarg.log_level)
         argv_out[i++] = "error"; /* Default LOG Level : ERROR */
-    else 
+    else
         argv_out[i++] = optarg.log_level;
 
     if (optarg.config_file) {
@@ -590,19 +572,18 @@ int abts_main(int argc, const char *const argv[], const char **argv_out)
     }
 
     argv_out[i] = NULL;
-    
+
     return OGS_OK;
 }
 
-static void abts_free(abts_suite *suite)
-{
+static void abts_free(abts_suite *suite) {
     sub_suite *ptr = NULL, *next_ptr = NULL;
 
     ptr = suite->head;
     while (ptr != NULL) {
         next_ptr = ptr->next;
 
-        free((void*)ptr->name);
+        free((void *) ptr->name);
         free(ptr);
         ptr = next_ptr;
     }
@@ -610,8 +591,7 @@ static void abts_free(abts_suite *suite)
     free(suite);
 }
 
-int abts_report(abts_suite *suite)
-{
+int abts_report(abts_suite *suite) {
     int rv = report(suite);
 
     abts_free(suite);
@@ -619,4 +599,5 @@ int abts_report(abts_suite *suite)
 
     return rv;
 }
+
 #endif

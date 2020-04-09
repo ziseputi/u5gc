@@ -24,23 +24,21 @@ typedef struct fsm_event_s {
 } fsm_event_t;
 
 static fsm_event_t entry_event = {
-    OGS_FSM_ENTRY_SIG,
+        OGS_FSM_ENTRY_SIG,
 };
 static fsm_event_t exit_event = {
-    OGS_FSM_EXIT_SIG,
+        OGS_FSM_EXIT_SIG,
 };
 
 const char *OGS_FSM_NAME_INIT_SIG = "INIT";
 const char *OGS_FSM_NAME_ENTRY_SIG = "ENTRY";
 const char *OGS_FSM_NAME_EXIT_SIG = "EXIT";
 
-void ogs_fsm_init(void *sm, void *event)
-{
+void ogs_fsm_init(void *sm, void *event) {
     ogs_fsm_t *s = sm;
     fsm_event_t *e = event;
 
-    if (s->init != NULL)
-    {
+    if (s->init != NULL) {
         (*s->init)(s, e);
         if (s->init != s->state) {
             if (e) {
@@ -53,8 +51,7 @@ void ogs_fsm_init(void *sm, void *event)
     }
 }
 
-void ogs_fsm_dispatch(void *sm, void *event)
-{
+void ogs_fsm_dispatch(void *sm, void *event) {
     ogs_fsm_t *s = sm;
     fsm_event_t *e = event;
     ogs_fsm_handler_t tmp = s->state;
@@ -76,8 +73,7 @@ void ogs_fsm_dispatch(void *sm, void *event)
     }
 }
 
-void ogs_fsm_fini(void *sm, void *event)
-{
+void ogs_fsm_fini(void *sm, void *event) {
     ogs_fsm_t *s = sm;
     fsm_event_t *e = event;
 

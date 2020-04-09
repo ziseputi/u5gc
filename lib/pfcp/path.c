@@ -19,8 +19,7 @@
 
 #include "ogs-pfcp.h"
 
-ogs_sock_t *ogs_pfcp_server(ogs_socknode_t *node)
-{
+ogs_sock_t *ogs_pfcp_server(ogs_socknode_t *node) {
     char buf[OGS_ADDRSTRLEN];
     ogs_sock_t *pfcp;
     ogs_assert(node);
@@ -29,14 +28,13 @@ ogs_sock_t *ogs_pfcp_server(ogs_socknode_t *node)
     ogs_assert(pfcp);
 
     ogs_info("pfcp_server() [%s]:%d",
-            OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
+             OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
 
     return pfcp;
 }
 
 int ogs_pfcp_connect(
-        ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_pfcp_cp_node_t *node)
-{
+        ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_pfcp_cp_node_t *node) {
     ogs_sockaddr_t *addr;
     char buf[OGS_ADDRSTRLEN];
 
@@ -57,7 +55,7 @@ int ogs_pfcp_connect(
 
         if (sock) {
             ogs_info("ogs_pfcp_connect() [%s]:%d",
-                    OGS_ADDR(addr, buf), OGS_PORT(addr));
+                     OGS_ADDR(addr, buf), OGS_PORT(addr));
 
             node->sock = sock;
             memcpy(&node->addr, addr, sizeof node->addr);
@@ -69,7 +67,7 @@ int ogs_pfcp_connect(
 
     if (addr == NULL) {
         ogs_error("ogs_pfcp_connect() [%s]:%d failed",
-                OGS_ADDR(node->sa_list, buf), OGS_PORT(node->sa_list));
+                  OGS_ADDR(node->sa_list, buf), OGS_PORT(node->sa_list));
         ogs_error("Please check the IP version between SMF and UPF nodes.");
         return OGS_ERROR;
     }
@@ -77,8 +75,7 @@ int ogs_pfcp_connect(
     return OGS_OK;
 }
 
-int ogs_pfcp_send(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf)
-{
+int ogs_pfcp_send(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf) {
     ssize_t sent;
     ogs_sock_t *sock = NULL;
 
@@ -96,8 +93,7 @@ int ogs_pfcp_send(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
-int ogs_pfcp_sendto(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf)
-{
+int ogs_pfcp_sendto(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf) {
     ssize_t sent;
     ogs_sock_t *sock = NULL;
     ogs_sockaddr_t *addr = NULL;
@@ -118,8 +114,7 @@ int ogs_pfcp_sendto(ogs_pfcp_cp_node_t *node, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
-void ogs_pfcp_send_heartbeat_response(ogs_pfcp_xact_t *xact)
-{
+void ogs_pfcp_send_heartbeat_response(ogs_pfcp_xact_t *xact) {
     int rv;
     ogs_pkbuf_t *n4buf = NULL;
     ogs_pfcp_header_t h;
@@ -141,8 +136,7 @@ void ogs_pfcp_send_heartbeat_response(ogs_pfcp_xact_t *xact)
 }
 
 void ogs_pfcp_send_error_message(
-    ogs_pfcp_xact_t *xact, uint64_t seid, uint8_t type, uint8_t cause_value)
-{
+        ogs_pfcp_xact_t *xact, uint64_t seid, uint8_t type, uint8_t cause_value) {
     int rv;
     ogs_pfcp_message_t errmsg;
     ogs_pfcp_tlv_cause_t *tlv = NULL;
@@ -155,39 +149,39 @@ void ogs_pfcp_send_error_message(
     errmsg.h.type = type;
 
     switch (type) {
-    case OGS_PFCP_PFD_MANAGEMENT_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_pfd_management_response.cause;
-        break;
-    case OGS_PFCP_ASSOCIATION_SETUP_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_association_setup_response.cause;
-        break;
-    case OGS_PFCP_ASSOCIATION_UPDATE_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_association_update_response.cause;
-        break;
-    case OGS_PFCP_ASSOCIATION_RELEASE_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_association_release_response.cause;
-        break;
-    case OGS_PFCP_NODE_REPORT_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_node_report_response.cause;
-        break;
-    case OGS_PFCP_SESSION_SET_DELETION_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_session_set_deletion_response.cause;
-        break;
-    case OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_session_establishment_response.cause;
-        break;
-    case OGS_PFCP_SESSION_MODIFICATION_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_session_modification_response.cause;
-        break;
-    case OGS_PFCP_SESSION_DELETION_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_session_deletion_response.cause;
-        break;
-    case OGS_PFCP_SESSION_REPORT_RESPONSE_TYPE:
-        tlv = &errmsg.pfcp_session_report_response.cause;
-        break;
-    default:
-        ogs_assert_if_reached();
-        return;
+        case OGS_PFCP_PFD_MANAGEMENT_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_pfd_management_response.cause;
+            break;
+        case OGS_PFCP_ASSOCIATION_SETUP_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_association_setup_response.cause;
+            break;
+        case OGS_PFCP_ASSOCIATION_UPDATE_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_association_update_response.cause;
+            break;
+        case OGS_PFCP_ASSOCIATION_RELEASE_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_association_release_response.cause;
+            break;
+        case OGS_PFCP_NODE_REPORT_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_node_report_response.cause;
+            break;
+        case OGS_PFCP_SESSION_SET_DELETION_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_session_set_deletion_response.cause;
+            break;
+        case OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_session_establishment_response.cause;
+            break;
+        case OGS_PFCP_SESSION_MODIFICATION_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_session_modification_response.cause;
+            break;
+        case OGS_PFCP_SESSION_DELETION_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_session_deletion_response.cause;
+            break;
+        case OGS_PFCP_SESSION_REPORT_RESPONSE_TYPE:
+            tlv = &errmsg.pfcp_session_report_response.cause;
+            break;
+        default:
+            ogs_assert_if_reached();
+            return;
     }
 
     ogs_assert(tlv);

@@ -19,8 +19,7 @@
 
 #include "ogs-gtp.h"
 
-ogs_sock_t *ogs_gtp_server(ogs_socknode_t *node)
-{
+ogs_sock_t *ogs_gtp_server(ogs_socknode_t *node) {
     char buf[OGS_ADDRSTRLEN];
     ogs_sock_t *gtp;
     ogs_assert(node);
@@ -29,13 +28,12 @@ ogs_sock_t *ogs_gtp_server(ogs_socknode_t *node)
     ogs_assert(gtp);
 
     ogs_info("gtp_server() [%s]:%d",
-            OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
+             OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
 
     return gtp;
 }
 
-int ogs_gtp_connect(ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_gtp_node_t *gnode)
-{
+int ogs_gtp_connect(ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_gtp_node_t *gnode) {
     ogs_sockaddr_t *addr;
     char buf[OGS_ADDRSTRLEN];
 
@@ -56,7 +54,7 @@ int ogs_gtp_connect(ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_gtp_node_t *gnode)
 
         if (sock) {
             ogs_info("gtp_connect() [%s]:%d",
-                    OGS_ADDR(addr, buf), OGS_PORT(addr));
+                     OGS_ADDR(addr, buf), OGS_PORT(addr));
 
             gnode->sock = sock;
             memcpy(&gnode->addr, addr, sizeof gnode->addr);
@@ -68,16 +66,15 @@ int ogs_gtp_connect(ogs_sock_t *ipv4, ogs_sock_t *ipv6, ogs_gtp_node_t *gnode)
 
     if (addr == NULL) {
         ogs_log_message(OGS_LOG_WARN, ogs_socket_errno,
-                "gtp_connect() [%s]:%d failed",
-                OGS_ADDR(gnode->sa_list, buf), OGS_PORT(gnode->sa_list));
+                        "gtp_connect() [%s]:%d failed",
+                        OGS_ADDR(gnode->sa_list, buf), OGS_PORT(gnode->sa_list));
         return OGS_ERROR;
     }
 
     return OGS_OK;
 }
 
-int ogs_gtp_send(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf)
-{
+int ogs_gtp_send(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf) {
     ssize_t sent;
     ogs_sock_t *sock = NULL;
 
@@ -95,8 +92,7 @@ int ogs_gtp_send(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
-int ogs_gtp_sendto(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf)
-{
+int ogs_gtp_sendto(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf) {
     ssize_t sent;
     ogs_sock_t *sock = NULL;
     ogs_sockaddr_t *addr = NULL;
@@ -117,8 +113,7 @@ int ogs_gtp_sendto(ogs_gtp_node_t *gnode, ogs_pkbuf_t *pkbuf)
     return OGS_OK;
 }
 
-ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb)
-{
+ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb) {
     ogs_gtp_header_t *gtph = NULL;
     ogs_pkbuf_t *pkb_resp = NULL;
     ogs_gtp_header_t *gtph_resp = NULL;
@@ -127,7 +122,7 @@ ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb)
 
     ogs_assert(pkb);
 
-    gtph = (ogs_gtp_header_t *)pkb->data;
+    gtph = (ogs_gtp_header_t *) pkb->data;
     /* Check GTP version. Now only support GTPv1(version = 1) */
     if ((gtph->flags >> 5) != 1) {
         return NULL;
@@ -139,9 +134,9 @@ ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb)
 
 
     pkb_resp = ogs_pkbuf_alloc(NULL,
-            100 /* enough for ECHO_RSP; use smaller buffer */);
+                               100 /* enough for ECHO_RSP; use smaller buffer */);
     ogs_pkbuf_put(pkb_resp, 100);
-    gtph_resp = (ogs_gtp_header_t *)pkb_resp->data;
+    gtph_resp = (ogs_gtp_header_t *) pkb_resp->data;
 
     /* reply back immediately */
     gtph_resp->flags = (1 << 5); /* set version */
@@ -157,30 +152,32 @@ ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb)
         if (gtph->flags & OGS_GTPU_FLAGS_S) {
             /* sequence exists */
             gtph_resp->flags |= OGS_GTPU_FLAGS_S;
-            *((uint8_t *)pkb_resp->data + idx) = *((uint8_t *)pkb->data + idx);
-            *((uint8_t *)pkb_resp->data + idx + 1) =
-                *((uint8_t *)pkb->data + idx + 1);
+            *((uint8_t *) pkb_resp->data + idx) = *((uint8_t *) pkb->data + idx);
+            *((uint8_t *) pkb_resp->data + idx + 1) =
+                    *((uint8_t *) pkb->data + idx + 1);
         } else {
-            *((uint8_t *)pkb_resp->data + idx) = 0;
-            *((uint8_t *)pkb_resp->data + idx + 1) = 0;
+            *((uint8_t *) pkb_resp->data + idx) = 0;
+            *((uint8_t *) pkb_resp->data + idx + 1) = 0;
         }
         idx += 2;
         if (gtph->flags & OGS_GTPU_FLAGS_PN) {
             /* sequence exists */
             gtph_resp->flags |= OGS_GTPU_FLAGS_PN;
-            *((uint8_t *)pkb_resp->data + idx) = *((uint8_t *)pkb->data + idx);
+            *((uint8_t *) pkb_resp->data + idx) = *((uint8_t *) pkb->data + idx);
         } else {
-            *((uint8_t *)pkb_resp->data + idx) = 0;
+            *((uint8_t *) pkb_resp->data + idx) = 0;
         }
         idx++;
-        *((uint8_t *)pkb_resp->data + idx) = 0; /* next-extension header */
+        *((uint8_t *) pkb_resp->data + idx) = 0; /* next-extension header */
         idx++;
     }
-    
+
     /* fill Recovery IE */
     length += 2;
-    *((uint8_t *)pkb_resp->data + idx) = 14; idx++; /* type */
-    *((uint8_t *)pkb_resp->data + idx) = 0; idx++; /* restart counter */
+    *((uint8_t *) pkb_resp->data + idx) = 14;
+    idx++; /* type */
+    *((uint8_t *) pkb_resp->data + idx) = 0;
+    idx++; /* restart counter */
 
     gtph_resp->length = htobe16(length);
     ogs_pkbuf_trim(pkb_resp, idx); /* buffer length */
@@ -189,8 +186,7 @@ ogs_pkbuf_t *ogs_gtp_handle_echo_req(ogs_pkbuf_t *pkb)
 }
 
 void ogs_gtp_send_error_message(
-        ogs_gtp_xact_t *xact, uint32_t teid, uint8_t type, uint8_t cause_value)
-{
+        ogs_gtp_xact_t *xact, uint32_t teid, uint8_t type, uint8_t cause_value) {
     int rv;
     ogs_gtp_message_t errmsg;
     ogs_gtp_cause_t cause;
@@ -202,48 +198,48 @@ void ogs_gtp_send_error_message(
     errmsg.h.type = type;
 
     switch (type) {
-    case OGS_GTP_CREATE_SESSION_RESPONSE_TYPE:
-        tlv = &errmsg.create_session_response.cause;
-        break;
-    case OGS_GTP_MODIFY_BEARER_RESPONSE_TYPE:
-        tlv = &errmsg.modify_bearer_response.cause;
-        break;
-    case OGS_GTP_DELETE_SESSION_RESPONSE_TYPE:
-        tlv = &errmsg.delete_session_response.cause;
-        break;
-    case OGS_GTP_RELEASE_ACCESS_BEARERS_RESPONSE_TYPE:
-        tlv = &errmsg.release_access_bearers_response.cause;
-        break;
-    case OGS_GTP_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE_TYPE:
-        tlv = &errmsg.downlink_data_notification_acknowledge.cause;
-        break;
-    case OGS_GTP_CREATE_BEARER_RESPONSE_TYPE:
-        tlv = &errmsg.create_bearer_response.cause;
-        break;
-    case OGS_GTP_UPDATE_BEARER_RESPONSE_TYPE:
-        tlv = &errmsg.update_bearer_response.cause;
-        break;
-    case OGS_GTP_DELETE_BEARER_RESPONSE_TYPE:
-        tlv = &errmsg.delete_bearer_response.cause;
-        break;
-    case OGS_GTP_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE_TYPE:
-        tlv = &errmsg.create_indirect_data_forwarding_tunnel_response.cause;
-        break;
-    case OGS_GTP_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE_TYPE:
-        tlv = &errmsg.delete_indirect_data_forwarding_tunnel_response.cause;
-        break;
-    case OGS_GTP_MODIFY_BEARER_FAILURE_INDICATION_TYPE:
-        tlv = &errmsg.modify_bearer_failure_indication.cause;
-        break;
-    case OGS_GTP_DELETE_BEARER_FAILURE_INDICATION_TYPE:
-        tlv = &errmsg.delete_bearer_failure_indication.cause;
-        break;
-    case OGS_GTP_BEARER_RESOURCE_FAILURE_INDICATION_TYPE:
-        tlv = &errmsg.bearer_resource_failure_indication.cause;
-        break;
-    default:
-        ogs_assert_if_reached();
-        return;
+        case OGS_GTP_CREATE_SESSION_RESPONSE_TYPE:
+            tlv = &errmsg.create_session_response.cause;
+            break;
+        case OGS_GTP_MODIFY_BEARER_RESPONSE_TYPE:
+            tlv = &errmsg.modify_bearer_response.cause;
+            break;
+        case OGS_GTP_DELETE_SESSION_RESPONSE_TYPE:
+            tlv = &errmsg.delete_session_response.cause;
+            break;
+        case OGS_GTP_RELEASE_ACCESS_BEARERS_RESPONSE_TYPE:
+            tlv = &errmsg.release_access_bearers_response.cause;
+            break;
+        case OGS_GTP_DOWNLINK_DATA_NOTIFICATION_ACKNOWLEDGE_TYPE:
+            tlv = &errmsg.downlink_data_notification_acknowledge.cause;
+            break;
+        case OGS_GTP_CREATE_BEARER_RESPONSE_TYPE:
+            tlv = &errmsg.create_bearer_response.cause;
+            break;
+        case OGS_GTP_UPDATE_BEARER_RESPONSE_TYPE:
+            tlv = &errmsg.update_bearer_response.cause;
+            break;
+        case OGS_GTP_DELETE_BEARER_RESPONSE_TYPE:
+            tlv = &errmsg.delete_bearer_response.cause;
+            break;
+        case OGS_GTP_CREATE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE_TYPE:
+            tlv = &errmsg.create_indirect_data_forwarding_tunnel_response.cause;
+            break;
+        case OGS_GTP_DELETE_INDIRECT_DATA_FORWARDING_TUNNEL_RESPONSE_TYPE:
+            tlv = &errmsg.delete_indirect_data_forwarding_tunnel_response.cause;
+            break;
+        case OGS_GTP_MODIFY_BEARER_FAILURE_INDICATION_TYPE:
+            tlv = &errmsg.modify_bearer_failure_indication.cause;
+            break;
+        case OGS_GTP_DELETE_BEARER_FAILURE_INDICATION_TYPE:
+            tlv = &errmsg.delete_bearer_failure_indication.cause;
+            break;
+        case OGS_GTP_BEARER_RESOURCE_FAILURE_INDICATION_TYPE:
+            tlv = &errmsg.bearer_resource_failure_indication.cause;
+            break;
+        default:
+            ogs_assert_if_reached();
+            return;
     }
 
     ogs_assert(tlv);
@@ -265,8 +261,7 @@ void ogs_gtp_send_error_message(
 }
 
 void ogs_gtp_send_echo_request(
-        ogs_gtp_node_t *gnode, uint8_t recovery, uint8_t features)
-{
+        ogs_gtp_node_t *gnode, uint8_t recovery, uint8_t features) {
     int rv;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_gtp_header_t h;
@@ -290,8 +285,7 @@ void ogs_gtp_send_echo_request(
 }
 
 void ogs_gtp_send_echo_response(ogs_gtp_xact_t *xact,
-        uint8_t recovery, uint8_t features)
-{
+                                uint8_t recovery, uint8_t features) {
     int rv;
     ogs_pkbuf_t *pkbuf = NULL;
     ogs_gtp_header_t h;

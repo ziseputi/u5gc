@@ -24,8 +24,7 @@
 
 void upf_n4_handle_association_setup_request(
         ogs_pfcp_cp_node_t *node, ogs_pfcp_xact_t *xact,
-        ogs_pfcp_association_setup_request_t *req)
-{
+        ogs_pfcp_association_setup_request_t *req) {
     ogs_assert(xact);
     upf_pfcp_send_association_setup_response(
             xact, OGS_PFCP_CAUSE_REQUEST_ACCEPTED);
@@ -33,32 +32,28 @@ void upf_n4_handle_association_setup_request(
 
 void upf_n4_handle_association_setup_response(
         ogs_pfcp_cp_node_t *node, ogs_pfcp_xact_t *xact,
-        ogs_pfcp_association_setup_response_t *rsp)
-{
+        ogs_pfcp_association_setup_response_t *rsp) {
     ogs_assert(xact);
 }
 
 void upf_n4_handle_heartbeat_request(
         ogs_pfcp_cp_node_t *node, ogs_pfcp_xact_t *xact,
-        ogs_pfcp_heartbeat_request_t *req)
-{
+        ogs_pfcp_heartbeat_request_t *req) {
     ogs_assert(xact);
     ogs_pfcp_send_heartbeat_response(xact);
 }
 
 void upf_n4_handle_heartbeat_response(
         ogs_pfcp_cp_node_t *node, ogs_pfcp_xact_t *xact,
-        ogs_pfcp_heartbeat_response_t *rsp)
-{
+        ogs_pfcp_heartbeat_response_t *rsp) {
     ogs_assert(xact);
     ogs_timer_start(node->t_heartbeat,
-            upf_timer_cfg(UPF_TIMER_HEARTBEAT)->duration);
+                    upf_timer_cfg(UPF_TIMER_HEARTBEAT)->duration);
 }
 
 void upf_n4_handle_session_establishment_request(
-        upf_sess_t *sess, ogs_pfcp_xact_t *xact, 
-        ogs_pfcp_session_establishment_request_t *req)
-{
+        upf_sess_t *sess, ogs_pfcp_xact_t *xact,
+        ogs_pfcp_session_establishment_request_t *req) {
     uint8_t cause_value = 0;
     int i;
 
@@ -72,8 +67,8 @@ void upf_n4_handle_session_establishment_request(
     if (!sess) {
         ogs_warn("No Context");
         ogs_pfcp_send_error_message(xact, 0,
-                OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE,
-                OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND);
+                                    OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE,
+                                    OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND);
         return;
     }
 
@@ -135,11 +130,11 @@ void upf_n4_handle_session_establishment_request(
             }
 
             memcpy(&pdr->f_teid, message->pdi.local_f_teid.data,
-                    message->pdi.local_f_teid.len);
+                   message->pdi.local_f_teid.len);
             pdr->f_teid.teid = be32toh(pdr->f_teid.teid);
             memcpy(&pdr->outer_header_removal,
-                    message->outer_header_removal.data,
-                    message->outer_header_removal.len);
+                   message->outer_header_removal.data,
+                   message->outer_header_removal.len);
         } else {
             ogs_error("Invalid Source Interface[%d] in PDR", pdr->src_if);
             cause_value = OGS_PFCP_CAUSE_MANDATORY_IE_INCORRECT;
@@ -194,10 +189,10 @@ void upf_n4_handle_session_establishment_request(
             }
 
             memcpy(&far->outer_header_creation,
-                    message->forwarding_parameters.outer_header_creation.data,
-                    message->forwarding_parameters.outer_header_creation.len);
+                   message->forwarding_parameters.outer_header_creation.data,
+                   message->forwarding_parameters.outer_header_creation.len);
             far->outer_header_creation.teid =
-                be32toh(far->outer_header_creation.teid);
+                    be32toh(far->outer_header_creation.teid);
 
         } else if (far->dst_if == OGS_PFCP_INTERFACE_CORE) {  /* Uplink */
 
@@ -213,7 +208,7 @@ void upf_n4_handle_session_establishment_request(
     if (cause_value != OGS_PFCP_CAUSE_REQUEST_ACCEPTED) {
         ogs_pfcp_sess_clear(&sess->pfcp);
         ogs_pfcp_send_error_message(xact, sess ? sess->pfcp.remote_n4_seid : 0,
-                OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE, cause_value);
+                                    OGS_PFCP_SESSION_ESTABLISHMENT_RESPONSE_TYPE, cause_value);
         return;
     }
 }

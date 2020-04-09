@@ -21,10 +21,9 @@
 
 #include "ogs-core.h"
 
-char *ogs_strerror(ogs_err_t err, char *buf, size_t size)
-{
+char *ogs_strerror(ogs_err_t err, char *buf, size_t size) {
 #if defined(_WIN32)
-	/*
+    /*
      * The following code is stolen from APR Library
      * http://svn.apache.org/repos/asf/apr/apr/trunk/misc/unix/errorcodes.c
      */

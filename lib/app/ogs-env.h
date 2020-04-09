@@ -29,7 +29,9 @@ extern "C" {
 #endif
 
 char *ogs_env_get(const char *envvar);
+
 int ogs_env_set(const char *envvar, const char *value);
+
 int ogs_env_delete(const char *envvar);
 
 #ifdef __cplusplus

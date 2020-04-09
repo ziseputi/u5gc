@@ -26,7 +26,7 @@
 
 extern int __ogs_app_domain;
 
-#include "ogs-yaml.h"
+//#include "ogs-yaml.h"
 #include "ogs-config.h"
 #include "ogs-init.h"
 
@@ -40,27 +40,35 @@ extern "C" {
 #endif
 
 int app_initialize(const char *const argv[]);
+
 void app_terminate(void);
 
 int mme_initialize(void);
+
 void mme_terminate(void);
 
 int hss_initialize(void);
+
 void hss_terminate(void);
 
 int sgw_initialize(void);
+
 void sgw_terminate(void);
 
 int pgw_initialize(void);
+
 void pgw_terminate(void);
 
 int pcrf_initialize(void);
+
 void pcrf_terminate(void);
 
 int smf_initialize(void);
+
 void smf_terminate(void);
 
 int upf_initialize(void);
+
 void upf_terminate(void);
 
 #ifdef __cplusplus

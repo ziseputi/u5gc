@@ -29,30 +29,33 @@
 #include "ogs-poll-private.h"
 
 static void epoll_init(ogs_pollset_t *pollset);
+
 static void epoll_cleanup(ogs_pollset_t *pollset);
+
 static int epoll_add(ogs_poll_t *poll, short when);
+
 static int epoll_remove(ogs_poll_t *poll);
+
 static int epoll_process(ogs_pollset_t *pollset, ogs_time_t timeout);
 
 const ogs_pollset_actions_t ogs_epoll_actions = {
-    epoll_init,
-    epoll_cleanup,
+        epoll_init,
+        epoll_cleanup,
 
-    epoll_add,
-    epoll_remove,
-    epoll_process,
+        epoll_add,
+        epoll_remove,
+        epoll_process,
 
-    ogs_notify_pollset,
+        ogs_notify_pollset,
 };
 
 struct epoll_context_s {
     int epfd;
 
-	struct epoll_event *event_list;
+    struct epoll_event *event_list;
 };
 
-static void epoll_init(ogs_pollset_t *pollset)
-{
+static void epoll_init(ogs_pollset_t *pollset) {
     struct epoll_context_s *context = NULL;
     ogs_assert(pollset);
 
@@ -60,9 +63,9 @@ static void epoll_init(ogs_pollset_t *pollset)
     ogs_assert(context);
     pollset->context = context;
 
-	context->event_list = ogs_calloc(
-        ogs_core()->socket.pool, sizeof(struct epoll_event));
-	ogs_assert(context->event_list);
+    context->event_list = ogs_calloc(
+            ogs_core()->socket.pool, sizeof(struct epoll_event));
+    ogs_assert(context->event_list);
 
     context->epfd = epoll_create(ogs_core()->socket.pool);
     ogs_assert(context->epfd >= 0);
@@ -70,8 +73,7 @@ static void epoll_init(ogs_pollset_t *pollset)
     ogs_notify_init(pollset);
 }
 
-static void epoll_cleanup(ogs_pollset_t *pollset)
-{
+static void epoll_cleanup(ogs_pollset_t *pollset) {
     struct epoll_context_s *context = NULL;
 
     ogs_assert(pollset);
@@ -80,13 +82,12 @@ static void epoll_cleanup(ogs_pollset_t *pollset)
 
     ogs_notify_final(pollset);
     close(context->epfd);
-	ogs_free(context->event_list);
+    ogs_free(context->event_list);
 
     ogs_free(context);
 }
 
-static int epoll_add(ogs_poll_t *poll, short when)
-{
+static int epoll_add(ogs_poll_t *poll, short when) {
     ogs_pollset_t *pollset = NULL;
     struct epoll_context_s *context = NULL;
     int rv;
@@ -100,7 +101,7 @@ static int epoll_add(ogs_poll_t *poll, short when)
 
     ee.events = 0;
     if (when == OGS_POLLIN)
-        ee.events |= (EPOLLIN|EPOLLRDHUP);
+        ee.events |= (EPOLLIN | EPOLLRDHUP);
     if (when == OGS_POLLOUT)
         ee.events |= EPOLLOUT;
 
@@ -108,15 +109,14 @@ static int epoll_add(ogs_poll_t *poll, short when)
 
     rv = epoll_ctl(context->epfd, EPOLL_CTL_ADD, poll->fd, &ee);
     if (rv < 0) {
-		ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "epoll_ctl failed");
-		return OGS_ERROR;
+        ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "epoll_ctl failed");
+        return OGS_ERROR;
     }
 
     return OGS_OK;
 }
 
-static int epoll_remove(ogs_poll_t *poll)
-{
+static int epoll_remove(ogs_poll_t *poll) {
     int rv;
     ogs_pollset_t *pollset = NULL;
     struct epoll_context_s *context = NULL;
@@ -133,28 +133,27 @@ static int epoll_remove(ogs_poll_t *poll)
 
     rv = epoll_ctl(context->epfd, EPOLL_CTL_DEL, poll->fd, &ee);
     if (rv < 0) {
-		ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "epoll_remove failed");
+        ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
+                        "epoll_remove failed");
         return OGS_ERROR;
     }
 
     return OGS_OK;
 }
 
-static int epoll_process(ogs_pollset_t *pollset, ogs_time_t timeout)
-{
+static int epoll_process(ogs_pollset_t *pollset, ogs_time_t timeout) {
     struct epoll_context_s *context = NULL;
-	int num_of_poll;
-	int i;
+    int num_of_poll;
+    int i;
 
     ogs_assert(pollset);
     context = pollset->context;
     ogs_assert(context);
 
-	num_of_poll = epoll_wait(context->epfd, context->event_list,
-            ogs_core()->socket.pool,
-            timeout == OGS_INFINITE_TIME ? OGS_INFINITE_TIME :
-                ogs_time_to_msec(timeout));
+    num_of_poll = epoll_wait(context->epfd, context->event_list,
+                             ogs_core()->socket.pool,
+                             timeout == OGS_INFINITE_TIME ? OGS_INFINITE_TIME :
+                             ogs_time_to_msec(timeout));
     if (num_of_poll < 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "epoll failed");
         return OGS_ERROR;
@@ -162,21 +161,21 @@ static int epoll_process(ogs_pollset_t *pollset, ogs_time_t timeout)
         return OGS_TIMEUP;
     }
 
-	for (i = 0; i < num_of_poll; i++) {
-		ogs_poll_t *poll = NULL;
-		uint32_t received;
+    for (i = 0; i < num_of_poll; i++) {
+        ogs_poll_t *poll = NULL;
+        uint32_t received;
         short when = 0;
 
-		received = context->event_list[i].events;
-		if (received & (EPOLLERR|EPOLLHUP)) {
-            when = OGS_POLLIN|OGS_POLLOUT;
-		} else {
-            if (received & (EPOLLIN|EPOLLRDHUP)) {
+        received = context->event_list[i].events;
+        if (received & (EPOLLERR | EPOLLHUP)) {
+            when = OGS_POLLIN | OGS_POLLOUT;
+        } else {
+            if (received & (EPOLLIN | EPOLLRDHUP)) {
                 when |= OGS_POLLIN;
             }
             if (received & EPOLLOUT) {
                 when |= OGS_POLLOUT;
-            } 
+            }
         }
 
         if (!when)
@@ -189,6 +188,6 @@ static int epoll_process(ogs_pollset_t *pollset, ogs_time_t timeout)
             poll->handler(when, poll->fd, poll->data);
         }
     }
-    
+
     return OGS_OK;
 }

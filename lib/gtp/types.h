@@ -109,10 +109,10 @@ extern "C" {
 
 typedef struct ogs_gtp_cause_s {
     uint8_t value;
-ED4(uint8_t spare:5;,
-    uint8_t pce:1;,
-    uint8_t bce:1;,
-    uint8_t cs:1;)
+    ED4(uint8_t spare:5;,
+        uint8_t pce:1;,
+        uint8_t bce:1;,
+        uint8_t cs:1;)
 } __attribute__ ((packed)) ogs_gtp_cause_t;
 
 /* 8.7 Aggregate Maximum Bit Rate (AMBR) */
@@ -123,41 +123,41 @@ typedef struct ogs_gtp_ambr_s {
 
 /* 8.12 Indication */
 typedef struct ogs_gtp_indication_s {
-ED8(uint8_t daf:1;,
-    uint8_t dtf:1;,
-    uint8_t hi:1;,
-    uint8_t dfi:1;,
-    uint8_t oi:1;,
-    uint8_t isrsi:1;,
-    uint8_t israi:1;,
-    uint8_t sgwci:1;)
+    ED8(uint8_t daf:1;,
+        uint8_t dtf:1;,
+        uint8_t hi:1;,
+        uint8_t dfi:1;,
+        uint8_t oi:1;,
+        uint8_t isrsi:1;,
+        uint8_t israi:1;,
+        uint8_t sgwci:1;)
 
-ED8(uint8_t sqci:1;,
-    uint8_t uimsi:1;,
-    uint8_t cfsi:1;,
-    uint8_t crsi:1;,
-    uint8_t p:1;,
-    uint8_t pt:1;,
-    uint8_t si:1;,
-    uint8_t msv:1;)
+    ED8(uint8_t sqci:1;,
+        uint8_t uimsi:1;,
+        uint8_t cfsi:1;,
+        uint8_t crsi:1;,
+        uint8_t p:1;,
+        uint8_t pt:1;,
+        uint8_t si:1;,
+        uint8_t msv:1;)
 
-ED8(uint8_t retloc:1;,
-    uint8_t pbic:1;,
-    uint8_t srni:1;,
-    uint8_t s6af:1;,
-    uint8_t s4af:1;,
-    uint8_t mbmdt:1;,
-    uint8_t israu:1;,
-    uint8_t ccrsi:1;)
+    ED8(uint8_t retloc:1;,
+        uint8_t pbic:1;,
+        uint8_t srni:1;,
+        uint8_t s6af:1;,
+        uint8_t s4af:1;,
+        uint8_t mbmdt:1;,
+        uint8_t israu:1;,
+        uint8_t ccrsi:1;)
 
-ED8(uint8_t spare1:1;,
-    uint8_t spare2:1;,
-    uint8_t spare3:1;,
-    uint8_t spare4:1;,
-    uint8_t spare5:1;,
-    uint8_t csfbi:1;,
-    uint8_t clii:1;,
-    uint8_t cpsr:1;)
+    ED8(uint8_t spare1:1;,
+        uint8_t spare2:1;,
+        uint8_t spare3:1;,
+        uint8_t spare4:1;,
+        uint8_t spare5:1;,
+        uint8_t csfbi:1;,
+        uint8_t clii:1;,
+        uint8_t cpsr:1;)
 } __attribute__ ((packed)) ogs_gtp_indication_t;
 
 /* 8.13 Protocol Configuration Options (PCO) 
@@ -168,16 +168,16 @@ ED8(uint8_t spare1:1;,
 /* 8.15 Bearer Quality of Service (Bearer QoS) */
 #define GTP_BEARER_QOS_LEN 22
 typedef struct ogs_gtp_bearer_qos_s {
-ED5(uint8_t spare1:1;,
+    ED5(uint8_t spare1:1;,
     /* See 3GPP TS 29.212[29], clause 5.3.46 Pre-emption-Capability AVP. */
-    uint8_t pre_emption_capability:1;, 
+        uint8_t pre_emption_capability:1;,
     /* See 3GPP TS 29.212[29], clause 5.3.45 Priority-Level AVP. 
      * PL encodes each priority level defined for the Priority-Level AVP 
      * as the binary value of the priority level.  */
-    uint8_t priority_level:4;,
-    uint8_t spare2:1;,
+        uint8_t priority_level:4;,
+        uint8_t spare2:1;,
     /* See 3GPP TS 29.212[29], clause 5.3.47 Pre-emption-Vulnerability AVP. */
-    uint8_t pre_emption_vulnerability:1;)
+        uint8_t pre_emption_vulnerability:1;)
     uint8_t qci; /* specified in 3GPP TS 23.203 [48]. */
 
     /* specified in 3GPP TS 36.413 [10]. */
@@ -191,9 +191,10 @@ ED5(uint8_t spare1:1;,
 } __attribute__ ((packed)) ogs_gtp_bearer_qos_t;
 
 int16_t ogs_gtp_parse_bearer_qos(
-    ogs_gtp_bearer_qos_t *bearer_qos, ogs_tlv_octet_t *octet);
+        ogs_gtp_bearer_qos_t *bearer_qos, ogs_tlv_octet_t *octet);
+
 int16_t ogs_gtp_build_bearer_qos(ogs_tlv_octet_t *octet,
-    ogs_gtp_bearer_qos_t *bearer_qos, void *data, int data_len);
+                                 ogs_gtp_bearer_qos_t *bearer_qos, void *data, int data_len);
 
 /* 8.16 Flow Quality of Service (Flow QoS) */
 #define GTP_FLOW_QOS_LEN 21
@@ -216,9 +217,10 @@ typedef struct ogs_gtp_flow_qos_s {
 uint64_t ogs_gtp_qos_to_kbps(uint8_t br, uint8_t extended, uint8_t extended2);
 
 int16_t ogs_gtp_parse_flow_qos(
-    ogs_gtp_flow_qos_t *flow_qos, ogs_tlv_octet_t *octet);
+        ogs_gtp_flow_qos_t *flow_qos, ogs_tlv_octet_t *octet);
+
 int16_t ogs_gtp_build_flow_qos(ogs_tlv_octet_t *octet,
-    ogs_gtp_flow_qos_t *flow_qos, void *data, int data_len);
+                               ogs_gtp_flow_qos_t *flow_qos, void *data, int data_len);
 
 /* 8.17 RAT Type */
 #define OGS_GTP_RAT_TYPE_UTRAN                                  1
@@ -245,18 +247,18 @@ typedef struct ogs_gtp_tft_s {
 #define OGS_GTP_TFT_CODE_REPLACE_PACKET_FILTERS_IN_EXISTING     4
 #define OGS_GTP_TFT_CODE_DELETE_PACKET_FILTERS_FROM_EXISTING    5
 #define OGS_GTP_TFT_CODE_NO_TFT_OPERATION                       6
-ED3(uint8_t code:3;,
-    uint8_t e_bit:1;,
-    uint8_t num_of_packet_filter:4;)
+            ED3(uint8_t code:3;,
+                uint8_t e_bit:1;,
+                uint8_t num_of_packet_filter:4;)
         };
         uint8_t flags;
     };
     struct {
         union {
             struct {
-            ED3(uint8_t spare:2;,
-                uint8_t direction:2;,
-                uint8_t identifier:4;)
+                ED3(uint8_t spare:2;,
+                    uint8_t direction:2;,
+                    uint8_t identifier:4;)
             };
             uint8_t flags;
         };
@@ -303,8 +305,9 @@ ED3(uint8_t code:3;,
 } ogs_gtp_tft_t;
 
 int16_t ogs_gtp_parse_tft(ogs_gtp_tft_t *tft, ogs_tlv_octet_t *octet);
+
 int16_t ogs_gtp_build_tft(
-    ogs_tlv_octet_t *octet, ogs_gtp_tft_t *tft, void *data, int data_len);
+        ogs_tlv_octet_t *octet, ogs_gtp_tft_t *tft, void *data, int data_len);
 
 /* 8.21 User Location Information (ULI) */
 #define OGS_GTP_MAX_ULI_LEN sizeof(ogs_gtp_uli_t)
@@ -333,13 +336,13 @@ typedef struct ogs_gtp_uli_lai_s {
 
 typedef struct ogs_gtp_uli_s {
     struct {
-    ED7(uint8_t spare:2;,
-        uint8_t lai:1;,
-        uint8_t e_cgi:1;,
-        uint8_t tai:1;,
-        uint8_t rai:1;,
-        uint8_t sai:1;,
-        uint8_t cgi:1;)
+        ED7(uint8_t spare:2;,
+            uint8_t lai:1;,
+            uint8_t e_cgi:1;,
+            uint8_t tai:1;,
+            uint8_t rai:1;,
+            uint8_t sai:1;,
+            uint8_t cgi:1;)
     } flags;
     ogs_gtp_uli_cgi_t cgi;
     ogs_gtp_uli_sai_t sai;
@@ -350,8 +353,9 @@ typedef struct ogs_gtp_uli_s {
 } ogs_gtp_uli_t;
 
 int16_t ogs_gtp_parse_uli(ogs_gtp_uli_t *uli, ogs_tlv_octet_t *octet);
+
 int16_t ogs_gtp_build_uli(ogs_tlv_octet_t *octet,
-        ogs_gtp_uli_t *uli, void *data, int data_len);
+                          ogs_gtp_uli_t *uli, void *data, int data_len);
 
 /* 8.22 Fully Qualified TEID (F-TEID) */
 #define OGS_GTP_F_TEID_S1_U_ENODEB_GTP_U                        0
@@ -400,10 +404,10 @@ int16_t ogs_gtp_build_uli(ogs_tlv_octet_t *octet,
 #define OGS_GTP_F_TEID_IPV6_LEN             OGS_IPV6_LEN+OGS_GTP_F_TEID_HDR_LEN
 #define OGS_GTP_F_TEID_IPV4V6_LEN           OGS_IPV4V6_LEN+OGS_GTP_F_TEID_HDR_LEN
 typedef struct ogs_gtp_f_teid_s {
-ED3(uint8_t       ipv4:1;,
-    uint8_t       ipv6:1;,
-    uint8_t       interface_type:6;)
-    uint32_t      teid;
+    ED3(uint8_t ipv4:1;,
+        uint8_t ipv6:1;,
+        uint8_t interface_type:6;)
+    uint32_t teid;
     union {
         /* OGS_GTP_F_TEID_IPV4 */
         uint32_t addr;
@@ -435,8 +439,8 @@ typedef struct ogs_gtp_ue_timezone_s {
      * the TP-Service-Centre-Time-Stamp field) represents 
      * the algebraic sign of this difference (0: positive, 1: negative). */
     uint8_t timezone;
-ED2(uint8_t spare:6;,
-    uint8_t daylight_saving_time:2;)
+    ED2(uint8_t spare:6;,
+        uint8_t daylight_saving_time:2;)
 } __attribute__ ((packed)) ogs_gtp_ue_timezone_t;
 
 /* 8.57 APN Restriction */

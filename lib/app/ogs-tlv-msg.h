@@ -57,7 +57,7 @@ typedef struct ogs_tlv_desc_s {
     const char *name;
     uint16_t type;
     uint16_t length;
-    uint8_t  instance;
+    uint8_t instance;
     uint16_t vsize;
     void *child_descs[OGS_TLV_MAX_CHILD_DESC];
 } ogs_tlv_desc_t;
@@ -155,6 +155,7 @@ typedef struct ogs_tlv_null_s {
 } ogs_tlv_null_t;
 
 ogs_pkbuf_t *ogs_tlv_build_msg(ogs_tlv_desc_t *desc, void *msg, int mode);
+
 int ogs_tlv_parse_msg(
         void *msg, ogs_tlv_desc_t *desc, ogs_pkbuf_t *pkbuf, int mode);
 

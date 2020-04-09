@@ -45,8 +45,11 @@ extern "C" {
     } while(0)
 
 void *ogs_malloc(size_t size);
+
 void ogs_free(void *ptr);
+
 void *ogs_calloc(size_t nmemb, size_t size);
+
 void *ogs_realloc(void *ptr, size_t size);
 
 #ifdef __cplusplus

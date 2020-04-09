@@ -48,11 +48,11 @@ typedef struct ogs_thread_s {
     bool running;
 
     void (*func)(void *);
+
     void *data;
 } ogs_thread_t;
 
-static void *thread_worker(void *arg)
-{
+static void *thread_worker(void *arg) {
     ogs_thread_t *thread = arg;
     ogs_assert(thread);
 
@@ -74,8 +74,7 @@ static void *thread_worker(void *arg)
     return NULL;
 }
 
-ogs_thread_t *ogs_thread_create(void (*func)(void *), void *data)
-{
+ogs_thread_t *ogs_thread_create(void (*func)(void *), void *data) {
     ogs_thread_t *thread = ogs_calloc(1, sizeof *thread);
     ogs_assert(thread);
 
@@ -103,13 +102,12 @@ ogs_thread_t *ogs_thread_create(void (*func)(void *), void *data)
     return thread;
 }
 
-void ogs_thread_destroy(ogs_thread_t *thread)
-{
+void ogs_thread_destroy(ogs_thread_t *thread) {
     const ogs_time_t deadline = ogs_get_monotonic_time() + 5 * 1000 * 1000;
     ogs_assert(thread);
 
     ogs_debug("[%p] thread running(%d)", thread, thread->running);
-    while(ogs_get_monotonic_time() <= deadline) {
+    while (ogs_get_monotonic_time() <= deadline) {
         /* wait 5 seconds */
         ogs_thread_mutex_lock(&thread->mutex);
         if (!thread->running) {

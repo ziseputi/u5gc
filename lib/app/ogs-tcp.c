@@ -22,8 +22,7 @@
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __ogs_sock_domain
 
-ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node)
-{
+ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node) {
     int rv;
     ogs_sock_t *new = NULL;
     ogs_sockaddr_t *addr;
@@ -33,7 +32,7 @@ ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node)
     ogs_assert(node->addr);
 
     addr = node->addr;
-    while(addr) {
+    while (addr) {
         new = ogs_sock_socket(addr->ogs_sa_family, SOCK_STREAM, IPPROTO_TCP);
         if (new) {
             rv = ogs_listen_reusable(new->fd);
@@ -41,7 +40,7 @@ ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node)
 
             if (ogs_sock_bind(new, addr) == OGS_OK) {
                 ogs_debug("tcp_server() [%s]:%d",
-                        OGS_ADDR(addr, buf), OGS_PORT(addr));
+                          OGS_ADDR(addr, buf), OGS_PORT(addr));
                 break;
             }
 
@@ -53,8 +52,8 @@ ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node)
 
     if (addr == NULL) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "tcp_server() [%s]:%d failed",
-                OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
+                        "tcp_server() [%s]:%d failed",
+                        OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
         return NULL;
     }
 
@@ -66,8 +65,7 @@ ogs_sock_t *ogs_tcp_server(ogs_socknode_t *node)
     return new;
 }
 
-ogs_sock_t *ogs_tcp_client(ogs_socknode_t *node)
-{
+ogs_sock_t *ogs_tcp_client(ogs_socknode_t *node) {
     ogs_sock_t *new = NULL;
     ogs_sockaddr_t *addr;
     char buf[OGS_ADDRSTRLEN];
@@ -81,7 +79,7 @@ ogs_sock_t *ogs_tcp_client(ogs_socknode_t *node)
         if (new) {
             if (ogs_sock_connect(new, addr) == OGS_OK) {
                 ogs_debug("tcp_client() [%s]:%d",
-                        OGS_ADDR(addr, buf), OGS_PORT(addr));
+                          OGS_ADDR(addr, buf), OGS_PORT(addr));
                 break;
             }
 
@@ -93,8 +91,8 @@ ogs_sock_t *ogs_tcp_client(ogs_socknode_t *node)
 
     if (addr == NULL) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "tcp_client() [%s]:%d failed",
-                OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
+                        "tcp_client() [%s]:%d failed",
+                        OGS_ADDR(node->addr, buf), OGS_PORT(node->addr));
         return NULL;
     }
 

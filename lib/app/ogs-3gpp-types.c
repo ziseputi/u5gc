@@ -23,8 +23,7 @@
 #define PLMN_ID_DIGIT2(x) (((x) / 10) % 10)
 #define PLMN_ID_DIGIT3(x) ((x) % 10)
 
-uint32_t ogs_plmn_id_hexdump(void *plmn_id)
-{
+uint32_t ogs_plmn_id_hexdump(void *plmn_id) {
     uint32_t hex;
     ogs_assert(plmn_id);
     memcpy(&hex, plmn_id, sizeof(ogs_plmn_id_t));
@@ -32,23 +31,21 @@ uint32_t ogs_plmn_id_hexdump(void *plmn_id)
     return hex;
 }
 
-uint16_t ogs_plmn_id_mcc(ogs_plmn_id_t *plmn_id)
-{
+uint16_t ogs_plmn_id_mcc(ogs_plmn_id_t *plmn_id) {
     return plmn_id->mcc1 * 100 + plmn_id->mcc2 * 10 + plmn_id->mcc3;
 }
-uint16_t ogs_plmn_id_mnc(ogs_plmn_id_t *plmn_id)
-{
+
+uint16_t ogs_plmn_id_mnc(ogs_plmn_id_t *plmn_id) {
     return plmn_id->mnc1 == 0xf ? plmn_id->mnc2 * 10 + plmn_id->mnc3 :
-        plmn_id->mnc1 * 100 + plmn_id->mnc2 * 10 + plmn_id->mnc3;
+           plmn_id->mnc1 * 100 + plmn_id->mnc2 * 10 + plmn_id->mnc3;
 }
-uint16_t ogs_plmn_id_mnc_len(ogs_plmn_id_t *plmn_id)
-{
+
+uint16_t ogs_plmn_id_mnc_len(ogs_plmn_id_t *plmn_id) {
     return plmn_id->mnc1 == 0xf ? 2 : 3;
 }
 
-void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id, 
-        uint16_t mcc, uint16_t mnc, uint16_t mnc_len)
-{
+void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id,
+                        uint16_t mcc, uint16_t mnc, uint16_t mnc_len) {
     plmn_id->mcc1 = PLMN_ID_DIGIT1(mcc);
     plmn_id->mcc2 = PLMN_ID_DIGIT2(mcc);
     plmn_id->mcc3 = PLMN_ID_DIGIT3(mcc);
@@ -64,25 +61,23 @@ void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id,
     return plmn_id;
 }
 
-int ogs_fqdn_build(char *dst, char *src, int length)
-{
+int ogs_fqdn_build(char *dst, char *src, int length) {
     int i = 0, j = 0;
 
     for (i = 0, j = 0; i < length; i++, j++) {
         if (src[i] == '.') {
-            dst[i-j] = j;
+            dst[i - j] = j;
             j = -1;
         } else {
-            dst[i+1] = src[i];
+            dst[i + 1] = src[i];
         }
     }
-    dst[i-j] = j;
+    dst[i - j] = j;
 
-    return length+1;
+    return length + 1;
 }
 
-int ogs_fqdn_parse(char *dst, char *src, int length)
-{
+int ogs_fqdn_parse(char *dst, char *src, int length) {
     int i = 0, j = 0;
     uint8_t len = 0;
 
@@ -92,7 +87,7 @@ int ogs_fqdn_parse(char *dst, char *src, int length)
 
         i += len;
         j += len;
-        
+
         if (i < length)
             dst[j++] = '.';
         else
@@ -104,9 +99,8 @@ int ogs_fqdn_parse(char *dst, char *src, int length)
 
 /* 8.13 Protocol Configuration Options (PCO) 
  * 10.5.6.3 Protocol configuration options in 3GPP TS 24.008 */
-int ogs_pco_parse(ogs_pco_t *pco, unsigned char *data, int data_len)
-{
-    ogs_pco_t *source = (ogs_pco_t *)data;
+int ogs_pco_parse(ogs_pco_t *pco, unsigned char *data, int data_len) {
+    ogs_pco_t *source = (ogs_pco_t *) data;
     int size = 0;
     int i = 0;
 
@@ -120,7 +114,7 @@ int ogs_pco_parse(ogs_pco_t *pco, unsigned char *data, int data_len)
     pco->configuration_protocol = source->configuration_protocol;
     size++;
 
-    while(size < data_len && i < OGS_MAX_NUM_OF_PROTOCOL_OR_CONTAINER_ID) {
+    while (size < data_len && i < OGS_MAX_NUM_OF_PROTOCOL_OR_CONTAINER_ID) {
         ogs_pco_id_t *id = &pco->ids[i];
         ogs_assert(size + sizeof(id->id) <= data_len);
         memcpy(&id->id, data + size, sizeof(id->id));
@@ -138,11 +132,11 @@ int ogs_pco_parse(ogs_pco_t *pco, unsigned char *data, int data_len)
     }
     pco->num_of_id = i;
     ogs_assert(size == data_len);
-    
+
     return size;
 }
-int ogs_pco_build(unsigned char *data, int data_len, ogs_pco_t *pco)
-{
+
+int ogs_pco_build(unsigned char *data, int data_len, ogs_pco_t *pco) {
     ogs_pco_t target;
     int size = 0;
     int i = 0;

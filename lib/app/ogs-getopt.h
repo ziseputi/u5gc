@@ -56,10 +56,13 @@ typedef struct ogs_getopt_long_s {
 } ogs_getopt_long_t;
 
 void ogs_getopt_init(ogs_getopt_t *options, char **argv);
+
 int ogs_getopt(ogs_getopt_t *options, const char *optstring);
+
 int ogs_getopt_long(ogs_getopt_t *options,
-                  const ogs_getopt_long_t *longopts,
-                  int *longindex);
+                    const ogs_getopt_long_t *longopts,
+                    int *longindex);
+
 char *ogs_getopt_arg(ogs_getopt_t *options);
 
 #ifdef __cplusplus

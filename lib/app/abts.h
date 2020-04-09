@@ -28,10 +28,13 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #ifdef WIN32
 #include <io.h>
 #else
+
 #include <unistd.h>
+
 #endif
 
 #ifndef ABTS_H
@@ -71,20 +74,32 @@ typedef void (*test_func)(abts_case *tc, void *data);
 #define ADD_SUITE(suite) abts_add_suite(suite, __FILE__);
 
 abts_suite *abts_add_suite(abts_suite *suite, const char *suite_name);
+
 void abts_run_test(abts_suite *ts, test_func f, void *value);
+
 void abts_log_message(const char *fmt, ...);
 
 void abts_int_equal(abts_case *tc, const int expected, const int actual, int lineno);
+
 void abts_int_nequal(abts_case *tc, const int expected, const int actual, int lineno);
+
 void abts_str_equal(abts_case *tc, const char *expected, const char *actual, int lineno);
+
 void abts_str_nequal(abts_case *tc, const char *expected, const char *actual,
-                       size_t n, int lineno);
+                     size_t n, int lineno);
+
 void abts_ptr_notnull(abts_case *tc, const void *ptr, int lineno);
+
 void abts_ptr_equal(abts_case *tc, const void *expected, const void *actual, int lineno);
+
 void abts_true(abts_case *tc, int condition, int lineno);
+
 void abts_fail(abts_case *tc, const char *message, int lineno);
+
 void abts_not_impl(abts_case *tc, const char *message, int lineno);
+
 void abts_assert(abts_case *tc, const char *message, int condition, int lineno);
+
 void abts_size_equal(abts_case *tc, size_t expected, size_t actual, int lineno);
 
 /* Convenience macros. Ryan hates these! */
@@ -103,11 +118,17 @@ void abts_size_equal(abts_case *tc, size_t expected, size_t actual, int lineno);
 
 
 abts_suite *run_tests(abts_suite *suite);
+
 abts_suite *run_tests1(abts_suite *suite);
+
 #if 1 /* modified by acetcom */
+
 void abts_init(int argc, const char *const argv[]);
+
 int abts_main(int argc, const char *const argv[], const char **argv_out);
+
 int abts_report(abts_suite *suite);
+
 #endif
 
 

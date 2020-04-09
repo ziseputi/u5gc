@@ -54,10 +54,13 @@ typedef struct upf_event_s {
 } upf_event_t;
 
 void upf_event_init(void);
+
 void upf_event_term(void);
+
 void upf_event_final(void);
 
 upf_event_t *upf_event_new(upf_event_e id);
+
 void upf_event_free(upf_event_t *e);
 
 const char *upf_event_get_name(upf_event_t *e);

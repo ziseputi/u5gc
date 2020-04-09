@@ -21,36 +21,34 @@
 
 typedef struct ogs_hash_entry_t ogs_hash_entry_t;
 struct ogs_hash_entry_t {
-    ogs_hash_entry_t    *next;
-    unsigned int        hash;
-    const void          *key;
-    int                 klen;
-    const void          *val;
+    ogs_hash_entry_t *next;
+    unsigned int hash;
+    const void *key;
+    int klen;
+    const void *val;
 };
 
 struct ogs_hash_index_t {
-    ogs_hash_t          *ht;
-    ogs_hash_entry_t    *this, *next;
-    unsigned int        index;
+    ogs_hash_t *ht;
+    ogs_hash_entry_t *this, *next;
+    unsigned int index;
 };
 
 struct ogs_hash_t {
-    ogs_hash_entry_t    **array;
-    ogs_hash_index_t    iterator;  /* For ogs_hash_first(NULL, ...) */
-    unsigned int        count, max, seed;
-    ogs_hashfunc_t      hash_func;
-    ogs_hash_entry_t    *free;  /* List of recycled entries */
+    ogs_hash_entry_t **array;
+    ogs_hash_index_t iterator;  /* For ogs_hash_first(NULL, ...) */
+    unsigned int count, max, seed;
+    ogs_hashfunc_t hash_func;
+    ogs_hash_entry_t *free;  /* List of recycled entries */
 };
 
 #define INITIAL_MAX 15 /* tunable == 2^n - 1 */
 
-static ogs_hash_entry_t **alloc_array(ogs_hash_t *ht, unsigned int max)
-{
-   return ogs_calloc(1, sizeof(*ht->array) * (max + 1));
+static ogs_hash_entry_t **alloc_array(ogs_hash_t *ht, unsigned int max) {
+    return ogs_calloc(1, sizeof(*ht->array) * (max + 1));
 }
 
-ogs_hash_t *ogs_hash_make()
-{
+ogs_hash_t *ogs_hash_make() {
     ogs_hash_t *ht;
     ogs_time_t now = ogs_get_monotonic_time();
 
@@ -59,23 +57,21 @@ ogs_hash_t *ogs_hash_make()
     ht->free = NULL;
     ht->count = 0;
     ht->max = INITIAL_MAX;
-    ht->seed = (unsigned int)((now >> 32) ^ now ^ 
-                              (uintptr_t)ht ^ (uintptr_t)&now) - 1;
+    ht->seed = (unsigned int) ((now >> 32) ^ now ^
+                               (uintptr_t) ht ^ (uintptr_t) &now) - 1;
     ht->array = alloc_array(ht, ht->max);
     ht->hash_func = NULL;
 
     return ht;
 }
 
-ogs_hash_t *ogs_hash_make_custom(ogs_hashfunc_t hash_func)
-{
+ogs_hash_t *ogs_hash_make_custom(ogs_hashfunc_t hash_func) {
     ogs_hash_t *ht = ogs_hash_make();
     ht->hash_func = hash_func;
     return ht;
 }
 
-void ogs_hash_destroy(ogs_hash_t *ht)
-{
+void ogs_hash_destroy(ogs_hash_t *ht) {
     ogs_hash_entry_t *he = NULL, *next_he = NULL;
 
     ogs_assert(ht);
@@ -84,7 +80,7 @@ void ogs_hash_destroy(ogs_hash_t *ht)
     ogs_hash_clear(ht);
 
     he = ht->free;
-    while(he) {
+    while (he) {
         next_he = he->next;
 
         ogs_free(he);
@@ -95,8 +91,7 @@ void ogs_hash_destroy(ogs_hash_t *ht)
     ogs_free(ht);
 }
 
-ogs_hash_index_t *ogs_hash_next(ogs_hash_index_t *hi)
-{
+ogs_hash_index_t *ogs_hash_next(ogs_hash_index_t *hi) {
     hi->this = hi->next;
     while (!hi->this) {
         if (hi->index > hi->ht->max)
@@ -108,8 +103,7 @@ ogs_hash_index_t *ogs_hash_next(ogs_hash_index_t *hi)
     return hi;
 }
 
-ogs_hash_index_t *ogs_hash_first(ogs_hash_t *ht)
-{
+ogs_hash_index_t *ogs_hash_first(ogs_hash_t *ht) {
     ogs_hash_index_t *hi;
 
     hi = &ht->iterator;
@@ -122,39 +116,34 @@ ogs_hash_index_t *ogs_hash_first(ogs_hash_t *ht)
 }
 
 void ogs_hash_this(ogs_hash_index_t *hi,
-        const void **key, int *klen, void **val)
-{
-    if (key)  *key  = hi->this->key;
+                   const void **key, int *klen, void **val) {
+    if (key) *key = hi->this->key;
     if (klen) *klen = hi->this->klen;
-    if (val)  *val  = (void *)hi->this->val;
+    if (val) *val = (void *) hi->this->val;
 }
 
-const void *ogs_hash_this_key(ogs_hash_index_t *hi)
-{
+const void *ogs_hash_this_key(ogs_hash_index_t *hi) {
     const void *key;
 
     ogs_hash_this(hi, &key, NULL, NULL);
     return key;
 }
 
-int ogs_hash_this_key_len(ogs_hash_index_t *hi)
-{
+int ogs_hash_this_key_len(ogs_hash_index_t *hi) {
     int klen;
 
     ogs_hash_this(hi, NULL, &klen, NULL);
     return klen;
 }
 
-void *ogs_hash_this_val(ogs_hash_index_t *hi)
-{
+void *ogs_hash_this_val(ogs_hash_index_t *hi) {
     void *val;
 
     ogs_hash_this(hi, NULL, NULL, &val);
     return val;
 }
 
-static void expand_array(ogs_hash_t *ht)
-{
+static void expand_array(ogs_hash_t *ht) {
     ogs_hash_index_t *hi;
     ogs_hash_entry_t **new_array;
     unsigned int new_max;
@@ -172,12 +161,11 @@ static void expand_array(ogs_hash_t *ht)
 }
 
 static unsigned int hashfunc_default(
-        const char *char_key, int *klen, unsigned int hash)
-{
-    const unsigned char *key = (const unsigned char *)char_key;
+        const char *char_key, int *klen, unsigned int hash) {
+    const unsigned char *key = (const unsigned char *) char_key;
     const unsigned char *p;
     int i;
-    
+
     /*
      * This is the popular `times 33' hash algorithm which is used by
      * perl and also appears in Berkeley DB. This is one of the best
@@ -221,8 +209,7 @@ static unsigned int hashfunc_default(
             hash = hash * 33 + *p;
         }
         *klen = p - key;
-    }
-    else {
+    } else {
         for (p = key, i = *klen; i; i--, p++) {
             hash = hash * 33 + *p;
         }
@@ -231,14 +218,12 @@ static unsigned int hashfunc_default(
     return hash;
 }
 
-unsigned int ogs_hashfunc_default(const char *char_key, int *klen)
-{
+unsigned int ogs_hashfunc_default(const char *char_key, int *klen) {
     return hashfunc_default(char_key, klen, 0);
 }
 
 static ogs_hash_entry_t **find_entry(ogs_hash_t *ht,
-        const void *key, int klen, const void *val)
-{
+                                     const void *key, int klen, const void *val) {
     ogs_hash_entry_t **hep, *he;
     unsigned int hash;
 
@@ -265,26 +250,24 @@ static ogs_hash_entry_t **find_entry(ogs_hash_t *ht,
         he = ogs_malloc(sizeof(*he));
     he->next = NULL;
     he->hash = hash;
-    he->key  = key;
+    he->key = key;
     he->klen = klen;
-    he->val  = val;
+    he->val = val;
     *hep = he;
     ht->count++;
     return hep;
 }
 
-void *ogs_hash_get(ogs_hash_t *ht, const void *key, int klen)
-{
+void *ogs_hash_get(ogs_hash_t *ht, const void *key, int klen) {
     ogs_hash_entry_t *he;
     he = *find_entry(ht, key, klen, NULL);
     if (he)
-        return (void *)he->val;
+        return (void *) he->val;
     else
         return NULL;
 }
 
-void ogs_hash_set(ogs_hash_t *ht, const void *key, int klen, const void *val)
-{
+void ogs_hash_set(ogs_hash_t *ht, const void *key, int klen, const void *val) {
     ogs_hash_entry_t **hep;
     hep = find_entry(ht, key, klen, val);
     if (*hep) {
@@ -307,9 +290,8 @@ void ogs_hash_set(ogs_hash_t *ht, const void *key, int klen, const void *val)
     /* else key not present and val==NULL */
 }
 
-void *ogs_hash_get_or_set(ogs_hash_t *ht, 
-        const void *key, int klen, const void *val)
-{
+void *ogs_hash_get_or_set(ogs_hash_t *ht,
+                          const void *key, int klen, const void *val) {
     ogs_hash_entry_t **hep;
     hep = find_entry(ht, key, klen, val);
     if (*hep) {
@@ -318,19 +300,17 @@ void *ogs_hash_get_or_set(ogs_hash_t *ht,
         if (ht->count > ht->max) {
             expand_array(ht);
         }
-        return (void *)val;
+        return (void *) val;
     }
     /* else key not present and val==NULL */
     return NULL;
 }
 
-unsigned int ogs_hash_count(ogs_hash_t *ht)
-{
+unsigned int ogs_hash_count(ogs_hash_t *ht) {
     return ht->count;
 }
 
-void ogs_hash_clear(ogs_hash_t *ht)
-{
+void ogs_hash_clear(ogs_hash_t *ht) {
     ogs_hash_index_t *hi;
     for (hi = ogs_hash_first(ht); hi; hi = ogs_hash_next(hi))
         ogs_hash_set(ht, hi->this->key, hi->this->klen, NULL);
@@ -345,16 +325,15 @@ void ogs_hash_clear(ogs_hash_t *ht)
  * element of the hash table.
  */
 int ogs_hash_do(ogs_hash_do_callback_fn_t *comp,
-                             void *rec, const ogs_hash_t *ht)
-{
-    ogs_hash_index_t  hix;
+                void *rec, const ogs_hash_t *ht) {
+    ogs_hash_index_t hix;
     ogs_hash_index_t *hi;
-    int rv, dorv  = 1;
+    int rv, dorv = 1;
 
-    hix.ht    = (ogs_hash_t *)ht;
+    hix.ht = (ogs_hash_t *) ht;
     hix.index = 0;
-    hix.this  = NULL;
-    hix.next  = NULL;
+    hix.this = NULL;
+    hix.next = NULL;
 
     if ((hi = ogs_hash_next(&hix))) {
         /* Scan the entire table */

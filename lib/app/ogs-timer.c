@@ -31,17 +31,17 @@ typedef struct ogs_timer_s {
     ogs_rbnode_t rbnode;
     ogs_lnode_t lnode;
 
-    void (*cb)(void*);
+    void (*cb)(void *);
+
     void *data;
 
     ogs_timer_mgr_t *manager;
     bool running;
-    ogs_time_t timeout;;       
+    ogs_time_t timeout;;
 } ogs_timer_t;
 
 static void add_timer_node(
-        ogs_rbtree_t *tree, ogs_timer_t *timer, ogs_time_t duration)
-{
+        ogs_rbtree_t *tree, ogs_timer_t *timer, ogs_time_t duration) {
     ogs_rbnode_t **new = NULL;
     ogs_rbnode_t *parent = NULL;
     ogs_assert(tree);
@@ -64,8 +64,7 @@ static void add_timer_node(
     ogs_rbtree_insert_color(tree, timer);
 }
 
-ogs_timer_mgr_t *ogs_timer_mgr_create(void)
-{
+ogs_timer_mgr_t *ogs_timer_mgr_create(void) {
     ogs_timer_mgr_t *manager = ogs_calloc(1, sizeof *manager);
     ogs_assert(manager);
 
@@ -74,8 +73,7 @@ ogs_timer_mgr_t *ogs_timer_mgr_create(void)
     return manager;
 }
 
-void ogs_timer_mgr_destroy(ogs_timer_mgr_t *manager)
-{
+void ogs_timer_mgr_destroy(ogs_timer_mgr_t *manager) {
     ogs_assert(manager);
 
     ogs_pool_final(&manager->pool);
@@ -83,8 +81,7 @@ void ogs_timer_mgr_destroy(ogs_timer_mgr_t *manager)
 }
 
 ogs_timer_t *ogs_timer_add(
-        ogs_timer_mgr_t *manager, void (*cb)(void *data), void *data)
-{
+        ogs_timer_mgr_t *manager, void (*cb)(void *data), void *data) {
     ogs_timer_t *timer = NULL;
     ogs_assert(manager);
     ogs_assert(cb);
@@ -101,8 +98,7 @@ ogs_timer_t *ogs_timer_add(
     return timer;
 }
 
-void ogs_timer_delete(ogs_timer_t *timer)
-{
+void ogs_timer_delete(ogs_timer_t *timer) {
     ogs_timer_mgr_t *manager;
     ogs_assert(timer);
     manager = timer->manager;
@@ -113,8 +109,7 @@ void ogs_timer_delete(ogs_timer_t *timer)
     ogs_pool_free(&manager->pool, timer);
 }
 
-void ogs_timer_start(ogs_timer_t *timer, ogs_time_t duration)
-{
+void ogs_timer_start(ogs_timer_t *timer, ogs_time_t duration) {
     ogs_timer_mgr_t *manager = NULL;
     ogs_assert(timer);
     ogs_assert(duration > 0);
@@ -129,8 +124,7 @@ void ogs_timer_start(ogs_timer_t *timer, ogs_time_t duration)
     add_timer_node(&manager->tree, timer, duration);
 }
 
-void ogs_timer_stop(ogs_timer_t *timer)
-{
+void ogs_timer_stop(ogs_timer_t *timer) {
     ogs_timer_mgr_t *manager = NULL;
     ogs_assert(timer);
     manager = timer->manager;
@@ -143,8 +137,7 @@ void ogs_timer_stop(ogs_timer_t *timer)
     ogs_rbtree_delete(&manager->tree, timer);
 }
 
-ogs_time_t ogs_timer_mgr_next(ogs_timer_mgr_t *manager)
-{
+ogs_time_t ogs_timer_mgr_next(ogs_timer_mgr_t *manager) {
     ogs_time_t current;
     ogs_rbnode_t *rbnode = NULL;
     ogs_assert(manager);
@@ -163,8 +156,7 @@ ogs_time_t ogs_timer_mgr_next(ogs_timer_mgr_t *manager)
     return OGS_INFINITE_TIME;
 }
 
-void ogs_timer_mgr_expire(ogs_timer_mgr_t *manager)
-{
+void ogs_timer_mgr_expire(ogs_timer_mgr_t *manager) {
     OGS_LIST(list);
     ogs_lnode_t *lnode;
 

@@ -20,46 +20,46 @@
 #ifndef OGS_CORE_H
 #define OGS_CORE_H
 
-#include "core/core-config.h"
+//#include "core-config.h"
 
 #define OGS_CORE_INSIDE
 
-#include "core/ogs-compat.h"
-#include "core/ogs-macros.h"
-#include "core/ogs-list.h"
-#include "core/ogs-pool.h"
-#include "core/ogs-abort.h"
-#include "core/ogs-strings.h"
-#include "core/ogs-errno.h"
-#include "core/ogs-time.h"
-#include "core/ogs-conv.h"
-#include "core/ogs-log.h"
-#include "core/ogs-pkbuf.h"
-#include "core/ogs-memory.h"
-#include "core/ogs-rand.h"
-#include "core/ogs-rbtree.h"
-#include "core/ogs-timer.h"
-#include "core/ogs-thread.h"
-#include "core/ogs-process.h"
-#include "core/ogs-signal.h"
-#include "core/ogs-sockaddr.h"
-#include "core/ogs-socket.h"
-#include "core/ogs-sockpair.h"
-#include "core/ogs-socknode.h"
-#include "core/ogs-udp.h"
-#include "core/ogs-tcp.h"
-#include "core/ogs-tun.h"
-#include "core/ogs-queue.h"
-#include "core/ogs-poll.h"
-#include "core/ogs-notify.h"
-#include "core/ogs-tlv.h"
-#include "core/ogs-tlv-msg.h"
-#include "core/ogs-env.h"
-#include "core/ogs-fsm.h"
-#include "core/ogs-hash.h"
-#include "core/ogs-misc.h"
-#include "core/ogs-getopt.h"
-#include "core/ogs-3gpp-types.h"
+#include "ogs-compat.h"
+#include "ogs-macros.h"
+#include "ogs-list.h"
+#include "ogs-pool.h"
+#include "ogs-abort.h"
+#include "ogs-strings.h"
+#include "ogs-errno.h"
+#include "ogs-time.h"
+#include "ogs-conv.h"
+#include "ogs-log.h"
+#include "ogs-pkbuf.h"
+#include "ogs-memory.h"
+#include "ogs-rand.h"
+#include "ogs-rbtree.h"
+#include "ogs-timer.h"
+#include "ogs-thread.h"
+#include "ogs-process.h"
+#include "ogs-signal.h"
+#include "ogs-sockaddr.h"
+#include "ogs-socket.h"
+#include "ogs-sockpair.h"
+#include "ogs-socknode.h"
+#include "ogs-udp.h"
+#include "ogs-tcp.h"
+#include "ogs-tun.h"
+#include "ogs-queue.h"
+#include "ogs-poll.h"
+#include "ogs-notify.h"
+#include "ogs-tlv.h"
+#include "ogs-tlv-msg.h"
+#include "ogs-env.h"
+#include "ogs-fsm.h"
+#include "ogs-hash.h"
+#include "ogs-misc.h"
+#include "ogs-getopt.h"
+#include "ogs-3gpp-types.h"
 
 #undef OGS_CORE_INSIDE
 
@@ -100,6 +100,7 @@ typedef struct {
 } ogs_core_context_t;
 
 void ogs_core_initialize(void);
+
 void ogs_core_terminate(void);
 
 ogs_core_context_t *ogs_core(void);

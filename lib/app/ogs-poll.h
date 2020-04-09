@@ -31,23 +31,28 @@ extern "C" {
 typedef void (*ogs_poll_handler_f)(short when, ogs_socket_t fd, void *data);
 
 ogs_pollset_t *ogs_pollset_create(void);
+
 void ogs_pollset_destroy(ogs_pollset_t *pollset);
 
 #define OGS_POLLIN      0x01
 #define OGS_POLLOUT     0x02
 
 ogs_poll_t *ogs_pollset_add(ogs_pollset_t *pollset, short when,
-        ogs_socket_t fd, ogs_poll_handler_f handler, void *data);
+                            ogs_socket_t fd, ogs_poll_handler_f handler, void *data);
+
 void ogs_pollset_remove(ogs_poll_t *poll);
 
 typedef struct ogs_pollset_actions_s {
     void (*init)(ogs_pollset_t *pollset);
+
     void (*cleanup)(ogs_pollset_t *pollset);
 
     int (*add)(ogs_poll_t *poll, short when);
+
     int (*remove)(ogs_poll_t *poll);
 
     int (*poll)(ogs_pollset_t *pollset, ogs_time_t timeout);
+
     int (*notify)(ogs_pollset_t *pollset);
 } ogs_pollset_actions_t;
 

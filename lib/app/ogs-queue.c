@@ -23,17 +23,17 @@
 #define OGS_LOG_DOMAIN __ogs_event_domain
 
 typedef struct ogs_queue_s {
-    void              **data;
-    unsigned int        nelts; /**< # elements */
-    unsigned int        in;    /**< next empty location */
-    unsigned int        out;   /**< next filled location */
-    unsigned int        bounds;/**< max size of queue */
-    unsigned int        full_waiters;
-    unsigned int        empty_waiters;
-    ogs_thread_mutex_t  one_big_mutex;
-    ogs_thread_cond_t   not_empty;
-    ogs_thread_cond_t   not_full;
-    int                 terminated;
+    void **data;
+    unsigned int nelts; /**< # elements */
+    unsigned int in;    /**< next empty location */
+    unsigned int out;   /**< next filled location */
+    unsigned int bounds;/**< max size of queue */
+    unsigned int full_waiters;
+    unsigned int empty_waiters;
+    ogs_thread_mutex_t one_big_mutex;
+    ogs_thread_cond_t not_empty;
+    ogs_thread_cond_t not_full;
+    int terminated;
 } ogs_queue_t;
 
 /**
@@ -52,8 +52,7 @@ typedef struct ogs_queue_s {
  * Callback routine that is called to destroy this
  * ogs_queue_t when its pool is destroyed.
  */
-ogs_queue_t *ogs_queue_create(unsigned int capacity)
-{
+ogs_queue_t *ogs_queue_create(unsigned int capacity) {
     ogs_queue_t *queue = ogs_calloc(1, sizeof *queue);
     ogs_assert(queue);
 
@@ -61,7 +60,7 @@ ogs_queue_t *ogs_queue_create(unsigned int capacity)
     ogs_thread_cond_init(&queue->not_empty);
     ogs_thread_cond_init(&queue->not_full);
 
-    queue->data = ogs_calloc(1, capacity * sizeof(void*));
+    queue->data = ogs_calloc(1, capacity * sizeof(void *));
     queue->bounds = capacity;
     queue->nelts = 0;
     queue->in = 0;
@@ -73,8 +72,7 @@ ogs_queue_t *ogs_queue_create(unsigned int capacity)
     return queue;
 }
 
-void ogs_queue_destroy(ogs_queue_t *queue)
-{
+void ogs_queue_destroy(ogs_queue_t *queue) {
     ogs_assert(queue);
 
     ogs_free(queue->data);
@@ -86,8 +84,7 @@ void ogs_queue_destroy(ogs_queue_t *queue)
     ogs_free(queue);
 }
 
-static int queue_push(ogs_queue_t *queue, void *data, ogs_time_t timeout)
-{
+static int queue_push(ogs_queue_t *queue, void *data, ogs_time_t timeout) {
     int rv;
 
     if (queue->terminated) {
@@ -107,8 +104,7 @@ static int queue_push(ogs_queue_t *queue, void *data, ogs_time_t timeout)
                 rv = ogs_thread_cond_timedwait(&queue->not_full,
                                                &queue->one_big_mutex,
                                                timeout);
-            }
-            else {
+            } else {
                 rv = ogs_thread_cond_wait(&queue->not_full,
                                           &queue->one_big_mutex);
             }
@@ -124,8 +120,7 @@ static int queue_push(ogs_queue_t *queue, void *data, ogs_time_t timeout)
             ogs_thread_mutex_unlock(&queue->one_big_mutex);
             if (queue->terminated) {
                 return OGS_DONE; /* no more elements ever again */
-            }
-            else {
+            } else {
                 return OGS_ERROR;
             }
         }
@@ -146,8 +141,7 @@ static int queue_push(ogs_queue_t *queue, void *data, ogs_time_t timeout)
     return OGS_OK;
 }
 
-int ogs_queue_push(ogs_queue_t *queue, void *data)
-{
+int ogs_queue_push(ogs_queue_t *queue, void *data) {
     return queue_push(queue, data, OGS_INFINITE_TIME);
 }
 
@@ -156,13 +150,11 @@ int ogs_queue_push(ogs_queue_t *queue, void *data)
  * the push operation completes successfully, it signals other threads
  * waiting in ogs_queue_pop() that they may continue consuming sockets.
  */
-int ogs_queue_trypush(ogs_queue_t *queue, void *data)
-{
+int ogs_queue_trypush(ogs_queue_t *queue, void *data) {
     return queue_push(queue, data, 0);
 }
 
-int ogs_queue_timedpush(ogs_queue_t *queue, void *data, ogs_time_t timeout)
-{
+int ogs_queue_timedpush(ogs_queue_t *queue, void *data, ogs_time_t timeout) {
     return queue_push(queue, data, timeout);
 }
 
@@ -180,8 +172,7 @@ unsigned int ogs_queue_size(ogs_queue_t *queue) {
  * otherwise until the given timeout expires). Once retrieved, the
  * item is placed into the address specified by 'data'.
  */
-static int queue_pop(ogs_queue_t *queue, void **data, ogs_time_t timeout)
-{
+static int queue_pop(ogs_queue_t *queue, void **data, ogs_time_t timeout) {
     int rv;
 
     if (queue->terminated) {
@@ -202,8 +193,7 @@ static int queue_pop(ogs_queue_t *queue, void **data, ogs_time_t timeout)
                 rv = ogs_thread_cond_timedwait(&queue->not_empty,
                                                &queue->one_big_mutex,
                                                timeout);
-            }
-            else {
+            } else {
                 rv = ogs_thread_cond_wait(&queue->not_empty,
                                           &queue->one_big_mutex);
             }
@@ -223,7 +213,7 @@ static int queue_pop(ogs_queue_t *queue, void **data, ogs_time_t timeout)
                 return OGS_ERROR;
             }
         }
-    } 
+    }
 
     *data = queue->data[queue->out];
     queue->nelts--;
@@ -240,23 +230,19 @@ static int queue_pop(ogs_queue_t *queue, void **data, ogs_time_t timeout)
     return OGS_OK;
 }
 
-int ogs_queue_pop(ogs_queue_t *queue, void **data)
-{
+int ogs_queue_pop(ogs_queue_t *queue, void **data) {
     return queue_pop(queue, data, OGS_INFINITE_TIME);
 }
 
-int ogs_queue_trypop(ogs_queue_t *queue, void **data)
-{
+int ogs_queue_trypop(ogs_queue_t *queue, void **data) {
     return queue_pop(queue, data, 0);
 }
 
-int ogs_queue_timedpop(ogs_queue_t *queue, void **data, ogs_time_t timeout)
-{
+int ogs_queue_timedpop(ogs_queue_t *queue, void **data, ogs_time_t timeout) {
     return queue_pop(queue, data, timeout);
 }
 
-int ogs_queue_interrupt_all(ogs_queue_t *queue)
-{
+int ogs_queue_interrupt_all(ogs_queue_t *queue) {
     ogs_debug("interrupt all");
     ogs_thread_mutex_lock(&queue->one_big_mutex);
 
@@ -268,8 +254,7 @@ int ogs_queue_interrupt_all(ogs_queue_t *queue)
     return OGS_OK;
 }
 
-int ogs_queue_term(ogs_queue_t *queue)
-{
+int ogs_queue_term(ogs_queue_t *queue) {
     ogs_thread_mutex_lock(&queue->one_big_mutex);
 
     /* we must hold one_big_mutex when setting this... otherwise,

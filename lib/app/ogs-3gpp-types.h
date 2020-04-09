@@ -64,22 +64,24 @@ extern "C" {
 /**********************************
  * PLMN_ID Structure             */
 typedef struct ogs_plmn_id_s {
-ED2(uint8_t mcc2:4;,
-    uint8_t mcc1:4;)
-ED2(uint8_t mnc1:4;,
-    uint8_t mcc3:4;)
-ED2(uint8_t mnc3:4;,
-    uint8_t mnc2:4;)
+    ED2(uint8_t mcc2:4;,
+        uint8_t mcc1:4;)
+    ED2(uint8_t mnc1:4;,
+        uint8_t mcc3:4;)
+    ED2(uint8_t mnc3:4;,
+        uint8_t mnc2:4;)
 } __attribute__ ((packed)) ogs_plmn_id_t;
 
 uint32_t ogs_plmn_id_hexdump(void *plmn_id);
 
 uint16_t ogs_plmn_id_mcc(ogs_plmn_id_t *plmn_id);
+
 uint16_t ogs_plmn_id_mnc(ogs_plmn_id_t *plmn_id);
+
 uint16_t ogs_plmn_id_mnc_len(ogs_plmn_id_t *plmn_id);
 
-void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id, 
-        uint16_t mcc, uint16_t mnc, uint16_t mnc_len);
+void *ogs_plmn_id_build(ogs_plmn_id_t *plmn_id,
+                        uint16_t mcc, uint16_t mnc, uint16_t mnc_len);
 
 #define OGS_MAX_NUM_OF_TAI              16
 
@@ -109,10 +111,10 @@ typedef struct ogs_ip_s {
             uint8_t addr6[OGS_IPV6_LEN];
         } both;
     };
-    uint32_t      len;
-ED3(uint8_t       ipv4:1;,
-    uint8_t       ipv6:1;,
-    uint8_t       reserved:6;)
+    uint32_t len;
+    ED3(uint8_t ipv4:1;,
+        uint8_t ipv6:1;,
+        uint8_t reserved:6;)
 } ogs_ip_t;
 
 /**************************************************
@@ -121,9 +123,9 @@ ED3(uint8_t       ipv4:1;,
 #define OGS_PAA_IPV6_LEN                                18
 #define OGS_PAA_IPV4V6_LEN                              22
 typedef struct ogs_paa_s {
-ED2(uint8_t spare:5;,
+    ED2(uint8_t spare:5;,
 /* 8.34 PDN Type  */
-#define OGS_GTP_PDN_TYPE_IPV4                           1
+        #define OGS_GTP_PDN_TYPE_IPV4                           1
 #define OGS_GTP_PDN_TYPE_IPV6                           2
 #define OGS_GTP_PDN_TYPE_IPV4V6                         3
 #define OGS_GTP_PDN_TYPE_NON_IP                         4
@@ -131,10 +133,10 @@ ED2(uint8_t spare:5;,
 #define OGS_PFCP_PDN_TYPE_IPV6                          OGS_GTP_PDN_TYPE_IPV6
 #define OGS_PFCP_PDN_TYPE_IPV4V6                        OGS_GTP_PDN_TYPE_IPV4V6
 #define OGS_PFCP_PDN_TYPE_NONIP                         OGS_GTP_PDN_TYPE_NONIP
-    uint8_t pdn_type:3;)
+            uint8_t pdn_type:3;)
     union {
         /* GTP_PDN_TYPE_IPV4 */
-        uint32_t addr;      
+        uint32_t addr;
 
         /* GTP_PDN_TYPE_IPV6 */
         struct {
@@ -152,7 +154,7 @@ ED2(uint8_t spare:5;,
                 /* IPv6 Prefix and Interface Identifier */
                 uint8_t addr6[OGS_IPV6_LEN];
             };
-            uint32_t addr;      
+            uint32_t addr;
         } __attribute__ ((packed)) both;
     };
 } __attribute__ ((packed)) ogs_paa_t;
@@ -180,25 +182,25 @@ typedef struct ogs_qos_s {
 #define OGS_PDN_QCI_66                                      66
 #define OGS_PDN_QCI_69                                      69
 #define OGS_PDN_QCI_70                                      70
-    uint8_t         qci;
+    uint8_t qci;
 
     struct {
-    /* Values 1 to 8 should only be assigned for services that are
-     * authorized to receive prioritized treatment within an operator domain. 
-     * Values 9 to 15 may be assigned to resources that are authorized 
-     * by the home network and thus applicable when a UE is roaming. */
-        uint8_t     priority_level;
+        /* Values 1 to 8 should only be assigned for services that are
+         * authorized to receive prioritized treatment within an operator domain.
+         * Values 9 to 15 may be assigned to resources that are authorized
+         * by the home network and thus applicable when a UE is roaming. */
+        uint8_t priority_level;
 
 #define OGS_PDN_PRE_EMPTION_CAPABILITY_ENABLED              0
 #define OGS_PDN_PRE_EMPTION_CAPABILITY_DISABLED             1
-        uint8_t     pre_emption_capability;
+        uint8_t pre_emption_capability;
 #define OGS_PDN_PRE_EMPTION_VULNERABILITY_ENABLED           0
 #define OGS_PDN_PRE_EMPTION_VULNERABILITY_DISABLED          1
-        uint8_t     pre_emption_vulnerability;
+        uint8_t pre_emption_vulnerability;
     } arp;
 
-    ogs_bitrate_t   mbr;  /* Maxmimum Bit Rate (MBR) */
-    ogs_bitrate_t   gbr;  /* Guaranteed Bit Rate (GBR) */
+    ogs_bitrate_t mbr;  /* Maxmimum Bit Rate (MBR) */
+    ogs_bitrate_t gbr;  /* Guaranteed Bit Rate (GBR) */
 } ogs_qos_t;
 
 /**********************************
@@ -242,8 +244,8 @@ typedef struct ogs_pcc_rule_s {
 #define OGS_FLOW_STATUS_REMOVE                  4
     int flow_status;
     uint32_t precedence;
-        
-    ogs_qos_t  qos;
+
+    ogs_qos_t qos;
 } ogs_pcc_rule_t;
 
 #define OGS_PCC_RULE_FREE(__pCCrULE) \
@@ -264,22 +266,23 @@ typedef struct ogs_pcc_rule_s {
 /**********************************
  * PDN Structure                 */
 typedef struct ogs_pdn_s {
-    uint32_t        context_identifier;
-    char            apn[OGS_MAX_APN_LEN+1];
+    uint32_t context_identifier;
+    char apn[OGS_MAX_APN_LEN + 1];
 #define OGS_DIAM_PDN_TYPE_IPV4                      0
 #define OGS_DIAM_PDN_TYPE_IPV6                      1
 #define OGS_DIAM_PDN_TYPE_IPV4V6                    2
 #define OGS_DIAM_PDN_TYPE_IPV4_OR_IPV6              3
-    uint8_t         pdn_type;
+    uint8_t pdn_type;
 
-    ogs_qos_t       qos;
-    ogs_bitrate_t   ambr; /* APN-AMBR */
+    ogs_qos_t qos;
+    ogs_bitrate_t ambr; /* APN-AMBR */
 
-    ogs_paa_t       paa;
-    ogs_ip_t        pgw_ip;
+    ogs_paa_t paa;
+    ogs_ip_t pgw_ip;
 } ogs_pdn_t;
 
 int ogs_fqdn_build(char *dst, char *src, int len);
+
 int ogs_fqdn_parse(char *dst, char *src, int len);
 
 /**************************************************
@@ -322,14 +325,15 @@ typedef struct ogs_pco_id_s {
 
 #define OGS_MAX_NUM_OF_PROTOCOL_OR_CONTAINER_ID    16
 typedef struct ogs_pco_s {
-ED3(uint8_t ext:1;,
-    uint8_t spare:4;,
-    uint8_t configuration_protocol:3;)
+    ED3(uint8_t ext:1;,
+        uint8_t spare:4;,
+        uint8_t configuration_protocol:3;)
     uint8_t num_of_id;
     ogs_pco_id_t ids[OGS_MAX_NUM_OF_PROTOCOL_OR_CONTAINER_ID];
 } ogs_pco_t;
 
 int ogs_pco_parse(ogs_pco_t *pco, unsigned char *data, int data_len);
+
 int ogs_pco_build(unsigned char *data, int data_len, ogs_pco_t *pco);
 
 #ifdef __cplusplus

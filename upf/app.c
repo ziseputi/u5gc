@@ -17,16 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <ogs-log.h>
-#include <ogs-errno.h>
 #include "ogs-app.h"
 
-int main(int argc, const char *const argv[]){
-    app_initialize(argv);
-}
-
-int app_initialize(const char *const argv[])
-{
+int app_initialize(const char *const argv[]) {
     int rv;
 
     rv = upf_initialize();
@@ -39,8 +32,7 @@ int app_initialize(const char *const argv[])
     return OGS_OK;
 }
 
-void app_terminate(void)
-{
+void app_terminate(void) {
     upf_terminate();
     ogs_info("UPF terminate...done");
 }

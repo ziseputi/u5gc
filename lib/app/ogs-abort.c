@@ -25,8 +25,7 @@
 
 #include "ogs-core.h"
 
-OGS_GNUC_NORETURN void ogs_abort(void)
-{
+OGS_GNUC_NORETURN void ogs_abort(void) {
 #if HAVE_BACKTRACE
     int nptrs;
     void *buffer[100];

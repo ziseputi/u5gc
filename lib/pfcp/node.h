@@ -39,36 +39,36 @@ extern "C" {
  * This structure represents the commonalities of PFCP CP node such as SMF/UPF.
  * Some of members may not be used by the specific type of node */
 typedef struct ogs_pfcp_cp_node_s {
-    ogs_lnode_t     lnode;          /* A node of list_t */
+    ogs_lnode_t lnode;          /* A node of list_t */
 
-    ogs_sockaddr_t  *sa_list;       /* Socket Address List Candidate */
+    ogs_sockaddr_t *sa_list;       /* Socket Address List Candidate */
 
-    ogs_sock_t      *sock;          /* Socket Instance */
-    ogs_sockaddr_t  addr;           /* Remote Address */
+    ogs_sock_t *sock;          /* Socket Instance */
+    ogs_sockaddr_t addr;           /* Remote Address */
 
-    ogs_ip_t        ip;             /* F-SEID IP address Duplicate Check */
+    ogs_ip_t ip;             /* F-SEID IP address Duplicate Check */
 
-    ogs_list_t      local_list;    
-    ogs_list_t      remote_list;   
+    ogs_list_t local_list;
+    ogs_list_t remote_list;
 
-    ogs_fsm_t       sm;             /* A state machine */
-    ogs_timer_t     *t_association; /* timer to retry to associate peer node */
-    ogs_timer_t     *t_heartbeat;   /* heartbeat timer to check UPF aliveness */
+    ogs_fsm_t sm;             /* A state machine */
+    ogs_timer_t *t_association; /* timer to retry to associate peer node */
+    ogs_timer_t *t_heartbeat;   /* heartbeat timer to check UPF aliveness */
 
-    uint16_t        tac[OGS_MAX_NUM_OF_TAI];
-    uint8_t         num_of_tac;
+    uint16_t tac[OGS_MAX_NUM_OF_TAI];
+    uint8_t num_of_tac;
 
-    ogs_list_t      up_list;        /* User Plane IP Resource Information */
+    ogs_list_t up_list;        /* User Plane IP Resource Information */
 } ogs_pfcp_cp_node_t;
 
 /**
  * This structure represents the User Plane IP Resource Information.
  */
 typedef struct ogs_pfcp_up_node_s {
-    ogs_lnode_t     lnode;      /* A node of list_t */
+    ogs_lnode_t lnode;      /* A node of list_t */
 
-    ogs_sockaddr_t  *addr;      /* addr or addr6 is needed */
-    ogs_sockaddr_t  *addr6;
+    ogs_sockaddr_t *addr;      /* addr or addr6 is needed */
+    ogs_sockaddr_t *addr6;
 
     struct {
         uint8_t num_of_bits;    /* Not available if num_of_bits == 0 */
@@ -80,26 +80,34 @@ typedef struct ogs_pfcp_up_node_s {
 } ogs_pfcp_up_node_t;
 
 int ogs_pfcp_node_init(int cp_size, int up_size);
+
 int ogs_pfcp_node_final(void);
 
 ogs_pfcp_cp_node_t *ogs_pfcp_cp_node_new(ogs_sockaddr_t *sa_list);
+
 void ogs_pfcp_cp_node_free(ogs_pfcp_cp_node_t *node);
 
 ogs_pfcp_cp_node_t *ogs_pfcp_cp_node_add(
         ogs_list_t *list, ogs_sockaddr_t *addr);
+
 ogs_pfcp_cp_node_t *ogs_pfcp_cp_node_find(
         ogs_list_t *list, ogs_sockaddr_t *addr);
+
 void ogs_pfcp_cp_node_remove(ogs_list_t *list, ogs_pfcp_cp_node_t *node);
+
 void ogs_pfcp_cp_node_remove_all(ogs_list_t *list);
 
 ogs_pfcp_up_node_t *ogs_pfcp_up_node_new(
         ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6);
+
 void ogs_pfcp_up_node_free(ogs_pfcp_up_node_t *node);
 
 ogs_pfcp_up_node_t *ogs_pfcp_up_node_add(
         ogs_list_t *list, ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6);
+
 void ogs_pfcp_up_node_remove(
         ogs_list_t *list, ogs_pfcp_up_node_t *node);
+
 void ogs_pfcp_up_node_remove_all(ogs_list_t *list);
 
 #ifdef __cplusplus

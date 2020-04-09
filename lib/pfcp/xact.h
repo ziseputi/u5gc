@@ -32,55 +32,60 @@ extern "C" {
  * Transaction context
  */
 typedef struct ogs_pfcp_xact_s {
-    ogs_lnode_t     lnode;          /**< A node of list */
-    ogs_index_t     index;
-    
+    ogs_lnode_t lnode;          /**< A node of list */
+    ogs_index_t index;
+
 #define OGS_PFCP_LOCAL_ORIGINATOR  0
 #define OGS_PFCP_REMOTE_ORIGINATOR 1
-    uint8_t         org;            /**< Transaction' originator. 
+    uint8_t org;            /**< Transaction' originator.
                                          local or remote */
 
-    uint32_t        xid;            /**< Transaction ID */
+    uint32_t xid;            /**< Transaction ID */
     ogs_pfcp_cp_node_t *node;       /**< Relevant PFCP node context */
 
     void (*cb)(ogs_pfcp_xact_t *, void *); /**< Local timer expiration handler */
-    void            *data;          /**< Transaction Data */
+    void *data;          /**< Transaction Data */
 
-    int             step;           /**< Current step in the sequence.
+    int step;           /**< Current step in the sequence.
                                          1 : Initial 
                                          2 : Triggered 
                                          3 : Triggered-Reply */
     struct {
-        uint8_t     type;           /**< Message type history */
+        uint8_t type;           /**< Message type history */
         ogs_pkbuf_t *pkbuf;         /**< Packet history */
     } seq[3];                       /**< history for the each step */
 
-    ogs_timer_t     *tm_response;   /**< Timer waiting for next message */
-    uint8_t         response_rcount;
-    ogs_timer_t     *tm_holding;    /**< Timer waiting for holding message */
-    uint8_t         holding_rcount;
+    ogs_timer_t *tm_response;   /**< Timer waiting for next message */
+    uint8_t response_rcount;
+    ogs_timer_t *tm_holding;    /**< Timer waiting for holding message */
+    uint8_t holding_rcount;
 } ogs_pfcp_xact_t;
 
 int ogs_pfcp_xact_init(ogs_timer_mgr_t *timer_mgr, int size);
+
 int ogs_pfcp_xact_final(void);
 
 ogs_pfcp_xact_t *ogs_pfcp_xact_local_create(ogs_pfcp_cp_node_t *node,
-        ogs_pfcp_header_t *hdesc, ogs_pkbuf_t *pkbuf,
-        void (*cb)(ogs_pfcp_xact_t *xact, void *data), void *data);
+                                            ogs_pfcp_header_t *hdesc, ogs_pkbuf_t *pkbuf,
+                                            void (*cb)(ogs_pfcp_xact_t *xact, void *data), void *data);
+
 ogs_pfcp_xact_t *ogs_pfcp_xact_remote_create(
         ogs_pfcp_cp_node_t *node, uint32_t sqn);
+
 void ogs_pfcp_xact_delete_all(ogs_pfcp_cp_node_t *node);
 
 int ogs_pfcp_xact_update_tx(ogs_pfcp_xact_t *xact,
-        ogs_pfcp_header_t *hdesc, ogs_pkbuf_t *pkbuf);
+                            ogs_pfcp_header_t *hdesc, ogs_pkbuf_t *pkbuf);
+
 int ogs_pfcp_xact_update_rx(ogs_pfcp_xact_t *xact, uint8_t type);
 
 int ogs_pfcp_xact_commit(ogs_pfcp_xact_t *xact);
 
 int ogs_pfcp_xact_receive(ogs_pfcp_cp_node_t *node,
-        ogs_pfcp_header_t *h, ogs_pfcp_xact_t **xact);
+                          ogs_pfcp_header_t *h, ogs_pfcp_xact_t **xact);
 
 ogs_pfcp_xact_t *ogs_pfcp_xact_find(ogs_index_t index);
+
 ogs_pfcp_xact_t *ogs_pfcp_xact_find_by_xid(
         ogs_pfcp_cp_node_t *node, uint8_t type, uint32_t xid);
 

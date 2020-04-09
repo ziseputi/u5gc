@@ -42,8 +42,7 @@ typedef struct ogs_list_s ogs_lnode_t;;
     (list)->next = (NULL); \
 } while (0)
 
-static ogs_inline void ogs_list_add(ogs_list_t *list, void *lnode)
-{
+static ogs_inline void ogs_list_add(ogs_list_t *list, void *lnode) {
     ogs_list_t *node = lnode;
     ogs_list_t *head = list;
     ogs_list_t *tail = list->prev;
@@ -57,8 +56,7 @@ static ogs_inline void ogs_list_add(ogs_list_t *list, void *lnode)
     head->prev = node;
 }
 
-static ogs_inline void ogs_list_remove(ogs_list_t *list, void *lnode)
-{
+static ogs_inline void ogs_list_remove(ogs_list_t *list, void *lnode) {
     ogs_list_t *node = lnode;
     ogs_list_t *prev = node->prev;
     ogs_list_t *next = node->next;;
@@ -74,13 +72,11 @@ static ogs_inline void ogs_list_remove(ogs_list_t *list, void *lnode)
         list->prev = prev;
 }
 
-static ogs_inline void *ogs_list_first(const ogs_list_t *list)
-{
+static ogs_inline void *ogs_list_first(const ogs_list_t *list) {
     return list->next;
 }
 
-static ogs_inline void *ogs_list_next(void *lnode)
-{
+static ogs_inline void *ogs_list_next(void *lnode) {
     ogs_list_t *node = lnode;
     return node->next;
 }
@@ -94,17 +90,14 @@ static ogs_inline void *ogs_list_next(void *lnode)
         (node) && (n = ogs_list_next(node), 1); \
         node = n)
 
-static ogs_inline bool ogs_list_empty(const ogs_list_t *list)
-{
+static ogs_inline bool ogs_list_empty(const ogs_list_t *list) {
     return list->next == NULL;
 }
 
-static ogs_inline int ogs_list_count(const ogs_list_t *list)
-{
+static ogs_inline int ogs_list_count(const ogs_list_t *list) {
     ogs_list_t *node;
     int i = 0;
-    ogs_list_for_each(list, node)
-        i++;
+    ogs_list_for_each(list, node)i++;
     return i;
 }
 

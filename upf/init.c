@@ -24,12 +24,12 @@
 #include "upf-sm.h"
 
 static ogs_thread_t *thread;
+
 static void upf_main(void *data);
 
 static int initialized = 0;
 
-int upf_initialize()
-{
+int upf_initialize() {
     int rv;
 
     ogs_pfcp_context_init();
@@ -60,8 +60,7 @@ int upf_initialize()
     return OGS_OK;
 }
 
-void upf_terminate(void)
-{
+void upf_terminate(void) {
     if (!initialized) return;
 
     upf_event_term();
@@ -76,26 +75,25 @@ void upf_terminate(void)
     upf_event_final();
 }
 
-static void upf_main(void *data)
-{
+static void upf_main(void *data) {
     ogs_fsm_t upf_sm;
     int rv;
 
     ogs_fsm_create(&upf_sm, upf_state_initial, upf_state_final);
     ogs_fsm_init(&upf_sm, 0);
 
-    for ( ;; ) {
+    for (;;) {
         ogs_pollset_poll(upf_self()->pollset,
-                ogs_timer_mgr_next(upf_self()->timer_mgr));
+                         ogs_timer_mgr_next(upf_self()->timer_mgr));
 
         /* Process the MESSAGE FIRST.
          *
          * For example, if UE Context Release Complete is received,
          * the MME_TIMER_UE_CONTEXT_RELEASE is first stopped */
-        for ( ;; ) {
+        for (;;) {
             upf_event_t *e = NULL;
 
-            rv = ogs_queue_trypop(upf_self()->queue, (void**)&e);
+            rv = ogs_queue_trypop(upf_self()->queue, (void **) &e);
             ogs_assert(rv != OGS_ERROR);
 
             if (rv == OGS_DONE)
@@ -112,10 +110,10 @@ static void upf_main(void *data)
         ogs_timer_mgr_expire(upf_self()->timer_mgr);
 
         /* AND THEN, process the TIMER. */
-        for ( ;; ) {
+        for (;;) {
             upf_event_t *e = NULL;
 
-            rv = ogs_queue_trypop(upf_self()->queue, (void**)&e);
+            rv = ogs_queue_trypop(upf_self()->queue, (void **) &e);
             ogs_assert(rv != OGS_ERROR);
 
             if (rv == OGS_DONE)
@@ -129,7 +127,7 @@ static void upf_main(void *data)
             upf_event_free(e);
         }
     }
-done:
+    done:
 
     ogs_fsm_fini(&upf_sm, 0);
     ogs_fsm_delete(&upf_sm);

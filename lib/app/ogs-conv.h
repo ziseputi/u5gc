@@ -29,11 +29,17 @@ extern "C" {
 #endif
 
 #define OGS_HEX(I, I_LEN, O) ogs_ascii_to_hex((char*)I, I_LEN, O, sizeof(O))
+
 void *ogs_ascii_to_hex(char *in, int in_len, void *out, int out_len);
+
 void *ogs_hex_to_ascii(void *in, int in_len, void *out, int out_len);
+
 void *ogs_uint64_to_buffer(uint64_t num, int size, void *buffer);
+
 uint64_t ogs_buffer_to_uint64(void *buffer, int size);
+
 void *ogs_bcd_to_buffer(const char *in, void *out, int *out_len);
+
 void *ogs_buffer_to_bcd(uint8_t *in, int in_len, void *out);
 
 #ifdef __cplusplus

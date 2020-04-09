@@ -56,12 +56,15 @@ ogs_sigfunc_t *ogs_signal(int signo, ogs_sigfunc_t *func);
 
 
 void ogs_signal_init(void);
+
 const char *ogs_signal_description_get(int signum);
 
 int ogs_setup_signal_thread(void);
+
 int ogs_signal_thread(int(*signal_handler)(int signum));
 
 int ogs_signal_block(int signum);
+
 int ogs_signal_unblock(int signum);
 
 #ifdef __cplusplus

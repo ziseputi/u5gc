@@ -54,7 +54,9 @@ typedef struct _ogs_fsm_t {
     ((__s)->init = (__s)->state = (__s)->fini = NULL)
 
 void ogs_fsm_init(void *sm, void *event);
+
 void ogs_fsm_dispatch(void *sm, void *event);
+
 void ogs_fsm_fini(void *sm, void *event);
 
 #define OGS_FSM_TRAN(__s, __target) \

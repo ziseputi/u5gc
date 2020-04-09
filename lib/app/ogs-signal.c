@@ -117,8 +117,7 @@ static const char *signal_description[OGS_NUMSIG];
         } \
     } while (0)
 
-void ogs_signal_init(void)
-{
+void ogs_signal_init(void) {
     int sig;
 
     store_desc(0, "Signal 0");
@@ -231,11 +230,10 @@ void ogs_signal_init(void)
             signal_description[sig] = "unknown signal (number)";
 }
 
-const char *ogs_signal_description_get(int signum)
-{
+const char *ogs_signal_description_get(int signum) {
     return (signum >= 0 && signum < OGS_NUMSIG)
-        ? signal_description[signum]
-        : "unknown signal (number)";
+           ? signal_description[signum]
+           : "unknown signal (number)";
 }
 
 #endif /* HAVE_DECL_SYS_SIGLIST */
@@ -354,7 +352,7 @@ int ogs_signal_thread(int(*signal_handler)(int signum))
             return OGS_OK;
         }
 #elif HAVE_SIGSUSPEND
-	sigsuspend(&sig_mask);
+    sigsuspend(&sig_mask);
 #else
 #error No sigwait() and no sigsuspend()
 #endif
@@ -397,8 +395,7 @@ int ogs_setup_signal_thread(void)
 
 #endif
 
-int ogs_signal_block(int signum)
-{
+int ogs_signal_block(int signum) {
 #if HAVE_SIGACTION
     sigset_t sig_mask;
     int rv;
@@ -425,8 +422,7 @@ int ogs_signal_block(int signum)
 #endif
 }
 
-int ogs_signal_unblock(int signum)
-{
+int ogs_signal_unblock(int signum) {
 #if HAVE_SIGACTION
     sigset_t sig_mask;
     int rv;

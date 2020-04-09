@@ -25,8 +25,7 @@
 #include "pfcp-path.h"
 #include "n4-build.h"
 
-static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data)
-{
+static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data) {
     int rv;
 
     ssize_t size;
@@ -44,14 +43,14 @@ static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data)
     size = ogs_recvfrom(fd, pkbuf->data, pkbuf->len, 0, &from);
     if (size <= 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "ogs_recvfrom() failed");
+                        "ogs_recvfrom() failed");
         ogs_pkbuf_free(pkbuf);
         return;
     }
 
     ogs_pkbuf_trim(pkbuf, size);
 
-    h = (ogs_pfcp_header_t *)pkbuf->data;
+    h = (ogs_pfcp_header_t *) pkbuf->data;
     if (h->version > OGS_PFCP_VERSION) {
         ogs_pfcp_header_t rsp;
 
@@ -81,14 +80,13 @@ static void pfcp_recv_cb(short when, ogs_socket_t fd, void *data)
 
     rv = ogs_queue_push(upf_self()->queue, e);
     if (rv != OGS_OK) {
-        ogs_error("ogs_queue_push() failed:%d", (int)rv);
+        ogs_error("ogs_queue_push() failed:%d", (int) rv);
         ogs_pkbuf_free(e->pkbuf);
         upf_event_free(e);
     }
 }
 
-int upf_pfcp_open(void)
-{
+int upf_pfcp_open(void) {
     ogs_socknode_t *node = NULL;
     ogs_sock_t *sock = NULL;
 
@@ -96,25 +94,25 @@ int upf_pfcp_open(void)
     ogs_list_for_each(&ogs_pfcp_self()->pfcp_list, node) {
         sock = ogs_pfcp_server(node);
         ogs_assert(sock);
-        
+
         node->poll = ogs_pollset_add(upf_self()->pollset,
-                OGS_POLLIN, sock->fd, pfcp_recv_cb, sock);
+                                     OGS_POLLIN, sock->fd, pfcp_recv_cb, sock);
     }
     ogs_list_for_each(&ogs_pfcp_self()->pfcp_list6, node) {
         sock = ogs_pfcp_server(node);
         ogs_assert(sock);
 
         node->poll = ogs_pollset_add(upf_self()->pollset,
-                OGS_POLLIN, sock->fd, pfcp_recv_cb, sock);
+                                     OGS_POLLIN, sock->fd, pfcp_recv_cb, sock);
     }
 
     ogs_pfcp_self()->pfcp_sock =
-        ogs_socknode_sock_first(&ogs_pfcp_self()->pfcp_list);
+            ogs_socknode_sock_first(&ogs_pfcp_self()->pfcp_list);
     if (ogs_pfcp_self()->pfcp_sock)
         ogs_pfcp_self()->pfcp_addr = &ogs_pfcp_self()->pfcp_sock->local_addr;
 
     ogs_pfcp_self()->pfcp_sock6 =
-        ogs_socknode_sock_first(&ogs_pfcp_self()->pfcp_list6);
+            ogs_socknode_sock_first(&ogs_pfcp_self()->pfcp_list6);
     if (ogs_pfcp_self()->pfcp_sock6)
         ogs_pfcp_self()->pfcp_addr6 = &ogs_pfcp_self()->pfcp_sock6->local_addr;
 
@@ -123,14 +121,12 @@ int upf_pfcp_open(void)
     return OGS_OK;
 }
 
-void upf_pfcp_close(void)
-{
+void upf_pfcp_close(void) {
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list);
     ogs_socknode_remove_all(&ogs_pfcp_self()->pfcp_list6);
 }
 
-static void timeout(ogs_pfcp_xact_t *xact, void *data)
-{
+static void timeout(ogs_pfcp_xact_t *xact, void *data) {
     int rv;
 
     upf_event_t *e = NULL;
@@ -140,25 +136,24 @@ static void timeout(ogs_pfcp_xact_t *xact, void *data)
     type = xact->seq[0].type;
 
     switch (type) {
-    case OGS_PFCP_HEARTBEAT_REQUEST_TYPE:
-        ogs_assert(data);
+        case OGS_PFCP_HEARTBEAT_REQUEST_TYPE:
+            ogs_assert(data);
 
-        e = upf_event_new(UPF_EVT_N4_NO_HEARTBEAT);
-        e->cp_node = data;
+            e = upf_event_new(UPF_EVT_N4_NO_HEARTBEAT);
+            e->cp_node = data;
 
-        rv = ogs_queue_push(upf_self()->queue, e);
-        if (rv != OGS_OK) {
-            ogs_warn("ogs_queue_push() failed:%d", (int)rv);
-            upf_event_free(e);
-        }
-        break;
-    default:
-        break;
+            rv = ogs_queue_push(upf_self()->queue, e);
+            if (rv != OGS_OK) {
+                ogs_warn("ogs_queue_push() failed:%d", (int) rv);
+                upf_event_free(e);
+            }
+            break;
+        default:
+            break;
     }
 }
 
-void upf_pfcp_send_association_setup_request(ogs_pfcp_cp_node_t *node)
-{
+void upf_pfcp_send_association_setup_request(ogs_pfcp_cp_node_t *node) {
     int rv;
     ogs_pkbuf_t *n4buf = NULL;
     ogs_pfcp_header_t h;
@@ -181,8 +176,7 @@ void upf_pfcp_send_association_setup_request(ogs_pfcp_cp_node_t *node)
 }
 
 void upf_pfcp_send_association_setup_response(ogs_pfcp_xact_t *xact,
-        uint8_t cause)
-{
+                                              uint8_t cause) {
     int rv;
     ogs_pkbuf_t *n4buf = NULL;
     ogs_pfcp_header_t h;
@@ -203,8 +197,7 @@ void upf_pfcp_send_association_setup_response(ogs_pfcp_xact_t *xact,
     ogs_expect(rv == OGS_OK);
 }
 
-void upf_pfcp_send_heartbeat_request(ogs_pfcp_cp_node_t *node)
-{
+void upf_pfcp_send_heartbeat_request(ogs_pfcp_cp_node_t *node) {
     int rv;
     ogs_pkbuf_t *n4buf = NULL;
     ogs_pfcp_header_t h;

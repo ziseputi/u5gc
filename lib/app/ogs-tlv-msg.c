@@ -19,135 +19,126 @@
 
 #include "ogs-core.h"
 
-ogs_tlv_desc_t ogs_tlv_desc_more1 = { 
-    OGS_TLV_MORE, "More", 0, 1, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more2 = { 
-    OGS_TLV_MORE, "More", 0, 2, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more3 = { 
-    OGS_TLV_MORE, "More", 0, 3, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more4 = { 
-    OGS_TLV_MORE, "More", 0, 4, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more5 = { 
-    OGS_TLV_MORE, "More", 0, 5, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more6 = { 
-    OGS_TLV_MORE, "More", 0, 6, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more7 = { 
-    OGS_TLV_MORE, "More", 0, 7, 0, 0, { NULL } };
-ogs_tlv_desc_t ogs_tlv_desc_more8 = { 
-    OGS_TLV_MORE, "More", 0, 8, 0, 0, { NULL } };
+ogs_tlv_desc_t ogs_tlv_desc_more1 = {
+        OGS_TLV_MORE, "More", 0, 1, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more2 = {
+        OGS_TLV_MORE, "More", 0, 2, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more3 = {
+        OGS_TLV_MORE, "More", 0, 3, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more4 = {
+        OGS_TLV_MORE, "More", 0, 4, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more5 = {
+        OGS_TLV_MORE, "More", 0, 5, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more6 = {
+        OGS_TLV_MORE, "More", 0, 6, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more7 = {
+        OGS_TLV_MORE, "More", 0, 7, 0, 0, {NULL}};
+ogs_tlv_desc_t ogs_tlv_desc_more8 = {
+        OGS_TLV_MORE, "More", 0, 8, 0, 0, {NULL}};
 
 static ogs_tlv_t *tlv_add_leaf(
-        ogs_tlv_t *parent_tlv, ogs_tlv_t *tlv, ogs_tlv_desc_t *desc, void *msg)
-{
+        ogs_tlv_t *parent_tlv, ogs_tlv_t *tlv, ogs_tlv_desc_t *desc, void *msg) {
     switch (desc->ctype) {
-    case OGS_TLV_UINT8:
-    case OGS_TLV_INT8:
-    {
-        ogs_tlv_uint8_t *v = (ogs_tlv_uint8_t *)msg;
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, 1, desc->instance, &v->u8);
-        else
-            tlv = ogs_tlv_add(tlv, desc->type, 1, desc->instance, &v->u8);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_UINT16:
-    {
-        ogs_tlv_uint16_t *v = (ogs_tlv_uint16_t *)msg;
+        case OGS_TLV_UINT8:
+        case OGS_TLV_INT8: {
+            ogs_tlv_uint8_t *v = (ogs_tlv_uint8_t *) msg;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, 1, desc->instance, &v->u8);
+            else
+                tlv = ogs_tlv_add(tlv, desc->type, 1, desc->instance, &v->u8);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_UINT16: {
+            ogs_tlv_uint16_t *v = (ogs_tlv_uint16_t *) msg;
 
-        v->u16 = htobe16(v->u16);
+            v->u16 = htobe16(v->u16);
 
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, 2, desc->instance, &v->u16);
-        else
-            tlv = ogs_tlv_add(tlv, desc->type, 2, desc->instance, &v->u16);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_UINT24:
-    case OGS_TLV_INT24:
-    {
-        ogs_tlv_uint24_t *v = (ogs_tlv_uint24_t *)msg;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, 2, desc->instance, &v->u16);
+            else
+                tlv = ogs_tlv_add(tlv, desc->type, 2, desc->instance, &v->u16);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_UINT24:
+        case OGS_TLV_INT24: {
+            ogs_tlv_uint24_t *v = (ogs_tlv_uint24_t *) msg;
 
-        v->u24 = v->u24 << 8;
-        v->u24 = htobe32(v->u24);
+            v->u24 = v->u24 << 8;
+            v->u24 = htobe32(v->u24);
 
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, 3, desc->instance, &v->u24);
-        else
-            tlv = ogs_tlv_add(tlv, desc->type, 3, desc->instance, &v->u24);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_UINT32:
-    case OGS_TLV_INT32:
-    {
-        ogs_tlv_uint32_t *v = (ogs_tlv_uint32_t *)msg;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, 3, desc->instance, &v->u24);
+            else
+                tlv = ogs_tlv_add(tlv, desc->type, 3, desc->instance, &v->u24);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_UINT32:
+        case OGS_TLV_INT32: {
+            ogs_tlv_uint32_t *v = (ogs_tlv_uint32_t *) msg;
 
-        v->u32 = htobe32(v->u32);
+            v->u32 = htobe32(v->u32);
 
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv,
-                    desc->type, 4, desc->instance, &v->u32);
-        else
-            tlv = ogs_tlv_add(tlv,
-                    desc->type, 4, desc->instance, &v->u32);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_FIXED_STR:
-    {
-        ogs_tlv_octet_t *v = (ogs_tlv_octet_t *)msg;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, 4, desc->instance, &v->u32);
+            else
+                tlv = ogs_tlv_add(tlv,
+                                  desc->type, 4, desc->instance, &v->u32);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_FIXED_STR: {
+            ogs_tlv_octet_t *v = (ogs_tlv_octet_t *) msg;
 
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, desc->length, desc->instance, v->data);
-        else
-            tlv = ogs_tlv_add(tlv, 
-                    desc->type, desc->length, desc->instance, v->data);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_VAR_STR:
-    {
-        ogs_tlv_octet_t *v = (ogs_tlv_octet_t *)msg;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, desc->length, desc->instance, v->data);
+            else
+                tlv = ogs_tlv_add(tlv,
+                                  desc->type, desc->length, desc->instance, v->data);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_VAR_STR: {
+            ogs_tlv_octet_t *v = (ogs_tlv_octet_t *) msg;
 
-        ogs_assert(v->len > 0);
+            ogs_assert(v->len > 0);
 
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, v->len, desc->instance, v->data);
-        else
-            tlv = ogs_tlv_add(tlv, 
-                    desc->type, v->len, desc->instance, v->data);
-        ogs_assert(tlv);
-        break;
-    }
-    case OGS_TLV_NULL:
-    {
-        if (parent_tlv)
-            tlv = ogs_tlv_embed(parent_tlv, 
-                    desc->type, 0, desc->instance, NULL);
-        else
-            tlv = ogs_tlv_add(tlv, 
-                    desc->type, 0, desc->instance, NULL);
-        ogs_assert(tlv);
-        break;
-    }
-    default:
-        ogs_assert_if_reached();
-        break;
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, v->len, desc->instance, v->data);
+            else
+                tlv = ogs_tlv_add(tlv,
+                                  desc->type, v->len, desc->instance, v->data);
+            ogs_assert(tlv);
+            break;
+        }
+        case OGS_TLV_NULL: {
+            if (parent_tlv)
+                tlv = ogs_tlv_embed(parent_tlv,
+                                    desc->type, 0, desc->instance, NULL);
+            else
+                tlv = ogs_tlv_add(tlv,
+                                  desc->type, 0, desc->instance, NULL);
+            ogs_assert(tlv);
+            break;
+        }
+        default:
+            ogs_assert_if_reached();
+            break;
     }
 
     return tlv;
 }
 
 static uint32_t tlv_add_compound(ogs_tlv_t **root, ogs_tlv_t *parent_tlv,
-        ogs_tlv_desc_t *parent_desc, void *msg, int depth)
-{
+                                 ogs_tlv_desc_t *parent_desc, void *msg, int depth) {
     ogs_tlv_presence_t *presence_p;
     ogs_tlv_desc_t *desc = NULL, *next_desc = NULL;
     ogs_tlv_t *tlv = NULL, *emb_tlv = NULL;
@@ -161,43 +152,43 @@ static uint32_t tlv_add_compound(ogs_tlv_t **root, ogs_tlv_t *parent_tlv,
     ogs_assert(msg);
 
     ogs_assert(depth <= 8);
-    indent[depth*2] = 0;
+    indent[depth * 2] = 0;
 
     *root = NULL;
 
     for (i = 0, desc = parent_desc->child_descs[i]; desc != NULL;
-            i++, desc = parent_desc->child_descs[i]) {
-        next_desc = parent_desc->child_descs[i+1];
+         i++, desc = parent_desc->child_descs[i]) {
+        next_desc = parent_desc->child_descs[i + 1];
         if (next_desc != NULL && next_desc->ctype == OGS_TLV_MORE) {
             int offset2 = offset;
             for (j = 0; j < next_desc->length; j++) {
-                presence_p = (ogs_tlv_presence_t *)(p + offset2);
+                presence_p = (ogs_tlv_presence_t *) (p + offset2);
 
                 if (*presence_p == 0)
                     break;
 
                 if (desc->ctype == OGS_TLV_COMPOUND) {
                     ogs_trace("BUILD %sC#%d [%s] T:%d I:%d (vsz=%d) off:%p ",
-                            indent, i, desc->name, desc->type, desc->instance, 
-                            desc->vsize, p + offset2);
+                              indent, i, desc->name, desc->type, desc->instance,
+                              desc->vsize, p + offset2);
 
                     if (parent_tlv)
-                        tlv = ogs_tlv_embed(parent_tlv, 
-                                desc->type, 0, desc->instance, NULL);
+                        tlv = ogs_tlv_embed(parent_tlv,
+                                            desc->type, 0, desc->instance, NULL);
                     else
                         tlv = ogs_tlv_add(tlv, desc->type, 0, desc->instance, NULL);
 
                     r = tlv_add_compound(&emb_tlv, tlv, desc,
-                            p + offset2 + sizeof(ogs_tlv_presence_t),
-                            depth + 1);
+                                         p + offset2 + sizeof(ogs_tlv_presence_t),
+                                         depth + 1);
                     ogs_assert(r > 0 && emb_tlv);
                     count += 1 + r;
                 } else {
                     ogs_trace("BUILD %sL#%d [%s] T:%d L:%d I:%d "
-                            "(cls:%d vsz:%d) off:%p ",
-                            indent, i, desc->name, desc->type, desc->length, 
-                            desc->instance, desc->ctype, desc->vsize, 
-                            p + offset2);
+                              "(cls:%d vsz:%d) off:%p ",
+                              indent, i, desc->name, desc->type, desc->length,
+                              desc->instance, desc->ctype, desc->vsize,
+                              p + offset2);
 
                     tlv = tlv_add_leaf(parent_tlv, tlv, desc, p + offset2);
                     ogs_assert(tlv);
@@ -212,31 +203,31 @@ static uint32_t tlv_add_compound(ogs_tlv_t **root, ogs_tlv_t *parent_tlv,
             offset += desc->vsize * next_desc->length;
             i++;
         } else {
-            presence_p = (ogs_tlv_presence_t *)(p + offset);
+            presence_p = (ogs_tlv_presence_t *) (p + offset);
 
             if (*presence_p) {
                 if (desc->ctype == OGS_TLV_COMPOUND) {
                     ogs_trace("BUILD %sC#%d [%s] T:%d I:%d (vsz=%d) off:%p ",
-                            indent, i, desc->name, desc->type, desc->instance, 
-                            desc->vsize, p + offset);
+                              indent, i, desc->name, desc->type, desc->instance,
+                              desc->vsize, p + offset);
 
                     if (parent_tlv)
-                        tlv = ogs_tlv_embed(parent_tlv, 
-                                desc->type, 0, desc->instance, NULL);
+                        tlv = ogs_tlv_embed(parent_tlv,
+                                            desc->type, 0, desc->instance, NULL);
                     else
                         tlv = ogs_tlv_add(tlv, desc->type, 0, desc->instance, NULL);
 
                     r = tlv_add_compound(&emb_tlv, tlv, desc,
-                            p + offset + sizeof(ogs_tlv_presence_t),
-                            depth + 1);
+                                         p + offset + sizeof(ogs_tlv_presence_t),
+                                         depth + 1);
                     ogs_assert(r > 0 && emb_tlv);
                     count += 1 + r;
                 } else {
                     ogs_trace("BUILD %sL#%d [%s] T:%d L:%d I:%d "
-                            "(cls:%d vsz:%d) off:%p ",
-                            indent, i, desc->name, desc->type, desc->length, 
-                            desc->instance, desc->ctype, desc->vsize, 
-                            p + offset);
+                              "(cls:%d vsz:%d) off:%p ",
+                              indent, i, desc->name, desc->type, desc->length,
+                              desc->instance, desc->ctype, desc->vsize,
+                              p + offset);
 
                     tlv = tlv_add_leaf(parent_tlv, tlv, desc, p + offset);
                     ogs_assert(tlv);
@@ -253,8 +244,7 @@ static uint32_t tlv_add_compound(ogs_tlv_t **root, ogs_tlv_t *parent_tlv,
     return count;
 }
 
-ogs_pkbuf_t *ogs_tlv_build_msg(ogs_tlv_desc_t *desc, void *msg, int mode)
-{
+ogs_pkbuf_t *ogs_tlv_build_msg(ogs_tlv_desc_t *desc, void *msg, int mode) {
     ogs_tlv_t *root = NULL;
     uint32_t r, length, rendlen;
     ogs_pkbuf_t *pkbuf = NULL;
@@ -264,12 +254,12 @@ ogs_pkbuf_t *ogs_tlv_build_msg(ogs_tlv_desc_t *desc, void *msg, int mode)
 
     ogs_assert(desc->ctype == OGS_TLV_MESSAGE);
     ogs_assert(desc->child_descs[0]);
-    
+
     r = tlv_add_compound(&root, NULL, desc, msg, 0);
     ogs_assert(r > 0 && root);
 
     length = ogs_tlv_calc_length(root, mode);
-    pkbuf = ogs_pkbuf_alloc(NULL, OGS_TLV_MAX_HEADROOM+length);
+    pkbuf = ogs_pkbuf_alloc(NULL, OGS_TLV_MAX_HEADROOM + length);
     ogs_assert(pkbuf);
     ogs_pkbuf_reserve(pkbuf, OGS_TLV_MAX_HEADROOM);
     ogs_pkbuf_put(pkbuf, length);
@@ -282,9 +272,8 @@ ogs_pkbuf_t *ogs_tlv_build_msg(ogs_tlv_desc_t *desc, void *msg, int mode)
     return pkbuf;
 }
 
-static ogs_tlv_desc_t* tlv_find_desc(uint8_t *desc_index,
-        uint32_t *tlv_offset, ogs_tlv_desc_t *parent_desc, ogs_tlv_t *tlv)
-{
+static ogs_tlv_desc_t *tlv_find_desc(uint8_t *desc_index,
+                                     uint32_t *tlv_offset, ogs_tlv_desc_t *parent_desc, ogs_tlv_t *tlv) {
     ogs_tlv_desc_t *prev_desc = NULL, *desc = NULL;
     int i, offset = 0;
 
@@ -292,7 +281,7 @@ static ogs_tlv_desc_t* tlv_find_desc(uint8_t *desc_index,
     ogs_assert(tlv);
 
     for (i = 0, desc = parent_desc->child_descs[i]; desc != NULL;
-            i++, desc = parent_desc->child_descs[i]) {
+         i++, desc = parent_desc->child_descs[i]) {
         if (desc->type == tlv->type && desc->instance == tlv->instance) {
             *desc_index = i;
             *tlv_offset = offset;
@@ -312,115 +301,101 @@ static ogs_tlv_desc_t* tlv_find_desc(uint8_t *desc_index,
     return desc;
 }
 
-static int tlv_parse_leaf(void *msg, ogs_tlv_desc_t *desc, ogs_tlv_t *tlv)
-{
+static int tlv_parse_leaf(void *msg, ogs_tlv_desc_t *desc, ogs_tlv_t *tlv) {
     ogs_assert(msg);
     ogs_assert(desc);
     ogs_assert(tlv);
 
     switch (desc->ctype) {
-    case OGS_TLV_UINT8:
-    case OGS_TLV_INT8:
-    {
-        ogs_tlv_uint8_t *v = (ogs_tlv_uint8_t *)msg;
+        case OGS_TLV_UINT8:
+        case OGS_TLV_INT8: {
+            ogs_tlv_uint8_t *v = (ogs_tlv_uint8_t *) msg;
 
-        if (tlv->length != 1)
-        {
-            ogs_error("Invalid TLV length %d. It should be 1", tlv->length);
-            return OGS_ERROR;
+            if (tlv->length != 1) {
+                ogs_error("Invalid TLV length %d. It should be 1", tlv->length);
+                return OGS_ERROR;
+            }
+            v->u8 = *(uint8_t *) (tlv->value);
+            break;
         }
-        v->u8 = *(uint8_t*)(tlv->value);
-        break;
-    }
-    case OGS_TLV_UINT16:
-    case OGS_TLV_INT16:
-    {
-        ogs_tlv_uint16_t *v = (ogs_tlv_uint16_t *)msg;
+        case OGS_TLV_UINT16:
+        case OGS_TLV_INT16: {
+            ogs_tlv_uint16_t *v = (ogs_tlv_uint16_t *) msg;
 
-        if (tlv->length != 2)
-        {
-            ogs_error("Invalid TLV length %d. It should be 2", tlv->length);
-            return OGS_ERROR;
+            if (tlv->length != 2) {
+                ogs_error("Invalid TLV length %d. It should be 2", tlv->length);
+                return OGS_ERROR;
+            }
+            v->u16 = ((((uint8_t *) tlv->value)[0] << 8) & 0xff00) |
+                     ((((uint8_t *) tlv->value)[1]) & 0x00ff);
+            break;
         }
-        v->u16 = ((((uint8_t*)tlv->value)[0]<< 8)&0xff00) |
-               ((((uint8_t*)tlv->value)[1]    )&0x00ff);
-        break;
-    }
-    case OGS_TLV_UINT24:
-    case OGS_TLV_INT24:
-    {
-        ogs_tlv_uint24_t *v = (ogs_tlv_uint24_t *)msg;
+        case OGS_TLV_UINT24:
+        case OGS_TLV_INT24: {
+            ogs_tlv_uint24_t *v = (ogs_tlv_uint24_t *) msg;
 
-        if (tlv->length != 3)
-        {
-            ogs_error("Invalid TLV length %d. It should be 3", tlv->length);
-            return OGS_ERROR;
+            if (tlv->length != 3) {
+                ogs_error("Invalid TLV length %d. It should be 3", tlv->length);
+                return OGS_ERROR;
+            }
+            v->u24 = ((((uint8_t *) tlv->value)[0] << 16) & 0x00ff0000) |
+                     ((((uint8_t *) tlv->value)[1] << 8) & 0x0000ff00) |
+                     ((((uint8_t *) tlv->value)[2]) & 0x000000ff);
+            break;
         }
-        v->u24 = ((((uint8_t*)tlv->value)[0]<<16)&0x00ff0000) |
-               ((((uint8_t*)tlv->value)[1]<< 8)&0x0000ff00) |
-               ((((uint8_t*)tlv->value)[2]    )&0x000000ff);
-        break;
-    }
-    case OGS_TLV_UINT32:
-    case OGS_TLV_INT32:
-    {
-        ogs_tlv_uint32_t *v = (ogs_tlv_uint32_t *)msg;
+        case OGS_TLV_UINT32:
+        case OGS_TLV_INT32: {
+            ogs_tlv_uint32_t *v = (ogs_tlv_uint32_t *) msg;
 
-        if (tlv->length != 4)
-        {
-            ogs_error("Invalid TLV length %d. It should be 4", tlv->length);
-            return OGS_ERROR;
+            if (tlv->length != 4) {
+                ogs_error("Invalid TLV length %d. It should be 4", tlv->length);
+                return OGS_ERROR;
+            }
+            v->u32 = ((((uint8_t *) tlv->value)[0] << 24) & 0xff000000) |
+                     ((((uint8_t *) tlv->value)[1] << 16) & 0x00ff0000) |
+                     ((((uint8_t *) tlv->value)[2] << 8) & 0x0000ff00) |
+                     ((((uint8_t *) tlv->value)[3]) & 0x000000ff);
+            break;
         }
-        v->u32 = ((((uint8_t*)tlv->value)[0]<<24)&0xff000000) |
-               ((((uint8_t*)tlv->value)[1]<<16)&0x00ff0000) |
-               ((((uint8_t*)tlv->value)[2]<< 8)&0x0000ff00) |
-               ((((uint8_t*)tlv->value)[3]    )&0x000000ff);
-        break;
-    }
-    case OGS_TLV_FIXED_STR:
-    {
-        ogs_tlv_octet_t *v = (ogs_tlv_octet_t *)msg;
+        case OGS_TLV_FIXED_STR: {
+            ogs_tlv_octet_t *v = (ogs_tlv_octet_t *) msg;
 
-        if (tlv->length != desc->length)
-        {
-            ogs_error("Invalid TLV length %d. It should be %d",
-                    tlv->length, desc->length);
-            return OGS_ERROR;
+            if (tlv->length != desc->length) {
+                ogs_error("Invalid TLV length %d. It should be %d",
+                          tlv->length, desc->length);
+                return OGS_ERROR;
+            }
+
+            v->data = tlv->value;
+            v->len = tlv->length;
+            break;
         }
+        case OGS_TLV_VAR_STR: {
+            ogs_tlv_octet_t *v = (ogs_tlv_octet_t *) msg;
 
-        v->data = tlv->value;
-        v->len = tlv->length;
-        break;
-    }
-    case OGS_TLV_VAR_STR:
-    {
-        ogs_tlv_octet_t *v = (ogs_tlv_octet_t *)msg;
-
-        v->data = tlv->value;
-        v->len = tlv->length;
-        break;
-    }
-    case OGS_TLV_NULL:
-    {
-        if (tlv->length != 0) {
-            ogs_error("Invalid TLV length %d. It should be 0", tlv->length);
-            return OGS_ERROR;
+            v->data = tlv->value;
+            v->len = tlv->length;
+            break;
         }
-        break;
-    }
-    default:
-        ogs_assert_if_reached();
-        break;
+        case OGS_TLV_NULL: {
+            if (tlv->length != 0) {
+                ogs_error("Invalid TLV length %d. It should be 0", tlv->length);
+                return OGS_ERROR;
+            }
+            break;
+        }
+        default:
+            ogs_assert_if_reached();
+            break;
     }
 
     return OGS_OK;
 }
 
-static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc, 
-        ogs_tlv_t *parent_tlv, int depth, int mode)
-{
+static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
+                              ogs_tlv_t *parent_tlv, int depth, int mode) {
     int rv;
-    ogs_tlv_presence_t *presence_p = (ogs_tlv_presence_t *)msg;
+    ogs_tlv_presence_t *presence_p = (ogs_tlv_presence_t *) msg;
     ogs_tlv_desc_t *desc = NULL, *next_desc = NULL;
     ogs_tlv_t *tlv = NULL, *emb_tlv = NULL;
     uint8_t *p = msg;
@@ -434,7 +409,7 @@ static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
     ogs_assert(parent_tlv);
 
     ogs_assert(depth <= 8);
-    indent[depth*2] = 0;
+    indent[depth * 2] = 0;
 
     tlv = parent_tlv;
     while (tlv) {
@@ -444,14 +419,14 @@ static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
             return OGS_ERROR;
         }
 
-        presence_p = (ogs_tlv_presence_t *)(p + offset);
+        presence_p = (ogs_tlv_presence_t *) (p + offset);
 
         /* Multiple of the same type TLV may be included */
-        next_desc = parent_desc->child_descs[index+1];
+        next_desc = parent_desc->child_descs[index + 1];
         if (next_desc != NULL && next_desc->ctype == OGS_TLV_MORE) {
             for (j = 0; j < next_desc->length; j++) {
-                presence_p = 
-                    (ogs_tlv_presence_t *)(p + offset + desc->vsize * j);
+                presence_p =
+                        (ogs_tlv_presence_t *) (p + offset + desc->vsize * j);
                 if (*presence_p == 0) {
                     offset += desc->vsize * j;
                     break;
@@ -473,8 +448,8 @@ static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
             }
 
             ogs_trace("PARSE %sC#%d [%s] T:%d I:%d (vsz=%d) off:%p ",
-                    indent, i++, desc->name, desc->type, desc->instance, 
-                    desc->vsize, p + offset);
+                      indent, i++, desc->name, desc->type, desc->instance,
+                      desc->vsize, p + offset);
 
             offset += sizeof(ogs_tlv_presence_t);
 
@@ -488,9 +463,9 @@ static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
             *presence_p = 1;
         } else {
             ogs_trace("PARSE %sL#%d [%s] T:%d L:%d I:%d "
-                    "(cls:%d vsz:%d) off:%p ",
-                    indent, i++, desc->name, desc->type, desc->length, 
-                    desc->instance, desc->ctype, desc->vsize, p + offset);
+                      "(cls:%d vsz:%d) off:%p ",
+                      indent, i++, desc->name, desc->type, desc->length,
+                      desc->instance, desc->ctype, desc->vsize, p + offset);
 
             rv = tlv_parse_leaf(p + offset, desc, tlv);
             if (rv != OGS_OK) {
@@ -508,8 +483,7 @@ static int tlv_parse_compound(void *msg, ogs_tlv_desc_t *parent_desc,
 }
 
 int ogs_tlv_parse_msg(void *msg, ogs_tlv_desc_t *desc, ogs_pkbuf_t *pkbuf,
-        int mode)
-{
+                      int mode) {
     int rv;
     ogs_tlv_t *root;
 

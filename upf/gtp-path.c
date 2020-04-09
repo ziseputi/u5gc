@@ -42,14 +42,17 @@
 #define UPF_GTP_HANDLED     1
 
 uint16_t in_cksum(uint16_t *addr, int len);
+
 static int upf_gtp_handle_multicast(ogs_pkbuf_t *recvbuf);
+
 static int upf_gtp_handle_slaac(upf_sess_t *sess, ogs_pkbuf_t *recvbuf);
+
 static int upf_gtp_send_to_bearer(upf_bearer_t *bearer, ogs_pkbuf_t *sendbuf);
+
 static int upf_gtp_send_router_advertisement(
         upf_sess_t *sess, uint8_t *ip6_dst);
 
-static void _gtpv1_tun_recv_cb(short when, ogs_socket_t fd, void *data)
-{
+static void _gtpv1_tun_recv_cb(short when, ogs_socket_t fd, void *data) {
     ogs_pkbuf_t *recvbuf = NULL;
     int n;
     int rv;
@@ -57,7 +60,7 @@ static void _gtpv1_tun_recv_cb(short when, ogs_socket_t fd, void *data)
 
     recvbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
     ogs_pkbuf_reserve(recvbuf, OGS_GTPV1U_HEADER_LEN);
-    ogs_pkbuf_put(recvbuf, OGS_MAX_SDU_LEN-OGS_GTPV1U_HEADER_LEN);
+    ogs_pkbuf_put(recvbuf, OGS_MAX_SDU_LEN - OGS_GTPV1U_HEADER_LEN);
 
     n = ogs_read(fd, recvbuf->data, recvbuf->len);
     if (n <= 0) {
@@ -84,8 +87,7 @@ static void _gtpv1_tun_recv_cb(short when, ogs_socket_t fd, void *data)
     ogs_pkbuf_free(recvbuf);
 }
 
-static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
-{
+static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data) {
     int rv;
     ssize_t size;
     ogs_pkbuf_t *pkbuf = NULL;
@@ -107,7 +109,7 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
     size = ogs_recv(fd, pkbuf->data, pkbuf->len, 0);
     if (size <= 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno,
-                "ogs_recv() failed");
+                        "ogs_recv() failed");
         goto cleanup;
     }
 
@@ -116,7 +118,7 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
     ogs_assert(pkbuf);
     ogs_assert(pkbuf->len);
 
-    gtp_h = (ogs_gtp_header_t *)pkbuf->data;
+    gtp_h = (ogs_gtp_header_t *) pkbuf->data;
     if (gtp_h->flags & OGS_GTPU_FLAGS_S) len += 4;
     teid = be32toh(gtp_h->teid);
 
@@ -125,7 +127,7 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
     /* Remove GTP header and send packets to TUN interface */
     ogs_assert(ogs_pkbuf_pull(pkbuf, len));
 
-    ip_h = (struct ip *)pkbuf->data;
+    ip_h = (struct ip *) pkbuf->data;
     ogs_assert(ip_h);
 
     bearer = upf_bearer_find_by_upf_s5u_teid(teid);
@@ -144,7 +146,7 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
     if (!subnet) {
         ogs_log_hexdump(OGS_LOG_TRACE, pkbuf->data, pkbuf->len);
         ogs_error("[DROP] Cannot find subnet V:%d, IPv4:%p, IPv6:%p",
-                ip_h->ip_v, sess->ipv4, sess->ipv6);
+                  ip_h->ip_v, sess->ipv4, sess->ipv6);
         goto cleanup;
     }
 
@@ -162,12 +164,11 @@ static void _gtpv1_u_recv_cb(short when, ogs_socket_t fd, void *data)
     if (ogs_write(dev->fd, pkbuf->data, pkbuf->len) <= 0)
         ogs_error("ogs_write() failed");
 
-cleanup:
+    cleanup:
     ogs_pkbuf_free(pkbuf);
 }
 
-int upf_gtp_open(void)
-{
+int upf_gtp_open(void) {
     ogs_pfcp_dev_t *dev = NULL;
     ogs_pfcp_subnet_t *subnet = NULL;
     ogs_socknode_t *node = NULL;
@@ -179,7 +180,7 @@ int upf_gtp_open(void)
         ogs_assert(sock);
 
         node->poll = ogs_pollset_add(upf_self()->pollset,
-                OGS_POLLIN, sock->fd, _gtpv1_u_recv_cb, sock);
+                                     OGS_POLLIN, sock->fd, _gtpv1_u_recv_cb, sock);
     }
 
     /* NOTE : tun device can be created via following command.
@@ -202,7 +203,7 @@ int upf_gtp_open(void)
         }
 
         dev->poll = ogs_pollset_add(upf_self()->pollset,
-                OGS_POLLIN, dev->fd, _gtpv1_tun_recv_cb, NULL);
+                                    OGS_POLLIN, dev->fd, _gtpv1_tun_recv_cb, NULL);
         ogs_assert(dev->poll);
     }
 
@@ -227,14 +228,12 @@ int upf_gtp_open(void)
     }
 
     /* Link-Local Address for UPF_TUN */
-    ogs_list_for_each(&ogs_pfcp_self()->dev_list, dev)
-        dev->link_local_addr = ogs_link_local_addr_by_dev(dev->ifname);
+    ogs_list_for_each(&ogs_pfcp_self()->dev_list, dev)dev->link_local_addr = ogs_link_local_addr_by_dev(dev->ifname);
 
     return OGS_OK;
 }
 
-void upf_gtp_close(void)
-{
+void upf_gtp_close(void) {
     ogs_pfcp_dev_t *dev = NULL;
 
     ogs_socknode_remove_all(&upf_self()->gtpu_list);
@@ -246,20 +245,19 @@ void upf_gtp_close(void)
     }
 }
 
-static int upf_gtp_handle_multicast(ogs_pkbuf_t *recvbuf)
-{
+static int upf_gtp_handle_multicast(ogs_pkbuf_t *recvbuf) {
     int rv;
-    struct ip *ip_h =  NULL;
-    struct ip6_hdr *ip6_h =  NULL;
+    struct ip *ip_h = NULL;
+    struct ip6_hdr *ip6_h = NULL;
 
-    ip_h = (struct ip *)recvbuf->data;
+    ip_h = (struct ip *) recvbuf->data;
     if (ip_h->ip_v == 6) {
 #if COMPILE_ERROR_IN_MAC_OS_X  /* Compiler error in Mac OS X platform */
         ip6_h = (struct ip6_hdr *)recvbuf->data;
         if (IN6_IS_ADDR_MULTICAST(&ip6_h->ip6_dst))
 #else
         struct in6_addr ip6_dst;
-        ip6_h = (struct ip6_hdr *)recvbuf->data;
+        ip6_h = (struct ip6_hdr *) recvbuf->data;
         memcpy(&ip6_dst, &ip6_h->ip6_dst, sizeof(struct in6_addr));
         if (IN6_IS_ADDR_MULTICAST(&ip6_dst))
 #endif
@@ -285,20 +283,19 @@ static int upf_gtp_handle_multicast(ogs_pkbuf_t *recvbuf)
     return OGS_OK;
 }
 
-static int upf_gtp_handle_slaac(upf_sess_t *sess, ogs_pkbuf_t *recvbuf)
-{
+static int upf_gtp_handle_slaac(upf_sess_t *sess, ogs_pkbuf_t *recvbuf) {
     int rv;
     struct ip *ip_h = NULL;
 
     ogs_assert(sess);
     ogs_assert(recvbuf);
     ogs_assert(recvbuf->len);
-    ip_h = (struct ip *)recvbuf->data;
+    ip_h = (struct ip *) recvbuf->data;
     if (ip_h->ip_v == 6) {
-        struct ip6_hdr *ip6_h = (struct ip6_hdr *)recvbuf->data;
+        struct ip6_hdr *ip6_h = (struct ip6_hdr *) recvbuf->data;
         if (ip6_h->ip6_nxt == IPPROTO_ICMPV6) {
             struct icmp6_hdr *icmp_h =
-                (struct icmp6_hdr *)(recvbuf->data + sizeof(struct ip6_hdr));
+                    (struct icmp6_hdr *) (recvbuf->data + sizeof(struct ip6_hdr));
             if (icmp_h->icmp6_type == ND_ROUTER_SOLICIT) {
                 ogs_debug("[UPF]      Router Solict");
                 if (sess->ipv6) {
@@ -314,8 +311,7 @@ static int upf_gtp_handle_slaac(upf_sess_t *sess, ogs_pkbuf_t *recvbuf)
     return OGS_OK;
 }
 
-static int upf_gtp_send_to_bearer(upf_bearer_t *bearer, ogs_pkbuf_t *sendbuf)
-{
+static int upf_gtp_send_to_bearer(upf_bearer_t *bearer, ogs_pkbuf_t *sendbuf) {
     char buf[OGS_ADDRSTRLEN];
     int rv;
     ogs_gtp_header_t *gtp_h = NULL;
@@ -326,7 +322,7 @@ static int upf_gtp_send_to_bearer(upf_bearer_t *bearer, ogs_pkbuf_t *sendbuf)
 
     /* Add GTP-U header */
     ogs_assert(ogs_pkbuf_push(sendbuf, OGS_GTPV1U_HEADER_LEN));
-    gtp_h = (ogs_gtp_header_t *)sendbuf->data;
+    gtp_h = (ogs_gtp_header_t *) sendbuf->data;
     /* Bits    8  7  6  5  4  3  2  1
      *        +--+--+--+--+--+--+--+--+
      *        |version |PT| 1| E| S|PN|
@@ -340,16 +336,15 @@ static int upf_gtp_send_to_bearer(upf_bearer_t *bearer, ogs_pkbuf_t *sendbuf)
 
     /* Send to SGW */
     ogs_debug("[UPF] SEND GPU-U to SGW[%s] : TEID[0x%x]",
-        OGS_ADDR(&bearer->gnode->addr, buf),
-        bearer->sgw_s5u_teid);
-    rv =  ogs_gtp_sendto(bearer->gnode, sendbuf);
+              OGS_ADDR(&bearer->gnode->addr, buf),
+              bearer->sgw_s5u_teid);
+    rv = ogs_gtp_sendto(bearer->gnode, sendbuf);
 
     return rv;
 }
 
 static int upf_gtp_send_router_advertisement(
-        upf_sess_t *sess, uint8_t *ip6_dst)
-{
+        upf_sess_t *sess, uint8_t *ip6_dst) {
     int rv;
     ogs_pkbuf_t *pkbuf = NULL;
 
@@ -362,7 +357,7 @@ static int upf_gtp_send_router_advertisement(
     uint16_t plen = 0;
     uint8_t nxt = 0;
     uint8_t *p = NULL;
-    struct ip6_hdr *ip6_h =  NULL;
+    struct ip6_hdr *ip6_h = NULL;
     struct nd_router_advert *advert_h = NULL;
     struct nd_opt_prefix_info *prefix = NULL;
 
@@ -376,23 +371,23 @@ static int upf_gtp_send_router_advertisement(
     dev = subnet->dev;
     ogs_assert(dev);
 
-    pkbuf = ogs_pkbuf_alloc(NULL, OGS_GTPV1U_HEADER_LEN+200);
+    pkbuf = ogs_pkbuf_alloc(NULL, OGS_GTPV1U_HEADER_LEN + 200);
     ogs_pkbuf_reserve(pkbuf, OGS_GTPV1U_HEADER_LEN);
     ogs_pkbuf_put(pkbuf, 200);
     pkbuf->len = sizeof *ip6_h + sizeof *advert_h + sizeof *prefix;
     memset(pkbuf->data, 0, pkbuf->len);
 
-    p = (uint8_t *)pkbuf->data;
-    ip6_h = (struct ip6_hdr *)p;
-    advert_h = (struct nd_router_advert *)((uint8_t *)ip6_h + sizeof *ip6_h);
+    p = (uint8_t *) pkbuf->data;
+    ip6_h = (struct ip6_hdr *) p;
+    advert_h = (struct nd_router_advert *) ((uint8_t *) ip6_h + sizeof *ip6_h);
     prefix = (struct nd_opt_prefix_info *)
-        ((uint8_t*)advert_h + sizeof *advert_h);
+            ((uint8_t *) advert_h + sizeof *advert_h);
 
     rv = ogs_ipsubnet(&src_ipsub, "fe80::1", NULL);
     ogs_assert(rv == OGS_OK);
     if (dev->link_local_addr)
         memcpy(src_ipsub.sub, dev->link_local_addr->sin6.sin6_addr.s6_addr,
-                sizeof src_ipsub.sub);
+               sizeof src_ipsub.sub);
 
     advert_h->nd_ra_type = ND_ROUTER_ADVERT;
     advert_h->nd_ra_code = 0;
@@ -406,11 +401,11 @@ static int upf_gtp_send_router_advertisement(
     prefix->nd_opt_pi_len = 4; /* 32bytes */
     prefix->nd_opt_pi_prefix_len = subnet->prefixlen;
     prefix->nd_opt_pi_flags_reserved =
-        ND_OPT_PI_FLAG_ONLINK|ND_OPT_PI_FLAG_AUTO;
+            ND_OPT_PI_FLAG_ONLINK | ND_OPT_PI_FLAG_AUTO;
     prefix->nd_opt_pi_valid_time = htobe32(0xffffffff); /* Infinite */
     prefix->nd_opt_pi_preferred_time = htobe32(0xffffffff); /* Infinite */
     memcpy(prefix->nd_opt_pi_prefix.s6_addr,
-            subnet->sub.sub, sizeof prefix->nd_opt_pi_prefix.s6_addr);
+           subnet->sub.sub, sizeof prefix->nd_opt_pi_prefix.s6_addr);
 
     /* For IPv6 Pseudo-Header */
     plen = htobe16(sizeof *advert_h + sizeof *prefix);
@@ -420,9 +415,13 @@ static int upf_gtp_send_router_advertisement(
     p += sizeof src_ipsub.sub;
     memcpy(p, ip6_dst, OGS_IPV6_LEN);
     p += OGS_IPV6_LEN;
-    p += 2; memcpy(p, &plen, 2); p += 2;
-    p += 3; *p = nxt; p += 1;
-    advert_h->nd_ra_cksum = in_cksum((uint16_t *)pkbuf->data, pkbuf->len);
+    p += 2;
+    memcpy(p, &plen, 2);
+    p += 2;
+    p += 3;
+    *p = nxt;
+    p += 1;
+    advert_h->nd_ra_cksum = in_cksum((uint16_t *) pkbuf->data, pkbuf->len);
 
     ip6_h->ip6_flow = htobe32(0x60000001);
     ip6_h->ip6_plen = plen;
@@ -430,7 +429,7 @@ static int upf_gtp_send_router_advertisement(
     ip6_h->ip6_hlim = 0xff;
     memcpy(ip6_h->ip6_src.s6_addr, src_ipsub.sub, sizeof src_ipsub.sub);
     memcpy(ip6_h->ip6_dst.s6_addr, ip6_dst, OGS_IPV6_LEN);
-    
+
     rv = upf_gtp_send_to_bearer(bearer, pkbuf);
     ogs_assert(rv == OGS_OK);
 
@@ -440,8 +439,7 @@ static int upf_gtp_send_router_advertisement(
     return rv;
 }
 
-uint16_t in_cksum(uint16_t *addr, int len)
-{
+uint16_t in_cksum(uint16_t *addr, int len) {
     int nleft = len;
     uint32_t sum = 0;
     uint16_t *w = addr;

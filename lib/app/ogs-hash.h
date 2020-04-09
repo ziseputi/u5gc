@@ -32,34 +32,46 @@ extern "C" {
 
 typedef struct ogs_hash_t ogs_hash_t;
 typedef struct ogs_hash_index_t ogs_hash_index_t;
+
 typedef unsigned int (*ogs_hashfunc_t)(const char *key, int *klen);
+
 unsigned int ogs_hashfunc_default(const char *key, int *klen);
 
 ogs_hash_t *ogs_hash_make(void);
+
 ogs_hash_t *ogs_hash_make_custom(ogs_hashfunc_t ogs_hash_func);
+
 void ogs_hash_destroy(ogs_hash_t *ht);
 
 void ogs_hash_set(ogs_hash_t *ht, const void *key, int klen, const void *val);
+
 void *ogs_hash_get(ogs_hash_t *ht, const void *key, int klen);
-void *ogs_hash_get_or_set(ogs_hash_t *ht, 
-        const void *key, int klen, const void *val);
+
+void *ogs_hash_get_or_set(ogs_hash_t *ht,
+                          const void *key, int klen, const void *val);
 
 ogs_hash_index_t *ogs_hash_first(ogs_hash_t *ht);
-ogs_hash_index_t *ogs_hash_next(ogs_hash_index_t *hi);
-void ogs_hash_this(ogs_hash_index_t *hi, 
-        const void **key, int *klen, void **val);
 
-const void* ogs_hash_this_key(ogs_hash_index_t *hi);
+ogs_hash_index_t *ogs_hash_next(ogs_hash_index_t *hi);
+
+void ogs_hash_this(ogs_hash_index_t *hi,
+                   const void **key, int *klen, void **val);
+
+const void *ogs_hash_this_key(ogs_hash_index_t *hi);
+
 int ogs_hash_this_key_len(ogs_hash_index_t *hi);
-void* ogs_hash_this_val(ogs_hash_index_t *hi);
+
+void *ogs_hash_this_val(ogs_hash_index_t *hi);
+
 unsigned int ogs_hash_count(ogs_hash_t *ht);
+
 void ogs_hash_clear(ogs_hash_t *ht);
 
 typedef int (ogs_hash_do_callback_fn_t)(
         void *rec, const void *key, int klen, const void *value);
 
 int ogs_hash_do(ogs_hash_do_callback_fn_t *comp,
-        void *rec, const ogs_hash_t *ht);
+                void *rec, const ogs_hash_t *ht);
 
 
 #ifdef __cplusplus

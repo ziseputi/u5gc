@@ -32,8 +32,7 @@
 #undef OGS_LOG_DOMAIN
 #define OGS_LOG_DOMAIN __ogs_sock_domain
 
-ogs_socknode_t *ogs_socknode_new(ogs_sockaddr_t *addr)
-{
+ogs_socknode_t *ogs_socknode_new(ogs_sockaddr_t *addr) {
     ogs_socknode_t *node = NULL;
 
     ogs_assert(addr);
@@ -46,8 +45,7 @@ ogs_socknode_t *ogs_socknode_new(ogs_sockaddr_t *addr)
     return node;
 }
 
-void ogs_socknode_free(ogs_socknode_t *node)
-{
+void ogs_socknode_free(ogs_socknode_t *node) {
     ogs_assert(node);
 
     ogs_freeaddrinfo(node->addr);
@@ -63,8 +61,7 @@ void ogs_socknode_free(ogs_socknode_t *node)
 }
 
 ogs_socknode_t *ogs_socknode_add(
-        ogs_list_t *list, int family, ogs_sockaddr_t *addr)
-{
+        ogs_list_t *list, int family, ogs_sockaddr_t *addr) {
     ogs_socknode_t *node = NULL;
     ogs_sockaddr_t *dup = NULL;
 
@@ -83,37 +80,33 @@ ogs_socknode_t *ogs_socknode_add(
     return node;
 }
 
-void ogs_socknode_remove(ogs_list_t *list, ogs_socknode_t *node)
-{
+void ogs_socknode_remove(ogs_list_t *list, ogs_socknode_t *node) {
     ogs_assert(node);
 
     ogs_list_remove(list, node);
     ogs_socknode_free(node);
 }
 
-void ogs_socknode_remove_all(ogs_list_t *list)
-{
+void ogs_socknode_remove_all(ogs_list_t *list) {
     ogs_socknode_t *node = NULL, *saved_node = NULL;
 
-    ogs_list_for_each_safe(list, saved_node, node)
-        ogs_socknode_remove(list, node);
+    ogs_list_for_each_safe(list, saved_node, node)ogs_socknode_remove(list, node);
 }
 
 int ogs_socknode_probe(
-        ogs_list_t *list, ogs_list_t *list6, const char *dev, uint16_t port)
-{
+        ogs_list_t *list, ogs_list_t *list6, const char *dev, uint16_t port) {
 #if defined(HAVE_GETIFADDRS)
     ogs_socknode_t *node = NULL;
-	struct ifaddrs *iflist, *cur;
+    struct ifaddrs *iflist, *cur;
     int rc;
 
-	rc = getifaddrs(&iflist);
+    rc = getifaddrs(&iflist);
     if (rc != 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "getifaddrs failed");
         return OGS_ERROR;
     }
 
-	for (cur = iflist; cur != NULL; cur = cur->ifa_next) {
+    for (cur = iflist; cur != NULL; cur = cur->ifa_next) {
         ogs_sockaddr_t *addr = NULL;
 
         if (cur->ifa_flags & IFF_LOOPBACK)
@@ -122,8 +115,8 @@ int ogs_socknode_probe(
         if (cur->ifa_flags & IFF_POINTOPOINT)
             continue;
 
-		if (cur->ifa_addr == NULL) /* may happen with ppp interfaces */
-			continue;
+        if (cur->ifa_addr == NULL) /* may happen with ppp interfaces */
+            continue;
 
         if (dev && strcmp(dev, cur->ifa_name) != 0)
             continue;
@@ -172,9 +165,9 @@ int ogs_socknode_probe(
             ogs_list_add(list6, node);
         } else
             ogs_assert_if_reached();
-	}
+    }
 
-	freeifaddrs(iflist);
+    freeifaddrs(iflist);
     return OGS_OK;
 #elif defined(_WIN32)
     return OGS_OK;
@@ -185,10 +178,9 @@ int ogs_socknode_probe(
 
 }
 
-int ogs_socknode_fill_scope_id_in_local(ogs_sockaddr_t *sa_list)
-{
+int ogs_socknode_fill_scope_id_in_local(ogs_sockaddr_t *sa_list) {
 #if defined(HAVE_GETIFADDRS)
-	struct ifaddrs *iflist = NULL, *cur;
+    struct ifaddrs *iflist = NULL, *cur;
     int rc;
     ogs_sockaddr_t *addr, *ifaddr;
 
@@ -243,38 +235,33 @@ int ogs_socknode_fill_scope_id_in_local(ogs_sockaddr_t *sa_list)
 #endif
 }
 
-void ogs_socknode_sctp_option(ogs_socknode_t *node, ogs_sockopt_t *option)
-{
+void ogs_socknode_sctp_option(ogs_socknode_t *node, ogs_sockopt_t *option) {
     ogs_assert(node);
     ogs_assert(option);
 
     memcpy(&node->option.sctp, &option->sctp, sizeof(option->sctp));
 }
 
-void ogs_socknode_nodelay(ogs_socknode_t *node, int on)
-{
+void ogs_socknode_nodelay(ogs_socknode_t *node, int on) {
     ogs_assert(node);
     node->option.nodelay = on;
 }
 
-void ogs_socknode_linger(ogs_socknode_t *node, int onoff, int linger)
-{
+void ogs_socknode_linger(ogs_socknode_t *node, int onoff, int linger) {
     ogs_assert(node);
     node->option.l_onoff = onoff;
     node->option.l_linger = linger;
 }
 
 void ogs_socknode_set_cleanup(
-        ogs_socknode_t *node, void (*cleanup)(ogs_sock_t *))
-{
+        ogs_socknode_t *node, void (*cleanup)(ogs_sock_t *)) {
     ogs_assert(node);
     ogs_assert(cleanup);
 
     node->cleanup = cleanup;
 }
 
-ogs_sock_t *ogs_socknode_sock_first(ogs_list_t *list)
-{
+ogs_sock_t *ogs_socknode_sock_first(ogs_list_t *list) {
     ogs_socknode_t *snode = NULL;
 
     ogs_assert(list);

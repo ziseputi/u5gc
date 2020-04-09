@@ -41,9 +41,9 @@ extern "C" {
 #define ogs_thread_cond_t pthread_cond_t
 #define ogs_thread_cond_init(_n) (void)pthread_cond_init((_n), NULL)
 #define ogs_thread_cond_wait pthread_cond_wait
+
 static ogs_inline int ogs_thread_cond_timedwait(
-        pthread_cond_t *cond, pthread_mutex_t *mutex, ogs_time_t timeout)
-{
+        pthread_cond_t *cond, pthread_mutex_t *mutex, ogs_time_t timeout) {
     int r;
     struct timespec to;
     struct timeval tv;
@@ -58,12 +58,13 @@ static ogs_inline int ogs_thread_cond_timedwait(
 
     r = pthread_cond_timedwait(cond, mutex, &to);
     if (r == 0)
-        return OGS_OK; 
+        return OGS_OK;
     else if (r == OGS_ETIMEDOUT)
         return OGS_TIMEUP;
-    else 
+    else
         return OGS_ERROR;
 }
+
 #define ogs_thread_cond_signal (void)pthread_cond_signal
 #define ogs_thread_cond_broadcast pthread_cond_broadcast
 #define ogs_thread_cond_destroy (void)pthread_cond_destroy
@@ -108,6 +109,7 @@ static ogs_inline int ogs_thread_cond_destroy(ogs_thread_cond_t *_ignored)
 typedef struct ogs_thread_s ogs_thread_t;
 
 ogs_thread_t *ogs_thread_create(void (*func)(void *), void *data);
+
 void ogs_thread_destroy(ogs_thread_t *thread);
 
 #ifdef __cplusplus

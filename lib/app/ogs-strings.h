@@ -41,16 +41,21 @@ extern "C" {
 #endif
 
 int ogs_vsnprintf(char *str, size_t size, const char *format, va_list ap)
-    OGS_GNUC_PRINTF (3, 0);
+OGS_GNUC_PRINTF (3, 0);
+
 int ogs_snprintf(char *str, size_t size, const char *format, ...)
-    OGS_GNUC_PRINTF(3, 4);
+OGS_GNUC_PRINTF(3, 4);
+
 char *ogs_vslprintf(char *str, char *last, const char *format, va_list ap)
-    OGS_GNUC_PRINTF (3, 0);
+OGS_GNUC_PRINTF (3, 0);
+
 char *ogs_slprintf(char *str, char *last, const char *format, ...)
-    OGS_GNUC_PRINTF(3, 4);
+OGS_GNUC_PRINTF(3, 4);
 
 char *ogs_strdup(const char *s);
+
 char *ogs_strndup(const char *s, size_t n);
+
 void *ogs_memdup(const void *m, size_t n);
 
 char *ogs_cpystrn(char *dst, const char *src, size_t dst_size);

@@ -42,12 +42,12 @@ extern "C" {
 #define ogs_log_message(level, err, ...) \
     ogs_log_printf(level, OGS_LOG_DOMAIN, \
     err, __FILE__, __LINE__, OGS_FUNC,  \
-    0, __VA_ARGS__) 
+    0, __VA_ARGS__)
 
 #define ogs_log_print(level, ...) \
     ogs_log_printf(level, OGS_LOG_DOMAIN, \
     0, NULL, 0, NULL,  \
-    1, __VA_ARGS__) 
+    1, __VA_ARGS__)
 
 #define ogs_log_hexdump(level, _d, _l) \
     ogs_log_hexdump_func(level, OGS_LOG_DOMAIN, _d, _l)
@@ -68,39 +68,49 @@ typedef struct ogs_log_s ogs_log_t;
 typedef struct ogs_log_domain_s ogs_log_domain_t;
 
 void ogs_log_init(void);
+
 void ogs_log_final(void);
+
 void ogs_log_cycle(void);
 
 ogs_log_t *ogs_log_add_stderr(void);
+
 ogs_log_t *ogs_log_add_file(const char *name);
+
 void ogs_log_remove(ogs_log_t *log);
 
 ogs_log_domain_t *ogs_log_add_domain(const char *name, ogs_log_level_e level);
+
 ogs_log_domain_t *ogs_log_find_domain(const char *name);
+
 void ogs_log_remove_domain(ogs_log_domain_t *domain);
 
 void ogs_log_set_domain_level(int id, ogs_log_level_e level);
+
 ogs_log_level_e ogs_log_get_domain_level(int id);
 
 const char *ogs_log_get_domain_name(int id);
+
 int ogs_log_get_domain_id(const char *name);
 
 void ogs_log_install_domain(int *domain_id,
-        const char *name, ogs_log_level_e level);
+                            const char *name, ogs_log_level_e level);
+
 int ogs_log_config_domain(const char *domain, const char *level);
 
 void ogs_log_set_mask_level(const char *mask, ogs_log_level_e level);
 
 void ogs_log_vprintf(ogs_log_level_e level, int id,
-    ogs_err_t err, const char *file, int line, const char *func,
-    int content_only, const char *format, va_list ap);
+                     ogs_err_t err, const char *file, int line, const char *func,
+                     int content_only, const char *format, va_list ap);
+
 void ogs_log_printf(ogs_log_level_e level, int domain_id,
-    ogs_err_t err, const char *file, int line, const char *func,
-    int content_only, const char *format, ...)
-    OGS_GNUC_PRINTF(8, 9);
+                    ogs_err_t err, const char *file, int line, const char *func,
+                    int content_only, const char *format, ...)
+OGS_GNUC_PRINTF(8, 9);
 
 void ogs_log_hexdump_func(ogs_log_level_e level, int domain_id,
-    const unsigned char *data, size_t len);
+                          const unsigned char *data, size_t len);
 
 #define ogs_assert(expr) \
     do { \

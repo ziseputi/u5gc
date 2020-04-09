@@ -31,20 +31,25 @@ extern "C" {
 typedef struct ogs_queue_s ogs_queue_t;
 
 ogs_queue_t *ogs_queue_create(unsigned int capacity);
+
 void ogs_queue_destroy(ogs_queue_t *queue);
 
 int ogs_queue_push(ogs_queue_t *queue, void *data);
+
 int ogs_queue_pop(ogs_queue_t *queue, void **data);
 
 int ogs_queue_trypush(ogs_queue_t *queue, void *data);
+
 int ogs_queue_trypop(ogs_queue_t *queue, void **data);
 
 int ogs_queue_timedpush(ogs_queue_t *queue, void *data, ogs_time_t timeout);
+
 int ogs_queue_timedpop(ogs_queue_t *queue, void **data, ogs_time_t timeout);
 
 unsigned int ogs_queue_size(ogs_queue_t *queue);
 
 int ogs_queue_interrupt_all(ogs_queue_t *queue);
+
 int ogs_queue_term(ogs_queue_t *queue);
 
 

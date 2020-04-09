@@ -28,6 +28,7 @@ extern "C" {
 #endif
 
 int upf_gtp_open(void);
+
 void upf_gtp_close(void);
 
 #ifdef __cplusplus

@@ -42,10 +42,10 @@ extern "C" {
 typedef struct ogs_gtp_header_s {
     union {
         struct {
-        ED4(uint8_t version:3;,
-            uint8_t piggybacked:1;,
-            uint8_t teid_presence:1;,
-            uint8_t spare1:3;)
+            ED4(uint8_t version:3;,
+                uint8_t piggybacked:1;,
+                uint8_t teid_presence:1;,
+                uint8_t spare1:3;)
         };
 /* GTU-U flags */
 #define OGS_GTPU_FLAGS_PN                       0x1
@@ -1061,7 +1061,7 @@ typedef struct ogs_gtp_delete_bearer_response_s {
     ogs_gtp_tlv_twan_identifier_timestamp_t wlan_location_timestamp;
     ogs_gtp_tlv_port_number_t ue_udp_port;
     ogs_gtp_tlv_f_container_t nbifom_container;
-    ogs_gtp_tlv_port_number_t ue_tcp_port	;
+    ogs_gtp_tlv_port_number_t ue_tcp_port;
 } ogs_gtp_delete_bearer_response_t;
 
 typedef struct ogs_gtp_create_indirect_data_forwarding_tunnel_request_s {
@@ -1164,8 +1164,8 @@ typedef struct ogs_gtp_modify_access_bearers_response_s {
 } ogs_gtp_modify_access_bearers_response_t;
 
 typedef struct ogs_gtp_message_s {
-   ogs_gtp_header_t h;
-   union {
+    ogs_gtp_header_t h;
+    union {
         ogs_gtp_echo_request_t echo_request;
         ogs_gtp_echo_response_t echo_response;
         ogs_gtp_create_session_request_t create_session_request;
@@ -1197,10 +1197,11 @@ typedef struct ogs_gtp_message_s {
         ogs_gtp_downlink_data_notification_acknowledge_t downlink_data_notification_acknowledge;
         ogs_gtp_modify_access_bearers_request_t modify_access_bearers_request;
         ogs_gtp_modify_access_bearers_response_t modify_access_bearers_response;
-   };
+    };
 } ogs_gtp_message_t;
 
 int ogs_gtp_parse_msg(ogs_gtp_message_t *gtp_message, ogs_pkbuf_t *pkbuf);
+
 ogs_pkbuf_t *ogs_gtp_build_msg(ogs_gtp_message_t *gtp_message);
 
 #ifdef __cplusplus

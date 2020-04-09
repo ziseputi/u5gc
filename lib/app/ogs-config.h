@@ -85,10 +85,13 @@ typedef struct ogs_config_s {
 } ogs_config_t;
 
 int ogs_config_init(void);
+
 int ogs_config_final(void);
+
 ogs_config_t *ogs_config(void);
 
 int ogs_config_read(void);
+
 int ogs_config_parse(void);
 
 #ifdef __cplusplus

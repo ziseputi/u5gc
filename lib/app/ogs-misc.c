@@ -22,11 +22,10 @@
 #define PATH_SEPARATOR '/'
 
 /* Remove trailing separators that don't affect the meaning of PATH. */
-static void path_canonicalize(char *dir)
-{
+static void path_canonicalize(char *dir) {
     /* At some point this could eliminate redundant components.  For
      * now, it just makes sure there is no trailing slash. */
-    size_t len = strlen (dir);
+    size_t len = strlen(dir);
     size_t orig_len = len;
 
     ogs_assert(dir);
@@ -39,8 +38,7 @@ static void path_canonicalize(char *dir)
 }
 
 /* Remove one component off the end of PATH. */
-void ogs_path_remove_last_component(char *dir, const char *path)
-{
+void ogs_path_remove_last_component(char *dir, const char *path) {
     int i;
     int len = 0;
 
@@ -48,7 +46,7 @@ void ogs_path_remove_last_component(char *dir, const char *path)
     ogs_assert(path);
 
     strcpy(dir, path);
-    path_canonicalize (dir);
+    path_canonicalize(dir);
     for (i = (strlen(dir) - 1); i >= 0; i--) {
         if (path[i] == PATH_SEPARATOR)
             break;
@@ -58,8 +56,7 @@ void ogs_path_remove_last_component(char *dir, const char *path)
     dir[len] = 0;
 }
 
-bool ogs_path_is_absolute(const char *filename)
-{
+bool ogs_path_is_absolute(const char *filename) {
     ogs_assert(filename);
 
     if (OGS_IS_DIR_SEPARATOR(filename[0]))

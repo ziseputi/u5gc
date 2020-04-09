@@ -58,13 +58,16 @@ int ogs_gettimeofday(struct timeval *tv);
 
 /** @return number of microseconds since an arbitrary point */
 ogs_time_t ogs_get_monotonic_time(void);
+
 /** @return the GMT offset in seconds */
 int ogs_timezone(void);
 
 void ogs_localtime(time_t s, struct tm *tm);
+
 void ogs_gmtime(time_t s, struct tm *tm);
 
 void ogs_msleep(time_t msec);
+
 void ogs_usleep(time_t usec);
 
 #ifdef __cplusplus

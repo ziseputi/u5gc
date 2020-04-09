@@ -20,8 +20,7 @@
 #include "ogs-gtp.h"
 
 ogs_pkbuf_t *ogs_gtp_build_echo_request(
-        uint8_t type, uint8_t recovery, uint8_t features)
-{
+        uint8_t type, uint8_t recovery, uint8_t features) {
     ogs_gtp_message_t gtp_message;
     ogs_gtp_echo_request_t *req = NULL;
 
@@ -39,8 +38,7 @@ ogs_pkbuf_t *ogs_gtp_build_echo_request(
 }
 
 ogs_pkbuf_t *ogs_gtp_build_echo_response(
-        uint8_t type, uint8_t recovery, uint8_t features)
-{
+        uint8_t type, uint8_t recovery, uint8_t features) {
     ogs_gtp_message_t gtp_message;
     ogs_gtp_echo_response_t *rsp = NULL;
 

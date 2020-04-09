@@ -20,9 +20,8 @@
 #include "ogs-pfcp.h"
 
 int ogs_pfcp_sockaddr_to_node_id(
-    ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6, int prefer_ipv4,
-    ogs_pfcp_node_id_t *node_id, int *len)
-{
+        ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6, int prefer_ipv4,
+        ogs_pfcp_node_id_t *node_id, int *len) {
     const int hdr_len = 1;
     int rv;
     char hostname[OGS_MAX_FQDN_LEN];
@@ -36,7 +35,7 @@ int ogs_pfcp_sockaddr_to_node_id(
         if (rv == OGS_OK && strcmp(addr->hostname, hostname) == 0) {
             node_id->type = OGS_PFCP_NODE_ID_FQDN;
             *len = ogs_fqdn_build(node_id->fqdn,
-                        addr->hostname, strlen(addr->hostname)) + hdr_len;
+                                  addr->hostname, strlen(addr->hostname)) + hdr_len;
 
             return OGS_OK;
         }
@@ -47,7 +46,7 @@ int ogs_pfcp_sockaddr_to_node_id(
         if (rv == OGS_OK && strcmp(addr6->hostname, hostname) == 0) {
             node_id->type = OGS_PFCP_NODE_ID_FQDN;
             *len = ogs_fqdn_build(node_id->fqdn,
-                        addr6->hostname, strlen(addr6->hostname)) + hdr_len;
+                                  addr6->hostname, strlen(addr6->hostname)) + hdr_len;
 
             return OGS_OK;
         }
@@ -74,8 +73,7 @@ int ogs_pfcp_sockaddr_to_node_id(
 }
 
 int ogs_pfcp_f_seid_to_sockaddr(
-    ogs_pfcp_f_seid_t *f_seid, uint16_t port, ogs_sockaddr_t **list)
-{
+        ogs_pfcp_f_seid_t *f_seid, uint16_t port, ogs_sockaddr_t **list) {
     ogs_sockaddr_t *addr = NULL, *addr6 = NULL;
 
     ogs_assert(f_seid);
@@ -118,9 +116,8 @@ int ogs_pfcp_f_seid_to_sockaddr(
 }
 
 int ogs_pfcp_sockaddr_to_f_seid(
-    ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
-    ogs_pfcp_f_seid_t *f_seid, int *len)
-{
+        ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
+        ogs_pfcp_f_seid_t *f_seid, int *len) {
     const int hdr_len = 9;
 
     ogs_assert(f_seid);
@@ -149,8 +146,7 @@ int ogs_pfcp_sockaddr_to_f_seid(
     return OGS_OK;
 }
 
-int ogs_pfcp_f_seid_to_ip(ogs_pfcp_f_seid_t *f_seid, ogs_ip_t *ip)
-{
+int ogs_pfcp_f_seid_to_ip(ogs_pfcp_f_seid_t *f_seid, ogs_ip_t *ip) {
     ogs_assert(ip);
     ogs_assert(f_seid);
 
@@ -176,9 +172,8 @@ int ogs_pfcp_f_seid_to_ip(ogs_pfcp_f_seid_t *f_seid, ogs_ip_t *ip)
 }
 
 static int sockaddr_to_f_teid(
-    ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
-    ogs_pfcp_f_teid_t *f_teid, int *len)
-{
+        ogs_sockaddr_t *addr, ogs_sockaddr_t *addr6,
+        ogs_pfcp_f_teid_t *f_teid, int *len) {
     const int hdr_len = 5;
 
     ogs_assert(addr == NULL || addr6 == NULL);
@@ -208,8 +203,7 @@ static int sockaddr_to_f_teid(
 }
 
 int ogs_pfcp_sockaddr_to_f_teid(
-    ogs_sockaddr_t *a, ogs_sockaddr_t *b, ogs_pfcp_f_teid_t *f_teid, int *len)
-{
+        ogs_sockaddr_t *a, ogs_sockaddr_t *b, ogs_pfcp_f_teid_t *f_teid, int *len) {
     ogs_sockaddr_t *addr = NULL, *addr6 = NULL;
 
     if (a && a->sin.sin_family == AF_INET) {
@@ -231,8 +225,7 @@ int ogs_pfcp_sockaddr_to_f_teid(
 }
 
 int ogs_pfcp_paa_to_ue_ip_addr(
-    ogs_paa_t *paa, ogs_pfcp_ue_ip_addr_t *addr, int *len)
-{
+        ogs_paa_t *paa, ogs_pfcp_ue_ip_addr_t *addr, int *len) {
     const int hdr_len = 1;
 
     ogs_assert(paa);
@@ -263,8 +256,7 @@ int ogs_pfcp_paa_to_ue_ip_addr(
 }
 
 int ogs_pfcp_ip_to_outer_header_creation(ogs_ip_t *ip,
-        ogs_pfcp_outer_header_creation_t *outer_header_creation, int *len)
-{
+                                         ogs_pfcp_outer_header_creation_t *outer_header_creation, int *len) {
     const int hdr_len = 6;
 
     ogs_assert(ip);

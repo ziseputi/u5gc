@@ -51,8 +51,7 @@ typedef struct ogs_rbtree_s {
         (type *)((u_char *)n - offsetof(type, link))
 
 static ogs_inline void ogs_rbtree_link_node(
-        void *rb_node, ogs_rbnode_t *parent, ogs_rbnode_t **rb_link)
-{
+        void *rb_node, ogs_rbnode_t *parent, ogs_rbnode_t **rb_link) {
     ogs_rbnode_t *node = rb_node;
     node->parent = parent;
     node->left = node->right = NULL;
@@ -62,33 +61,35 @@ static ogs_inline void ogs_rbtree_link_node(
 }
 
 void ogs_rbtree_insert_color(ogs_rbtree_t *tree, void *rb_node);
+
 void ogs_rbtree_delete(ogs_rbtree_t *tree, void *rb_node);
 
-static ogs_inline void *ogs_rbtree_min(const ogs_rbnode_t *rb_node)
-{
+static ogs_inline void *ogs_rbtree_min(const ogs_rbnode_t *rb_node) {
     const ogs_rbnode_t *node = rb_node;
     ogs_assert(node);
 
     while (node->left)
         node = node->left;
 
-    return (void *)node;
+    return (void *) node;
 }
 
-static ogs_inline void *ogs_rbtree_max(const void *rb_node)
-{
+static ogs_inline void *ogs_rbtree_max(const void *rb_node) {
     const ogs_rbnode_t *node = rb_node;
     ogs_assert(node);
 
     while (node->right)
         node = node->right;
 
-    return (void *)node;
+    return (void *) node;
 }
 
 void *ogs_rbtree_first(const ogs_rbtree_t *tree);
+
 void *ogs_rbtree_next(const void *node);
+
 void *ogs_rbtree_last(const ogs_rbtree_t *tree);
+
 void *ogs_rbtree_prev(const void *node);
 
 #define ogs_rbtree_for_each(tree, node) \
@@ -99,17 +100,14 @@ void *ogs_rbtree_prev(const void *node);
     for (node = ogs_rbtree_last(tree); \
         (node); node = ogs_rbtree_prev(node))
 
-static ogs_inline bool ogs_rbtree_empty(const ogs_rbtree_t *tree)
-{
+static ogs_inline bool ogs_rbtree_empty(const ogs_rbtree_t *tree) {
     return tree->root == NULL;
 }
 
-static ogs_inline int ogs_rbtree_count(const ogs_rbtree_t *tree)
-{
+static ogs_inline int ogs_rbtree_count(const ogs_rbtree_t *tree) {
     ogs_rbnode_t *node;
     int i = 0;
-    ogs_rbtree_for_each(tree, node)
-        i++;
+    ogs_rbtree_for_each(tree, node)i++;
     return i;
 }
 

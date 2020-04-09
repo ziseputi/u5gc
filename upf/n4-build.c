@@ -20,8 +20,7 @@
 #include "context.h"
 #include "n4-build.h"
 
-ogs_pkbuf_t *upf_n4_build_association_setup_request(uint8_t type)
-{
+ogs_pkbuf_t *upf_n4_build_association_setup_request(uint8_t type) {
     ogs_pfcp_message_t pfcp_message;
     ogs_pfcp_association_setup_request_t *req = NULL;
 
@@ -40,7 +39,7 @@ ogs_pkbuf_t *upf_n4_build_association_setup_request(uint8_t type)
     req->node_id.presence = 1;
     req->node_id.data = &node_id;
     req->node_id.len = node_id_len;
-    
+
     req->recovery_time_stamp.presence = 1;
     req->recovery_time_stamp.u32 = ogs_pfcp_self()->pfcp_started;
 
@@ -52,8 +51,7 @@ ogs_pkbuf_t *upf_n4_build_association_setup_request(uint8_t type)
 }
 
 ogs_pkbuf_t *upf_n4_build_association_setup_response(uint8_t type,
-        uint8_t cause)
-{
+                                                     uint8_t cause) {
     ogs_pfcp_message_t pfcp_message;
     ogs_pfcp_association_setup_response_t *rsp = NULL;
 
@@ -75,7 +73,7 @@ ogs_pkbuf_t *upf_n4_build_association_setup_response(uint8_t type,
 
     rsp->cause.presence = 1;
     rsp->cause.u8 = cause;
-    
+
     rsp->recovery_time_stamp.presence = 1;
     rsp->recovery_time_stamp.u32 = ogs_pfcp_self()->pfcp_started;
 

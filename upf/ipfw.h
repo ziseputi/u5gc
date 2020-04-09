@@ -27,6 +27,7 @@ extern "C" {
 #endif
 
 int upf_compile_packet_filter(upf_rule_t *pf, char *description);
+
 upf_bearer_t *upf_bearer_find_by_packet(ogs_pkbuf_t *pkt);
 
 #ifdef __cplusplus

@@ -66,7 +66,7 @@ extern "C" {
 #endif
 #define OGS_GNUC_NORETURN __attribute__((__noreturn__))
 #else
-#define OGS_GNUC_PRINTF(f, v) 
+#define OGS_GNUC_PRINTF(f, v)
 #define OGS_GNUC_NORETURN
 #endif
 
@@ -86,7 +86,9 @@ extern "C" {
 #define be64toh(x) ntohll((x))
 
 #elif defined(__APPLE__)
+
 #include <libkern/OSByteOrder.h>
+
 #define htole16(x) OSSwapHostToLittleInt16((x))
 #define htole32(x) OSSwapHostToLittleInt32((x))
 #define htole64(x) OSSwapHostToLittleInt64((x))
@@ -152,8 +154,8 @@ extern "C" {
 #define INET6_NTOP(src, dst) \
     inet_ntop(AF_INET6, (void *)(src), (dst), INET6_ADDRSTRLEN)
 
-#define ogs_max(x , y)  (((x) > (y)) ? (x) : (y))
-#define ogs_min(x , y)  (((x) < (y)) ? (x) : (y))
+#define ogs_max(x, y)  (((x) > (y)) ? (x) : (y))
+#define ogs_min(x, y)  (((x) < (y)) ? (x) : (y))
 
 #if defined(_WIN32)
 #define OGS_IS_DIR_SEPARATOR(c) ((c) == OGS_DIR_SEPARATOR || (c) == '/')

@@ -21,56 +21,55 @@
 
 int __ogs_pfcp_domain;
 
-const char *ogs_pfcp_cause_get_name(uint8_t cause)
-{
-    switch(cause) {
-    case OGS_PFCP_CAUSE_REQUEST_ACCEPTED:
-        return "OGS_PFCP_CAUSE_REQUEST_ACCEPTED";
-        break;
-    case OGS_PFCP_CAUSE_REQUEST_REJECTED:
-        return "OGS_PFCP_CAUSE_REQUEST_REJECTED";
-        break;
-    case OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND:
-        return "OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND";
-        break;
-    case OGS_PFCP_CAUSE_MANDATORY_IE_MISSING:
-        return "OGS_PFCP_CAUSE_MANDATORY_IE_MISSING";
-        break;
-    case OGS_PFCP_CAUSE_CONDITIONAL_IE_MISSING:
-        return "OGS_PFCP_CAUSE_CONDITIONAL_IE_MISSING";
-        break;
-    case OGS_PFCP_CAUSE_INVALID_LENGTH:
-        return "OGS_PFCP_CAUSE_INVALID_LENGTH";
-        break;
-    case OGS_PFCP_CAUSE_MANDATORY_IE_INCORRECT:
-        return "OGS_PFCP_CAUSE_MANDATORY_IE_INCORRECT";
-        break;
-    case OGS_PFCP_CAUSE_INVALID_FORWARDING_POLICY:
-        return "OGS_PFCP_CAUSE_INVALID_FORWARDING_POLICY";
-        break;
-    case OGS_PFCP_CAUSE_INVALID_F_TEID_ALLOCATION_OPTION:
-        return "OGS_PFCP_CAUSE_INVALID_F_TEID_ALLOCATION_OPTION";
-        break;
-    case OGS_PFCP_CAUSE_NO_ESTABLISHED_PFCP_ASSOCIATION:
-        return "OGS_PFCP_CAUSE_NO_ESTABLISHED_PFCP_ASSOCIATION";
-        break;
-    case OGS_PFCP_CAUSE_RULE_CREATION_MODIFICATION_FAILURE:
-        return "OGS_PFCP_CAUSE_RULE_CREATION_MODIFICATION_FAILURE";
-        break;
-    case OGS_PFCP_CAUSE_PFCP_ENTITY_IN_CONGESTION:
-        return "OGS_PFCP_CAUSE_PFCP_ENTITY_IN_CONGESTION";
-        break;
-    case OGS_PFCP_CAUSE_NO_RESOURCES_AVAILABLE:
-        return "OGS_PFCP_CAUSE_NO_RESOURCES_AVAILABLE";
-        break;
-    case OGS_PFCP_CAUSE_SERVICE_NOT_SUPPORTED:
-        return "OGS_PFCP_CAUSE_SERVICE_NOT_SUPPORTED";
-        break;
-    case OGS_PFCP_CAUSE_SYSTEM_FAILURE:
-        return "OGS_PFCP_CAUSE_SYSTEM_FAILURE";
-        break;
-    default:
-        break;
+const char *ogs_pfcp_cause_get_name(uint8_t cause) {
+    switch (cause) {
+        case OGS_PFCP_CAUSE_REQUEST_ACCEPTED:
+            return "OGS_PFCP_CAUSE_REQUEST_ACCEPTED";
+            break;
+        case OGS_PFCP_CAUSE_REQUEST_REJECTED:
+            return "OGS_PFCP_CAUSE_REQUEST_REJECTED";
+            break;
+        case OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND:
+            return "OGS_PFCP_CAUSE_SESSION_CONTEXT_NOT_FOUND";
+            break;
+        case OGS_PFCP_CAUSE_MANDATORY_IE_MISSING:
+            return "OGS_PFCP_CAUSE_MANDATORY_IE_MISSING";
+            break;
+        case OGS_PFCP_CAUSE_CONDITIONAL_IE_MISSING:
+            return "OGS_PFCP_CAUSE_CONDITIONAL_IE_MISSING";
+            break;
+        case OGS_PFCP_CAUSE_INVALID_LENGTH:
+            return "OGS_PFCP_CAUSE_INVALID_LENGTH";
+            break;
+        case OGS_PFCP_CAUSE_MANDATORY_IE_INCORRECT:
+            return "OGS_PFCP_CAUSE_MANDATORY_IE_INCORRECT";
+            break;
+        case OGS_PFCP_CAUSE_INVALID_FORWARDING_POLICY:
+            return "OGS_PFCP_CAUSE_INVALID_FORWARDING_POLICY";
+            break;
+        case OGS_PFCP_CAUSE_INVALID_F_TEID_ALLOCATION_OPTION:
+            return "OGS_PFCP_CAUSE_INVALID_F_TEID_ALLOCATION_OPTION";
+            break;
+        case OGS_PFCP_CAUSE_NO_ESTABLISHED_PFCP_ASSOCIATION:
+            return "OGS_PFCP_CAUSE_NO_ESTABLISHED_PFCP_ASSOCIATION";
+            break;
+        case OGS_PFCP_CAUSE_RULE_CREATION_MODIFICATION_FAILURE:
+            return "OGS_PFCP_CAUSE_RULE_CREATION_MODIFICATION_FAILURE";
+            break;
+        case OGS_PFCP_CAUSE_PFCP_ENTITY_IN_CONGESTION:
+            return "OGS_PFCP_CAUSE_PFCP_ENTITY_IN_CONGESTION";
+            break;
+        case OGS_PFCP_CAUSE_NO_RESOURCES_AVAILABLE:
+            return "OGS_PFCP_CAUSE_NO_RESOURCES_AVAILABLE";
+            break;
+        case OGS_PFCP_CAUSE_SERVICE_NOT_SUPPORTED:
+            return "OGS_PFCP_CAUSE_SERVICE_NOT_SUPPORTED";
+            break;
+        case OGS_PFCP_CAUSE_SYSTEM_FAILURE:
+            return "OGS_PFCP_CAUSE_SYSTEM_FAILURE";
+            break;
+        default:
+            break;
     }
     return "OGS_PFCP_CAUSE_UNKNOWN";
 }

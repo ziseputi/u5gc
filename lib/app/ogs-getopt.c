@@ -24,8 +24,7 @@
 #define OGS_GETOPT_MSG_TOOMANY "option takes no arguments"
 
 static int ogs_getopt_error(
-        ogs_getopt_t *options, const char *msg, const char *data)
-{
+        ogs_getopt_t *options, const char *msg, const char *data) {
     unsigned p = 0;
     const char *sep = " -- '";
     while (*msg)
@@ -39,8 +38,7 @@ static int ogs_getopt_error(
     return '?';
 }
 
-void ogs_getopt_init(ogs_getopt_t *options, char **argv)
-{
+void ogs_getopt_init(ogs_getopt_t *options, char **argv) {
     options->argv = argv;
     options->permute = 1;
     options->optind = 1;
@@ -49,24 +47,20 @@ void ogs_getopt_init(ogs_getopt_t *options, char **argv)
     options->errmsg[0] = '\0';
 }
 
-static int ogs_getopt_is_dashdash(const char *arg)
-{
+static int ogs_getopt_is_dashdash(const char *arg) {
     return arg != 0 && arg[0] == '-' && arg[1] == '-' && arg[2] == '\0';
 }
 
-static int ogs_getopt_is_shortopt(const char *arg)
-{
+static int ogs_getopt_is_shortopt(const char *arg) {
     return arg != 0 && arg[0] == '-' && arg[1] != '-' && arg[1] != '\0';
 }
 
 static int
-ogs_getopt_is_longopt(const char *arg)
-{
+ogs_getopt_is_longopt(const char *arg) {
     return arg != 0 && arg[0] == '-' && arg[1] == '-' && arg[2] != '\0';
 }
 
-static void ogs_getopt_permute(ogs_getopt_t *options, int index)
-{
+static void ogs_getopt_permute(ogs_getopt_t *options, int index) {
     char *nonoption = options->argv[index];
     int i;
     for (i = index; i < options->optind - 1; i++)
@@ -74,8 +68,7 @@ static void ogs_getopt_permute(ogs_getopt_t *options, int index)
     options->argv[options->optind - 1] = nonoption;
 }
 
-static int ogs_getopt_argtype(const char *optstring, char c)
-{
+static int ogs_getopt_argtype(const char *optstring, char c) {
     int count = OGS_GETOPT_NONE;
     if (c == ':')
         return -1;
@@ -87,8 +80,7 @@ static int ogs_getopt_argtype(const char *optstring, char c)
     return count;
 }
 
-int ogs_getopt(ogs_getopt_t *options, const char *optstring)
-{
+int ogs_getopt(ogs_getopt_t *options, const char *optstring) {
     int type;
     char *next;
     char *option = options->argv[options->optind];
@@ -116,49 +108,48 @@ int ogs_getopt(ogs_getopt_t *options, const char *optstring)
     type = ogs_getopt_argtype(optstring, option[0]);
     next = options->argv[options->optind + 1];
     switch (type) {
-    case -1: {
-        char str[2] = {0, 0};
-        str[0] = option[0];
-        options->optind++;
-        return ogs_getopt_error(options, OGS_GETOPT_MSG_INVALID, str);
-    }
-    case OGS_GETOPT_NONE:
-        if (option[1]) {
-            options->subopt++;
-        } else {
-            options->subopt = 0;
-            options->optind++;
-        }
-        return option[0];
-    case OGS_GETOPT_REQUIRED:
-        options->subopt = 0;
-        options->optind++;
-        if (option[1]) {
-            options->optarg = option + 1;
-        } else if (next != 0) {
-            options->optarg = next;
-            options->optind++;
-        } else {
+        case -1: {
             char str[2] = {0, 0};
             str[0] = option[0];
-            options->optarg = 0;
-            return ogs_getopt_error(options, OGS_GETOPT_MSG_MISSING, str);
+            options->optind++;
+            return ogs_getopt_error(options, OGS_GETOPT_MSG_INVALID, str);
         }
-        return option[0];
-    case OGS_GETOPT_OPTIONAL:
-        options->subopt = 0;
-        options->optind++;
-        if (option[1])
-            options->optarg = option + 1;
-        else
-            options->optarg = 0;
-        return option[0];
+        case OGS_GETOPT_NONE:
+            if (option[1]) {
+                options->subopt++;
+            } else {
+                options->subopt = 0;
+                options->optind++;
+            }
+            return option[0];
+        case OGS_GETOPT_REQUIRED:
+            options->subopt = 0;
+            options->optind++;
+            if (option[1]) {
+                options->optarg = option + 1;
+            } else if (next != 0) {
+                options->optarg = next;
+                options->optind++;
+            } else {
+                char str[2] = {0, 0};
+                str[0] = option[0];
+                options->optarg = 0;
+                return ogs_getopt_error(options, OGS_GETOPT_MSG_MISSING, str);
+            }
+            return option[0];
+        case OGS_GETOPT_OPTIONAL:
+            options->subopt = 0;
+            options->optind++;
+            if (option[1])
+                options->optarg = option + 1;
+            else
+                options->optarg = 0;
+            return option[0];
     }
     return 0;
 }
 
-char *ogs_getopt_arg(ogs_getopt_t *options)
-{
+char *ogs_getopt_arg(ogs_getopt_t *options) {
     char *option = options->argv[options->optind];
     options->subopt = 0;
     if (option != 0)
@@ -166,21 +157,19 @@ char *ogs_getopt_arg(ogs_getopt_t *options)
     return option;
 }
 
-static int ogs_getopt_longopts_end(const ogs_getopt_long_t *longopts, int i)
-{
+static int ogs_getopt_longopts_end(const ogs_getopt_long_t *longopts, int i) {
     return !longopts[i].longname && !longopts[i].shortname;
 }
 
 static void
-ogs_getopt_from_long(const ogs_getopt_long_t *longopts, char *optstring)
-{
+ogs_getopt_from_long(const ogs_getopt_long_t *longopts, char *optstring) {
     char *p = optstring;
     int i;
     for (i = 0; !ogs_getopt_longopts_end(longopts, i); i++) {
         if (longopts[i].shortname) {
             int a;
             *p++ = longopts[i].shortname;
-            for (a = 0; a < (int)longopts[i].argtype; a++)
+            for (a = 0; a < (int) longopts[i].argtype; a++)
                 *p++ = ':';
         }
     }
@@ -188,8 +177,7 @@ ogs_getopt_from_long(const ogs_getopt_long_t *longopts, char *optstring)
 }
 
 /* Unlike strcmp(), handles options containing "=". */
-static int ogs_getopt_longopts_match(const char *longname, const char *option)
-{
+static int ogs_getopt_longopts_match(const char *longname, const char *option) {
     const char *a = option, *n = longname;
     if (longname == 0)
         return 0;
@@ -200,8 +188,7 @@ static int ogs_getopt_longopts_match(const char *longname, const char *option)
 }
 
 /* Return the part after "=", or NULL. */
-static char *ogs_getopt_longopts_arg(char *option)
-{
+static char *ogs_getopt_longopts_arg(char *option) {
     for (; *option && *option != '='; option++);
     if (*option == '=')
         return option + 1;
@@ -210,9 +197,8 @@ static char *ogs_getopt_longopts_arg(char *option)
 }
 
 static int ogs_getopt_long_fallback(ogs_getopt_t *options,
-                       const ogs_getopt_long_t *longopts,
-                       int *longindex)
-{
+                                    const ogs_getopt_long_t *longopts,
+                                    int *longindex) {
     int result;
     char optstring[96 * 3 + 1]; /* 96 ASCII printable characters */
     ogs_getopt_from_long(longopts, optstring);
@@ -230,9 +216,8 @@ static int ogs_getopt_long_fallback(ogs_getopt_t *options,
 }
 
 int ogs_getopt_long(ogs_getopt_t *options,
-              const ogs_getopt_long_t *longopts,
-              int *longindex)
-{
+                    const ogs_getopt_long_t *longopts,
+                    int *longindex) {
     int i;
     char *option = options->argv[options->optind];
     if (option == 0) {
@@ -270,7 +255,8 @@ int ogs_getopt_long(ogs_getopt_t *options,
             arg = ogs_getopt_longopts_arg(option);
             if (longopts[i].argtype == OGS_GETOPT_NONE && arg != 0) {
                 return ogs_getopt_error(options, OGS_GETOPT_MSG_TOOMANY, name);
-            } if (arg != 0) {
+            }
+            if (arg != 0) {
                 options->optarg = arg;
             } else if (longopts[i].argtype == OGS_GETOPT_REQUIRED) {
                 options->optarg = options->argv[options->optind];

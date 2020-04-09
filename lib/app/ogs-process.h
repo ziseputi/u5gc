@@ -70,23 +70,27 @@ typedef struct ogs_proc_s {
 
 enum ogs_proc_option_e {
     // stdout and stderr are the same FILE.
-    ogs_proc_option_combined_stdout_stderr = 0x1,
+            ogs_proc_option_combined_stdout_stderr = 0x1,
 
     // The child process should inherit the environment variables of the parent.
-    ogs_proc_option_inherit_environment = 0x2
+            ogs_proc_option_inherit_environment = 0x2
 };
 
 int ogs_proc_create(const char *const command_line[], int options,
                     ogs_proc_t *const out_process);
 
 FILE *ogs_proc_stdin(const ogs_proc_t *const process);
+
 FILE *ogs_proc_stdout(const ogs_proc_t *const process);
+
 FILE *ogs_proc_stderr(const ogs_proc_t *const process);
 
 int ogs_proc_join(ogs_proc_t *const process, int *const out_return_code);
+
 int ogs_proc_destroy(ogs_proc_t *const process);
 
 int ogs_proc_terminate(ogs_proc_t *const process);
+
 int ogs_proc_kill(ogs_proc_t *const process);
 
 #ifdef __cplusplus

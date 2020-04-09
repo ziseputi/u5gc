@@ -27,20 +27,24 @@
 #include "ogs-poll-private.h"
 
 static void select_init(ogs_pollset_t *pollset);
+
 static void select_cleanup(ogs_pollset_t *pollset);
+
 static int select_add(ogs_poll_t *poll, short when);
+
 static int select_remove(ogs_poll_t *poll);
+
 static int select_process(ogs_pollset_t *pollset, ogs_time_t timeout);
 
 const ogs_pollset_actions_t ogs_select_actions = {
-    select_init,
-    select_cleanup,
+        select_init,
+        select_cleanup,
 
-    select_add,
-    select_remove,
-    select_process,
+        select_add,
+        select_remove,
+        select_process,
 
-    ogs_notify_pollset,
+        ogs_notify_pollset,
 };
 
 struct select_context_s {
@@ -53,8 +57,7 @@ struct select_context_s {
     ogs_list_t list;
 };
 
-static void select_init(ogs_pollset_t *pollset)
-{
+static void select_init(ogs_pollset_t *pollset) {
     struct select_context_s *context = NULL;
     ogs_assert(pollset);
 
@@ -71,8 +74,7 @@ static void select_init(ogs_pollset_t *pollset)
     ogs_notify_init(pollset);
 }
 
-static void select_cleanup(ogs_pollset_t *pollset)
-{
+static void select_cleanup(ogs_pollset_t *pollset) {
     struct select_context_s *context = NULL;
 
     ogs_assert(pollset);
@@ -83,8 +85,7 @@ static void select_cleanup(ogs_pollset_t *pollset)
     ogs_free(context);
 }
 
-static int select_add(ogs_poll_t *poll, short when)
-{
+static int select_add(ogs_poll_t *poll, short when) {
     ogs_pollset_t *pollset = NULL;
     struct select_context_s *context = NULL;
 
@@ -110,8 +111,7 @@ static int select_add(ogs_poll_t *poll, short when)
     return OGS_OK;
 }
 
-static int select_remove(ogs_poll_t *poll)
-{
+static int select_remove(ogs_poll_t *poll) {
     ogs_pollset_t *pollset = NULL;
     struct select_context_s *context = NULL;
 
@@ -133,8 +133,7 @@ static int select_remove(ogs_poll_t *poll)
     return OGS_OK;
 }
 
-static int select_process(ogs_pollset_t *pollset, ogs_time_t timeout)
-{
+static int select_process(ogs_pollset_t *pollset, ogs_time_t timeout) {
     struct select_context_s *context = NULL;
     ogs_poll_t *poll = NULL;
     int rc;
@@ -170,7 +169,7 @@ static int select_process(ogs_pollset_t *pollset, ogs_time_t timeout)
     }
 
     rc = select(context->max_fd + 1,
-            &context->work_read_fd_set, &context->work_write_fd_set, NULL, tp);
+                &context->work_read_fd_set, &context->work_write_fd_set, NULL, tp);
     if (rc < 0) {
         ogs_log_message(OGS_LOG_ERROR, ogs_socket_errno, "select() failed");
         return OGS_ERROR;
@@ -192,6 +191,6 @@ static int select_process(ogs_pollset_t *pollset, ogs_time_t timeout)
             poll->handler(when, poll->fd, poll->data);
         }
     }
-    
+
     return OGS_OK;
 }

@@ -21,8 +21,7 @@
 
 int __ogs_app_domain;
 
-int ogs_app_initialize(const char *default_config, const char *const argv[])
-{
+int ogs_app_initialize(const char *default_config, const char *const argv[]) {
     int rv, opt;
     ogs_getopt_t options;
     struct {
@@ -45,25 +44,25 @@ int ogs_app_initialize(const char *default_config, const char *const argv[])
      */
     memset(&optarg, 0, sizeof(optarg));
 
-    ogs_getopt_init(&options, (char**)argv);
+    ogs_getopt_init(&options, (char **) argv);
     while ((opt = ogs_getopt(&options, "c:l:e:m:")) != -1) {
         switch (opt) {
-        case 'c':
-            optarg.config_file = options.optarg;
-            break;
-        case 'l':
-            optarg.log_file = options.optarg;
-            break;
-        case 'e':
-            optarg.log_level = options.optarg;
-            break;
-        case 'm':
-            optarg.domain_mask = options.optarg;
-            break;
-        case '?':
-        default:
-            ogs_assert_if_reached();
-            return OGS_ERROR;
+            case 'c':
+                optarg.config_file = options.optarg;
+                break;
+            case 'l':
+                optarg.log_file = options.optarg;
+                break;
+            case 'e':
+                optarg.log_level = options.optarg;
+                break;
+            case 'm':
+                optarg.domain_mask = options.optarg;
+                break;
+            case '?':
+            default:
+                ogs_assert_if_reached();
+                return OGS_ERROR;
         }
     }
 
@@ -94,8 +93,8 @@ int ogs_app_initialize(const char *default_config, const char *const argv[])
 
     if (ogs_config()->logger.file) {
         if (ogs_log_add_file(ogs_config()->logger.file) == NULL) {
-            ogs_fatal("cannot open log file : %s", 
-                    ogs_config()->logger.file);
+            ogs_fatal("cannot open log file : %s",
+                      ogs_config()->logger.file);
             return OGS_ERROR;
         }
     }
@@ -103,7 +102,7 @@ int ogs_app_initialize(const char *default_config, const char *const argv[])
     if (optarg.domain_mask)
         ogs_config()->logger.domain = optarg.domain_mask;
 
-    if (optarg.log_level) 
+    if (optarg.log_level)
         ogs_config()->logger.level = optarg.log_level;
 
     rv = ogs_log_config_domain(
@@ -119,8 +118,7 @@ int ogs_app_initialize(const char *default_config, const char *const argv[])
     return rv;
 }
 
-void ogs_app_terminate(void)
-{
+void ogs_app_terminate(void) {
     ogs_config_final();
 
     ogs_pkbuf_default_destroy();
@@ -128,7 +126,6 @@ void ogs_app_terminate(void)
     ogs_core_terminate();
 }
 
-void ogs_app_setup_log(void)
-{
+void ogs_app_setup_log(void) {
     ogs_log_install_domain(&__ogs_app_domain, "app", ogs_core()->log.level);
 }

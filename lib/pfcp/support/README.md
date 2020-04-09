@@ -1,10 +1,10 @@
 
 * Install python-pip
-user@host ~/Documents/git/open5gs/lib/gtp/support$ \
+user@host ~/Documents/git/open5gs/lib/support$ \
     sudo apt-get install python-pip
 
 * Install python-docx
-user@host ~/Documents/git/open5gs/lib/gtp/support$ \
+user@host ~/Documents/git/open5gs/lib/support$ \
     sudo pip install python-docx
 
 * Change the format of standard specification 
@@ -12,5 +12,5 @@ user@host ~/Documents/git/open5gs/lib/gtp/support$ \
   using Microsoft Office 2007+
 
 * Generate TLV support files
-user@host ~/Documents/git/open5gs/lib/pfcp/support$ \
+user@host ~/Documents/git/open5gs/lib/support$ \
     python pfcp-tlv.py -f 29244-g10.docx -o ..

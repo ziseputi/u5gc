@@ -36,20 +36,25 @@ FAIL = '\033[91m'
 INFO = '\033[93m'
 ENDC = '\033[0m'
 
+
 def d_print(string):
     if verbosity > 0:
         sys.stdout.write(string)
 
+
 def d_info(string):
     sys.stdout.write(INFO + string + ENDC + "\n")
+
 
 def d_error(string):
     sys.stderr.write(FAIL + string + ENDC + "\n")
     sys.exit(0)
 
+
 def write_file(f, string):
     f.write(string)
     d_print(string)
+
 
 def output_header_to_file(f):
     now = datetime.datetime.now()
@@ -79,6 +84,7 @@ def output_header_to_file(f):
     f.write(" * Created on: %s by %s\n * from %s\n" % (str(now), getpass.getuser(), filename))
     f.write(" ******************************************************************************/\n\n")
 
+
 def usage():
     print "Python generating TLV build/parser for GTPv2-C v%s" % (version)
     print "Usage: python gtp-tlv.py [options]"
@@ -89,11 +95,14 @@ def usage():
     print "-c [dir]  Cache files to given directory"
     print "-h        Print this help and return"
 
+
 def v_upper(v):
     return re.sub('3GPP', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).upper())
 
+
 def v_lower(v):
     return re.sub('3gpp', '', re.sub('\'', '_', re.sub('/', '_', re.sub('-', '_', re.sub(' ', '_', v)))).lower())
+
 
 def get_cells(cells):
     instance = cells[4].text.encode('ascii', 'ignore')
@@ -112,7 +121,7 @@ def get_cells(cells):
         ie_type = 'IP4CP'
     if ie_type not in type_list.keys():
         assert False, "Unknown IE type : [" \
-                + cells[3].text + "]" + "(" + ie_type + ")"
+                      + cells[3].text + "]" + "(" + ie_type + ")"
     presence = cells[1].text.encode('ascii', 'ignore')
     ie_value = re.sub('\s*\n*\s*\([^\)]*\)*', '', cells[0].text).encode('ascii', 'ignore')
     comment = cells[2].text.encode('ascii', 'ignore')
@@ -122,14 +131,16 @@ def get_cells(cells):
         type_list[ie_type]["max_instance"] = instance
         write_file(f, "type_list[\"" + ie_type + "\"][\"max_instance\"] = \"" + instance + "\"\n")
 
-    return { "ie_type" : ie_type, "ie_value" : ie_value, "presence" : presence, "instance" : instance, "comment" : comment }
+    return {"ie_type": ie_type, "ie_value": ie_value, "presence": presence, "instance": instance, "comment": comment}
+
 
 def write_cells_to_file(name, cells):
     write_file(f, name + ".append({ \"ie_type\" : \"" + cells["ie_type"] + \
-        "\", \"ie_value\" : \"" + cells["ie_value"] + \
-        "\", \"presence\" : \"" + cells["presence"] + \
-        "\", \"instance\" : \"" + cells["instance"] + \
-        "\", \"comment\" : \"" + cells["comment"] + "\"})\n")
+               "\", \"ie_value\" : \"" + cells["ie_value"] + \
+               "\", \"presence\" : \"" + cells["presence"] + \
+               "\", \"instance\" : \"" + cells["instance"] + \
+               "\", \"comment\" : \"" + cells["comment"] + "\"})\n")
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], "df:ho:c:", ["debug", "file", "help", "output", "cache"])
@@ -156,7 +167,7 @@ for o, a in opts:
         sys.exit(2)
 
 if os.path.isfile(filename) and os.access(filename, os.R_OK):
-    file = open(filename, 'r') 
+    file = open(filename, 'r')
 else:
     d_error("Cannot find file : " + filename)
 
@@ -167,7 +178,7 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     msg_table = ""
     for i, table in enumerate(document.tables):
@@ -188,7 +199,7 @@ else:
         if key.find('Reserved') != -1:
             continue
         key = re.sub('\s*\n*\s*\([^\)]*\)*', '', key)
-        msg_list[key] = { "type": type }
+        msg_list[key] = {"type": type}
         write_file(f, "msg_list[\"" + key + "\"] = { \"type\" : \"" + type + "\" }\n")
     f.close()
 
@@ -199,7 +210,7 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     ie_table = ""
     for i, table in enumerate(document.tables):
@@ -231,11 +242,11 @@ else:
             key = re.sub('\)', '', key)
             key = re.sub('\s*$', '', key)
         type = row.cells[0].text.encode('ascii', 'ignore')
-        type_list[key] = { "type": type , "max_instance" : "0" }
+        type_list[key] = {"type": type, "max_instance": "0"}
         write_file(f, "type_list[\"" + key + "\"] = { \"type\" : \"" + type)
         write_file(f, "\", \"max_instance\" : \"0\" }\n")
     f.close()
-type_list['MM Context'] = { "type": "107", "max_instance" : "0" }
+type_list['MM Context'] = {"type": "107", "max_instance": "0"}
 
 d_info("[Group IE List]")
 cachefile = cachedir + 'tlv-group-list.py'
@@ -244,11 +255,11 @@ if os.path.isfile(cachefile) and os.access(cachefile, os.R_OK):
     print "Read from " + cachefile
 else:
     document = Document(filename)
-    f = open(cachefile, 'w') 
+    f = open(cachefile, 'w')
 
     for i, table in enumerate(document.tables):
         if table.rows[0].cells[0].text.find('Octet') != -1 and \
-            table.rows[0].cells[2].text.find('IE Type') != -1:
+                table.rows[0].cells[2].text.find('IE Type') != -1:
             d_print("Table Index = %d\n" % i)
 
             row = table.rows[0];
@@ -274,7 +285,7 @@ else:
                         ies.append(cells)
                         write_cells_to_file("ies", cells)
 
-                group_list[ie_name] = { "type" : ie_type, "ies" : ies }
+                group_list[ie_name] = {"type": ie_type, "ies": ies}
                 write_file(f, "group_list[\"" + ie_name + "\"] = { \"type\" : \"" + ie_type + "\", \"ies\" : ies }\n")
             else:
                 group_list_is_added = False
@@ -297,8 +308,9 @@ else:
                         write_cells_to_file("added_ies", cells)
                         group_list_is_added = True
                 if group_list_is_added is True:
-                    group_list[ie_name] = { "type" : ie_type, "ies" : added_ies }
-                    write_file(f, "group_list[\"" + ie_name + "\"] = { \"type\" : \"" + ie_type + "\", \"ies\" : added_ies }\n")
+                    group_list[ie_name] = {"type": ie_type, "ies": added_ies}
+                    write_file(f,
+                               "group_list[\"" + ie_name + "\"] = { \"type\" : \"" + ie_type + "\", \"ies\" : added_ies }\n")
     f.close()
 
 msg_list["Echo Request"]["table"] = 6
@@ -342,7 +354,7 @@ for key in msg_list.keys():
             print "Read from " + cachefile
         else:
             document = Document(filename)
-            f = open(cachefile, 'w') 
+            f = open(cachefile, 'w')
 
             ies = []
             write_file(f, "ies = []\n")
@@ -363,16 +375,16 @@ for key in msg_list.keys():
             write_file(f, "msg_list[key][\"ies\"] = ies\n")
             f.close()
 
-type_list["Recovery"]["size"] = 1                       # Type : 3
-type_list["EBI"]["size"] = 1                            # Type : 73
-type_list["RAT Type"]["size"] = 1                       # Type : 82
-type_list["PDN Type"]["size"] = 1                       # Type : 99
-type_list["PTI"]["size"] = 1                            # Type : 100
-type_list["Port Number"]["size"] = 2                    # Type : 126
-type_list["APN Restriction"]["size"] = 1                # Type : 127
-type_list["Selection Mode"]["size"] = 1                 # Type : 128
-type_list["Node Type"]["size"] = 1                      # Type : 135
-type_list["Node Features"]["size"] = 1                  # Type : 152
+type_list["Recovery"]["size"] = 1  # Type : 3
+type_list["EBI"]["size"] = 1  # Type : 73
+type_list["RAT Type"]["size"] = 1  # Type : 82
+type_list["PDN Type"]["size"] = 1  # Type : 99
+type_list["PTI"]["size"] = 1  # Type : 100
+type_list["Port Number"]["size"] = 2  # Type : 126
+type_list["APN Restriction"]["size"] = 1  # Type : 127
+type_list["Selection Mode"]["size"] = 1  # Type : 128
+type_list["Node Type"]["size"] = 1  # Type : 135
+type_list["Node Features"]["size"] = 1  # Type : 152
 
 f = open(outdir + 'message.h', 'w')
 output_header_to_file(f)
@@ -446,7 +458,7 @@ f.write("/* Infomration Element TLV Descriptor */\n")
 for (k, v) in sorted_type_list:
     if k in group_list.keys():
         continue
-    for instance in range(0, int(type_list[k]["max_instance"])+1):
+    for instance in range(0, int(type_list[k]["max_instance"]) + 1):
         f.write("extern ogs_tlv_desc_t ogs_gtp_tlv_desc_" + v_lower(k))
         f.write("_" + str(instance) + ";\n")
 f.write("\n")
@@ -456,7 +468,7 @@ sorted_group_list = sorted(tmp, key=lambda tup: int(tup[1]))
 
 f.write("/* Group Infomration Element TLV Descriptor */\n")
 for (k, v) in sorted_group_list:
-    for instance in range(0, int(type_list[k]["max_instance"])+1):
+    for instance in range(0, int(type_list[k]["max_instance"]) + 1):
         f.write("extern ogs_tlv_desc_t ogs_gtp_tlv_desc_" + v_lower(k))
         f.write("_" + str(instance) + ";\n")
 f.write("\n")
@@ -544,7 +556,7 @@ f.write("""#include "ogs-gtp.h"
 for (k, v) in sorted_type_list:
     if k in group_list.keys():
         continue
-    for instance in range(0, int(type_list[k]["max_instance"])+1):
+    for instance in range(0, int(type_list[k]["max_instance"]) + 1):
         f.write("ogs_tlv_desc_t ogs_gtp_tlv_desc_%s_%d =\n" % (v_lower(k), instance))
         f.write("{\n")
         if "size" in type_list[k]:
@@ -572,7 +584,7 @@ for (k, v) in sorted_type_list:
         f.write("};\n\n")
 
 for (k, v) in sorted_group_list:
-    for instance in range(0, int(type_list[k]["max_instance"])+1):
+    for instance in range(0, int(type_list[k]["max_instance"]) + 1):
         f.write("ogs_tlv_desc_t ogs_gtp_tlv_desc_%s_%d =\n" % (v_lower(k), instance))
         f.write("{\n")
         f.write("    OGS_TLV_COMPOUND,\n")
@@ -583,7 +595,7 @@ for (k, v) in sorted_group_list:
         f.write("    sizeof(ogs_gtp_tlv_%s_t),\n" % v_lower(k))
         f.write("    {\n")
         for ies in group_list[k]["ies"]:
-                f.write("        &ogs_gtp_tlv_desc_%s_%s,\n" % (v_lower(ies["ie_type"]), v_lower(ies["instance"])))
+            f.write("        &ogs_gtp_tlv_desc_%s_%s,\n" % (v_lower(ies["ie_type"]), v_lower(ies["instance"])))
         f.write("        NULL,\n")
         f.write("    }\n")
         f.write("};\n\n")
@@ -596,7 +608,7 @@ for (k, v) in sorted_msg_list:
         f.write("    \"%s\",\n" % k)
         f.write("    0, 0, 0, 0, {\n")
         for ies in msg_list[k]["ies"]:
-                f.write("        &ogs_gtp_tlv_desc_%s_%s,\n" % (v_lower(ies["ie_type"]), v_lower(ies["instance"])))
+            f.write("        &ogs_gtp_tlv_desc_%s_%s,\n" % (v_lower(ies["ie_type"]), v_lower(ies["instance"])))
         f.write("    NULL,\n")
         f.write("}};\n\n")
 f.write("\n")

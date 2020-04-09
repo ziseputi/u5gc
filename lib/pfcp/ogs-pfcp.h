@@ -32,14 +32,14 @@
 
 #define OGS_PFCP_INSIDE
 
-#include "pfcp/message.h"
-#include "pfcp/types.h"
-#include "pfcp/conv.h"
-#include "pfcp/node.h"
-#include "pfcp/context.h"
-#include "pfcp/n4-build.h"
-#include "pfcp/path.h"
-#include "pfcp/xact.h"
+#include "message.h"
+#include "types.h"
+#include "conv.h"
+#include "node.h"
+#include "context.h"
+#include "n4-build.h"
+#include "path.h"
+#include "xact.h"
 
 #ifdef __cplusplus
 extern "C" {
