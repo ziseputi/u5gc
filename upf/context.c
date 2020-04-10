@@ -124,147 +124,147 @@ static int upf_context_validation(void) {
 }
 
 int upf_context_parse_config(void) {
-    int rv;
-    yaml_document_t *document = NULL;
-    ogs_yaml_iter_t root_iter;
-
-    document = ogs_config()->document;
-    ogs_assert(document);
-
-    rv = upf_context_prepare();
-    if (rv != OGS_OK) return rv;
-
-    ogs_yaml_iter_init(&root_iter, document);
-    while (ogs_yaml_iter_next(&root_iter)) {
-        const char *root_key = ogs_yaml_iter_key(&root_iter);
-        ogs_assert(root_key);
-        if (!strcmp(root_key, "upf")) {
-            ogs_yaml_iter_t upf_iter;
-            ogs_yaml_iter_recurse(&root_iter, &upf_iter);
-            while (ogs_yaml_iter_next(&upf_iter)) {
-                const char *upf_key = ogs_yaml_iter_key(&upf_iter);
-                ogs_assert(upf_key);
-                if (!strcmp(upf_key, "gtpu")) {
-                    ogs_yaml_iter_t gtpu_array, gtpu_iter;
-                    ogs_yaml_iter_recurse(&upf_iter, &gtpu_array);
-                    do {
-                        int family = AF_UNSPEC;
-                        int i, num = 0;
-                        const char *hostname[OGS_MAX_NUM_OF_HOSTNAME];
-                        uint16_t port = self.gtpu_port;
-                        const char *dev = NULL;
-                        ogs_sockaddr_t *addr = NULL;
-
-                        if (ogs_yaml_iter_type(&gtpu_array) ==
-                            YAML_MAPPING_NODE) {
-                            memcpy(&gtpu_iter, &gtpu_array,
-                                   sizeof(ogs_yaml_iter_t));
-                        } else if (ogs_yaml_iter_type(&gtpu_array) ==
-                                   YAML_SEQUENCE_NODE) {
-                            if (!ogs_yaml_iter_next(&gtpu_array))
-                                break;
-                            ogs_yaml_iter_recurse(&gtpu_array, &gtpu_iter);
-                        } else if (ogs_yaml_iter_type(&gtpu_array) ==
-                                   YAML_SCALAR_NODE) {
-                            break;
-                        } else
-                            ogs_assert_if_reached();
-
-                        while (ogs_yaml_iter_next(&gtpu_iter)) {
-                            const char *gtpu_key =
-                                    ogs_yaml_iter_key(&gtpu_iter);
-                            ogs_assert(gtpu_key);
-                            if (!strcmp(gtpu_key, "family")) {
-                                const char *v = ogs_yaml_iter_value(&gtpu_iter);
-                                if (v) family = atoi(v);
-                                if (family != AF_UNSPEC &&
-                                    family != AF_INET && family != AF_INET6) {
-                                    ogs_warn("Ignore family(%d) : AF_UNSPEC(%d), "
-                                             "AF_INET(%d), AF_INET6(%d) ",
-                                             family, AF_UNSPEC, AF_INET, AF_INET6);
-                                    family = AF_UNSPEC;
-                                }
-                            } else if (!strcmp(gtpu_key, "addr") ||
-                                       !strcmp(gtpu_key, "name")) {
-                                ogs_yaml_iter_t hostname_iter;
-                                ogs_yaml_iter_recurse(
-                                        &gtpu_iter, &hostname_iter);
-                                ogs_assert(ogs_yaml_iter_type(&hostname_iter) !=
-                                           YAML_MAPPING_NODE);
-
-                                do {
-                                    if (ogs_yaml_iter_type(&hostname_iter) ==
-                                        YAML_SEQUENCE_NODE) {
-                                        if (!ogs_yaml_iter_next(&hostname_iter))
-                                            break;
-                                    }
-
-                                    ogs_assert(num <= OGS_MAX_NUM_OF_HOSTNAME);
-                                    hostname[num++] =
-                                            ogs_yaml_iter_value(&hostname_iter);
-                                } while (
-                                        ogs_yaml_iter_type(&hostname_iter) ==
-                                        YAML_SEQUENCE_NODE);
-                            } else if (!strcmp(gtpu_key, "port")) {
-                                const char *v = ogs_yaml_iter_value(&gtpu_iter);
-                                if (v) {
-                                    port = atoi(v);
-                                    self.gtpu_port = port;
-                                }
-                            } else if (!strcmp(gtpu_key, "dev")) {
-                                dev = ogs_yaml_iter_value(&gtpu_iter);
-                            } else
-                                ogs_warn("unknown key `%s`", gtpu_key);
-                        }
-
-                        addr = NULL;
-                        for (i = 0; i < num; i++) {
-                            rv = ogs_addaddrinfo(&addr,
-                                                 family, hostname[i], port, 0);
-                            ogs_assert(rv == OGS_OK);
-                        }
-
-                        if (addr) {
-                            if (ogs_config()->parameter.no_ipv4 == 0)
-                                ogs_socknode_add(
-                                        &self.gtpu_list, AF_INET, addr);
-                            if (ogs_config()->parameter.no_ipv6 == 0)
-                                ogs_socknode_add(
-                                        &self.gtpu_list, AF_INET6, addr);
-                            ogs_freeaddrinfo(addr);
-                        }
-
-                        if (dev) {
-                            rv = ogs_socknode_probe(
-                                    ogs_config()->parameter.no_ipv4 ?
-                                    NULL : &self.gtpu_list,
-                                    ogs_config()->parameter.no_ipv6 ?
-                                    NULL : &self.gtpu_list,
-                                    dev, self.gtpu_port);
-                            ogs_assert(rv == OGS_OK);
-                        }
-
-                    } while (ogs_yaml_iter_type(&gtpu_array) ==
-                             YAML_SEQUENCE_NODE);
-
-                    if (ogs_list_first(&self.gtpu_list) == NULL) {
-                        rv = ogs_socknode_probe(
-                                ogs_config()->parameter.no_ipv4 ?
-                                NULL : &self.gtpu_list,
-                                ogs_config()->parameter.no_ipv6 ?
-                                NULL : &self.gtpu_list,
-                                NULL, self.gtpu_port);
-                        ogs_assert(rv == OGS_OK);
-                    }
-                } else if (!strcmp(upf_key, "pdn")) {
-                    /* handle config in pfcp library */
-                }
-            }
-        }
-    }
-
-    rv = upf_context_validation();
-    if (rv != OGS_OK) return rv;
+//    int rv;
+//    yaml_document_t *document = NULL;
+//    ogs_yaml_iter_t root_iter;
+//
+//    document = ogs_config()->document;
+//    ogs_assert(document);
+//
+//    rv = upf_context_prepare();
+//    if (rv != OGS_OK) return rv;
+//
+//    ogs_yaml_iter_init(&root_iter, document);
+//    while (ogs_yaml_iter_next(&root_iter)) {
+//        const char *root_key = ogs_yaml_iter_key(&root_iter);
+//        ogs_assert(root_key);
+//        if (!strcmp(root_key, "upf")) {
+//            ogs_yaml_iter_t upf_iter;
+//            ogs_yaml_iter_recurse(&root_iter, &upf_iter);
+//            while (ogs_yaml_iter_next(&upf_iter)) {
+//                const char *upf_key = ogs_yaml_iter_key(&upf_iter);
+//                ogs_assert(upf_key);
+//                if (!strcmp(upf_key, "gtpu")) {
+//                    ogs_yaml_iter_t gtpu_array, gtpu_iter;
+//                    ogs_yaml_iter_recurse(&upf_iter, &gtpu_array);
+//                    do {
+//                        int family = AF_UNSPEC;
+//                        int i, num = 0;
+//                        const char *hostname[OGS_MAX_NUM_OF_HOSTNAME];
+//                        uint16_t port = self.gtpu_port;
+//                        const char *dev = NULL;
+//                        ogs_sockaddr_t *addr = NULL;
+//
+//                        if (ogs_yaml_iter_type(&gtpu_array) ==
+//                            YAML_MAPPING_NODE) {
+//                            memcpy(&gtpu_iter, &gtpu_array,
+//                                   sizeof(ogs_yaml_iter_t));
+//                        } else if (ogs_yaml_iter_type(&gtpu_array) ==
+//                                   YAML_SEQUENCE_NODE) {
+//                            if (!ogs_yaml_iter_next(&gtpu_array))
+//                                break;
+//                            ogs_yaml_iter_recurse(&gtpu_array, &gtpu_iter);
+//                        } else if (ogs_yaml_iter_type(&gtpu_array) ==
+//                                   YAML_SCALAR_NODE) {
+//                            break;
+//                        } else
+//                            ogs_assert_if_reached();
+//
+//                        while (ogs_yaml_iter_next(&gtpu_iter)) {
+//                            const char *gtpu_key =
+//                                    ogs_yaml_iter_key(&gtpu_iter);
+//                            ogs_assert(gtpu_key);
+//                            if (!strcmp(gtpu_key, "family")) {
+//                                const char *v = ogs_yaml_iter_value(&gtpu_iter);
+//                                if (v) family = atoi(v);
+//                                if (family != AF_UNSPEC &&
+//                                    family != AF_INET && family != AF_INET6) {
+//                                    ogs_warn("Ignore family(%d) : AF_UNSPEC(%d), "
+//                                             "AF_INET(%d), AF_INET6(%d) ",
+//                                             family, AF_UNSPEC, AF_INET, AF_INET6);
+//                                    family = AF_UNSPEC;
+//                                }
+//                            } else if (!strcmp(gtpu_key, "addr") ||
+//                                       !strcmp(gtpu_key, "name")) {
+//                                ogs_yaml_iter_t hostname_iter;
+//                                ogs_yaml_iter_recurse(
+//                                        &gtpu_iter, &hostname_iter);
+//                                ogs_assert(ogs_yaml_iter_type(&hostname_iter) !=
+//                                           YAML_MAPPING_NODE);
+//
+//                                do {
+//                                    if (ogs_yaml_iter_type(&hostname_iter) ==
+//                                        YAML_SEQUENCE_NODE) {
+//                                        if (!ogs_yaml_iter_next(&hostname_iter))
+//                                            break;
+//                                    }
+//
+//                                    ogs_assert(num <= OGS_MAX_NUM_OF_HOSTNAME);
+//                                    hostname[num++] =
+//                                            ogs_yaml_iter_value(&hostname_iter);
+//                                } while (
+//                                        ogs_yaml_iter_type(&hostname_iter) ==
+//                                        YAML_SEQUENCE_NODE);
+//                            } else if (!strcmp(gtpu_key, "port")) {
+//                                const char *v = ogs_yaml_iter_value(&gtpu_iter);
+//                                if (v) {
+//                                    port = atoi(v);
+//                                    self.gtpu_port = port;
+//                                }
+//                            } else if (!strcmp(gtpu_key, "dev")) {
+//                                dev = ogs_yaml_iter_value(&gtpu_iter);
+//                            } else
+//                                ogs_warn("unknown key `%s`", gtpu_key);
+//                        }
+//
+//                        addr = NULL;
+//                        for (i = 0; i < num; i++) {
+//                            rv = ogs_addaddrinfo(&addr,
+//                                                 family, hostname[i], port, 0);
+//                            ogs_assert(rv == OGS_OK);
+//                        }
+//
+//                        if (addr) {
+//                            if (ogs_config()->parameter.no_ipv4 == 0)
+//                                ogs_socknode_add(
+//                                        &self.gtpu_list, AF_INET, addr);
+//                            if (ogs_config()->parameter.no_ipv6 == 0)
+//                                ogs_socknode_add(
+//                                        &self.gtpu_list, AF_INET6, addr);
+//                            ogs_freeaddrinfo(addr);
+//                        }
+//
+//                        if (dev) {
+//                            rv = ogs_socknode_probe(
+//                                    ogs_config()->parameter.no_ipv4 ?
+//                                    NULL : &self.gtpu_list,
+//                                    ogs_config()->parameter.no_ipv6 ?
+//                                    NULL : &self.gtpu_list,
+//                                    dev, self.gtpu_port);
+//                            ogs_assert(rv == OGS_OK);
+//                        }
+//
+//                    } while (ogs_yaml_iter_type(&gtpu_array) ==
+//                             YAML_SEQUENCE_NODE);
+//
+//                    if (ogs_list_first(&self.gtpu_list) == NULL) {
+//                        rv = ogs_socknode_probe(
+//                                ogs_config()->parameter.no_ipv4 ?
+//                                NULL : &self.gtpu_list,
+//                                ogs_config()->parameter.no_ipv6 ?
+//                                NULL : &self.gtpu_list,
+//                                NULL, self.gtpu_port);
+//                        ogs_assert(rv == OGS_OK);
+//                    }
+//                } else if (!strcmp(upf_key, "pdn")) {
+//                    /* handle config in pfcp library */
+//                }
+//            }
+//        }
+//    }
+//
+//    rv = upf_context_validation();
+//    if (rv != OGS_OK) return rv;
 
     return OGS_OK;
 }

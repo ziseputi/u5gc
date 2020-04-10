@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <ogs-thread.h>
 #include <context.h>
 #include "context.h"
 #include "event.h"

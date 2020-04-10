@@ -51,7 +51,7 @@
 
 #ifndef ARC4RANDOM_NO_INCLUDES
 
-#include "evconfig-private.h"
+//#include "evconfig-private.h"
 
 #ifdef _WIN32
 #include <wincrypt.h>
@@ -306,15 +306,15 @@ static int arc4_seed_urandom_helper_(const char *fname) {
     int fd;
     size_t n;
 
-    fd = evutil_open_closeonexec_(fname, O_RDONLY, 0);
-    if (fd < 0)
-        return -1;
-    n = read_all(fd, buf, sizeof(buf));
-    close(fd);
-    if (n != sizeof(buf))
-        return -1;
-    arc4_addrandom(buf, sizeof(buf));
-    evutil_memclear_(buf, sizeof(buf));
+//    fd = evutil_open_closeonexec_(fname, O_RDONLY, 0);
+//    if (fd < 0)
+//        return -1;
+//    n = read_all(fd, buf, sizeof(buf));
+//    close(fd);
+//    if (n != sizeof(buf))
+//        return -1;
+//    arc4_addrandom(buf, sizeof(buf));
+//    evutil_memclear_(buf, sizeof(buf));
     arc4_seeded_ok = 1;
     return 0;
 }
@@ -451,9 +451,9 @@ arc4_getword(void) {
 ARC4RANDOM_EXPORT int
 arc4random_stir(void) {
     int val;
-    ARC4_LOCK_();
-    val = arc4_stir();
-    ARC4_UNLOCK_();
+//    ARC4_LOCK_();
+//    val = arc4_stir();
+//    ARC4_UNLOCK_();
     return val;
 }
 
@@ -462,18 +462,18 @@ arc4random_stir(void) {
 #ifndef ARC4RANDOM_NOADDRANDOM
 ARC4RANDOM_EXPORT void
 arc4random_addrandom(const unsigned char *dat, int datlen) {
-    int j;
-    ARC4_LOCK_();
-    if (!rs_initialized)
-        arc4_stir();
-    for (j = 0; j < datlen; j += 256) {
-        /* arc4_addrandom() ignores all but the first 256 bytes of
-         * its input.  We want to make sure to look at ALL the
-         * data in 'dat', just in case the user is doing something
-         * crazy like passing us all the files in /var/log. */
-        arc4_addrandom(dat + j, datlen - j);
-    }
-    ARC4_UNLOCK_();
+//    int j;
+//    ARC4_LOCK_();
+//    if (!rs_initialized)
+//        arc4_stir();
+//    for (j = 0; j < datlen; j += 256) {
+//        /* arc4_addrandom() ignores all but the first 256 bytes of
+//         * its input.  We want to make sure to look at ALL the
+//         * data in 'dat', just in case the user is doing something
+//         * crazy like passing us all the files in /var/log. */
+//        arc4_addrandom(dat + j, datlen - j);
+//    }
+//    ARC4_UNLOCK_();
 }
 
 #endif
@@ -482,11 +482,11 @@ arc4random_addrandom(const unsigned char *dat, int datlen) {
 ARC4RANDOM_EXPORT ARC4RANDOM_UINT32
 arc4random(void) {
     ARC4RANDOM_UINT32 val;
-    ARC4_LOCK_();
-    arc4_count -= 4;
-    arc4_stir_if_needed();
-    val = arc4_getword();
-    ARC4_UNLOCK_();
+//    ARC4_LOCK_();
+//    arc4_count -= 4;
+//    arc4_stir_if_needed();
+//    val = arc4_getword();
+//    ARC4_UNLOCK_();
     return val;
 }
 
@@ -495,14 +495,14 @@ arc4random(void) {
 ARC4RANDOM_EXPORT void
 arc4random_buf(void *buf_, size_t n) {
     unsigned char *buf = buf_;
-    ARC4_LOCK_();
-    arc4_stir_if_needed();
-    while (n--) {
-        if (--arc4_count <= 0)
-            arc4_stir();
-        buf[n] = arc4_getbyte();
-    }
-    ARC4_UNLOCK_();
+//    ARC4_LOCK_();
+//    arc4_stir_if_needed();
+//    while (n--) {
+//        if (--arc4_count <= 0)
+//            arc4_stir();
+//        buf[n] = arc4_getbyte();
+//    }
+//    ARC4_UNLOCK_();
 }
 
 #ifndef ARC4RANDOM_NOUNIFORM
